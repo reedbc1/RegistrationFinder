@@ -1,0 +1,97 @@
+[
+    {
+        "address_components": [
+            {
+                "long_name": "4214",
+                "short_name": "4214",
+                "types": [
+                    "street_number"
+                ]
+            },
+            {
+                "long_name": "Summit Knoll Drive",
+                "short_name": "Summit Knoll Dr",
+                "types": [
+                    "route"
+                ]
+            },
+            {
+                "long_name": "St. Louis",
+                "short_name": "St. Louis",
+                "types": [
+                    "locality",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "Tesson Ferry Township",
+                "short_name": "Tesson Ferry Township",
+                "types": [
+                    "administrative_area_level_3",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "St. Louis County",
+                "short_name": "St. Louis County",
+                "types": [
+                    "administrative_area_level_2",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "Missouri",
+                "short_name": "MO",
+                "types": [
+                    "administrative_area_level_1",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "United States",
+                "short_name": "US",
+                "types": [
+                    "country",
+                    "political"
+                ]
+            },
+            {
+                "long_name": "63129",
+                "short_name": "63129",
+                "types": [
+                    "postal_code"
+                ]
+            }
+        ],
+        "formatted_address": "4214 Summit Knoll Dr, St. Louis, MO 63129, USA",
+        "geometry": {
+            "location": {
+                "lat": 38.4920959,
+                "lng": -90.3455515
+            },
+            "location_type": "RANGE_INTERPOLATED",
+            "viewport": {
+                "northeast": {
+                    "lat": 38.49337063029149,
+                    "lng": -90.3440863197085
+                },
+                "southwest": {
+                    "lat": 38.4906726697085,
+                    "lng": -90.3467842802915
+                }
+            }
+        },
+        "navigation_points": [
+            {
+                "location": {
+                    "latitude": 38.4919531,
+                    "longitude": -90.34532800000001
+                }
+            }
+        ],
+        "place_id": "Ei40MjE0IFN1bW1pdCBLbm9sbCBEciwgU3QuIExvdWlzLCBNTyA2MzEyOSwgVVNBIjESLwoUChIJkTLG44TI2IcRQiFysHuEd4YQ9iAqFAoSCdVsEwWFyNiHEVJNtOFcj7tF",
+        "types": [
+            "street_address"
+        ]
+    }
+]

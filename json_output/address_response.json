@@ -1,0 +1,35 @@
+{
+    "firm": "",
+    "address": {
+        "streetAddress": "4214 SUMMIT KNOLL DR",
+        "streetAddressAbbreviation": "4214 SUMMIT KNOLL DR",
+        "secondaryAddress": "",
+        "cityAbbreviation": "SAINT LOUIS",
+        "city": "SAINT LOUIS",
+        "state": "MO",
+        "ZIPCode": "63129",
+        "ZIPPlus4": "7516",
+        "urbanization": ""
+    },
+    "additionalInfo": {
+        "deliveryPoint": "99",
+        "carrierRoute": "C087",
+        "DPVConfirmation": "D",
+        "DPVCMRA": "N",
+        "business": "N",
+        "centralDeliveryPoint": "N",
+        "vacant": "N"
+    },
+    "corrections": [
+        {
+            "code": "32",
+            "text": "Default address: The address you entered was found but more information is needed (such as an apartment, suite, or box number) to match to a specific address."
+        }
+    ],
+    "matches": [
+        {
+            "code": "",
+            "text": ""
+        }
+    ]
+}

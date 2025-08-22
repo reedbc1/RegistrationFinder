@@ -3,6 +3,7 @@ modules = ["python-3.11"]
 
 [nix]
 channel = "stable-25_05"
+packages = ["glibcLocales"]
 
 [unitTest]
 language = "python3"
@@ -13,3 +14,51 @@ requiredFiles = [".replit", "replit.nix"]
 [deployment]
 run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
+
+[workflows]
+runButton = "run arcgisapi.py"
+
+[[workflows.workflow]]
+name = "run usps_api.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 usps_api.py"
+
+[[workflows.workflow]]
+name = "run googlemapsapi.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 googlemapsapi.py"
+
+[[workflows.workflow]]
+name = "run geo_codes.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 geo_codes.py"
+
+[[workflows.workflow]]
+name = "run slcgeocode.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 slcgeocode.py"
+
+[[workflows.workflow]]
+name = "run jeffcoschooldistricts.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3  jeffcoschooldistricts.py"
