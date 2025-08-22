@@ -16,7 +16,7 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "run arcgisapi.py"
+runButton = "Run Flask App"
 
 [[workflows.workflow]]
 name = "run usps_api.py"
@@ -62,3 +62,12 @@ author = 170199
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python3  jeffcoschooldistricts.py"
+
+[[workflows.workflow]]
+name = "Run Flask App"
+author = 170199
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 app.py"
