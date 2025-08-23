@@ -81,6 +81,27 @@
             {% if result.address %}
             <p><span class="label">Formatted Address:</span><span class="value">{{ result.address }}</span></p>
             {% endif %}
+            
+            {% if result.city %}
+            <p><span class="label">City:</span><span class="value">{{ result.city }}</span></p>
+            {% endif %}
+            
+            {% if result.state %}
+            <p><span class="label">State:</span><span class="value">{{ result.state }}</span></p>
+            {% endif %}
+            
+            {% if result.county %}
+            <p><span class="label">County:</span><span class="value">{{ result.county }}</span></p>
+            {% endif %}
+            
+            {% if result.library %}
+            <p><span class="label">Library District:</span><span class="value">{{ result.library }}</span></p>
+            {% endif %}
+            
+            {% if result.school_district %}
+            <p><span class="label">School District:</span><span class="value">{{ result.school_district }}</span></p>
+            {% endif %}
+            
             <p><span class="label">Geographic Code:</span><span class="value">{{ result.geo_code }}</span></p>
             <p><span class="label">Patron Type:</span><span class="value">{{ result.patron_type }}</span></p>
         </div>
