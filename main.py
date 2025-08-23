@@ -241,6 +241,7 @@ def address_and_county(params):
     city = response['city']
     state = response['state']
     county = get_county(google_address)
+    print(county)
 
     # load patron types csv as df
     patron_types = load_patron_types_1()
@@ -249,6 +250,8 @@ def address_and_county(params):
     if city == "Washington" and state == "MO":
         return {
             "address": google_address,
+            "city": city,
+            "state": state,
             "geo_code": "Washington Public Library",
             "patron_type": "Reciprocal"
         }
@@ -261,6 +264,8 @@ def address_and_county(params):
             geo_code = select_row['Geographic Code'].iloc[0]
             patron_type = select_row['Patron Type'].iloc[0]
             return {
+                "address": google_address,
+                "county": county,
                 "geo_code": geo_code, 
                 "patron_type": patron_type
             }
@@ -269,13 +274,14 @@ def address_and_county(params):
         patron_types_stlc = load_patron_types_2()
         # filtered_df needs to have all lowercase geo codes
         library = address_slcl(stlcounty_address)
-        library = library.lower()
         select_row = patron_types_stlc[patron_types_stlc['Geographic Code'].
                                        str.lower() == library.lower()]
         geo_code = select_row['Geographic Code'].iloc[0]
         patron_type = select_row['Patron Type'].iloc[0]
         return {
             "address": google_address,
+            "county": county,
+            "library": library,
             "geo_code": geo_code, 
             "patron_type": patron_type
         }
@@ -287,12 +293,16 @@ def address_and_county(params):
         if school in valid_jeffco_schools:
             return {
                 "address": google_address,
+                "county": county,
+                "school_district": school,
                 "geo_code": "Jefferson County",
                 "patron_type": "Reciprocal"
             }
         else:
             return {
                 "address": google_address,
+                "county": county,
+                "school_district": school,
                 "geo_code": "Jefferson County",
                 "patron_type": "Non-Resident"
             }
@@ -300,6 +310,8 @@ def address_and_county(params):
     else:
         return {
             "address": google_address,
+            "state": state,
+            "county": county,
             "geo_code": "Ineligible", 
             "patron_type": "Ineligible"
         }
