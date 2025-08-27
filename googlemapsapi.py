@@ -22,11 +22,16 @@ def load_result():
         return data
 
 
-save_result('1600 Amphitheatre Parkway, Mountain View, CA')
+save_result('4214 summit knoll dr, st louis, mo 63129')
 result = load_result()
-result = result[0]['address_components']
-county = [
-    item["long_name"] for item in result
-    if "administrative_area_level_2" in item["types"]
-][0]
-print(county)
+
+# result = result[0]['address_components']
+# county = [
+#     item["long_name"] for item in result
+#     if "administrative_area_level_2" in item["types"]
+# ][0]
+
+print(result[0]['formatted_address'])
+
+
+

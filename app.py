@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, request, jsonify
-from main import address_and_county
+from main import address_lookup
 
 app = Flask(__name__)
 
@@ -12,18 +12,14 @@ def index():
 def lookup_address():
     try:
         # Get form data
-        params = {
-            "streetAddress": request.form.get('streetAddress', ''),
-            "secondaryAddress": request.form.get('secondaryAddress', ''),
-            "city": request.form.get('city', ''),
-            "state": request.form.get('state', ''),
-            "ZIPCode": request.form.get('ZIPCode', '')
-        }
+        street = request.form.get('streetAddress')
+        zip = request.form.get('ZIPCode')
         
         # Call the main function
-        result = address_and_county(params)
-        
-        return render_template('result.html', params=params, result=result)
+        result = address_lookup(street, zip)
+
+        # fix params = params
+        return render_template('result.html', params=[street, zip], result=result)
     except Exception as e:
         return render_template('error.html', error=str(e))
 

@@ -1,13 +1,9 @@
 import requests
-import json
-import googlemaps
-from datetime import datetime
-import os
 import pandas as pd
 
 
 ### functions for finding possible geo codes from ZIP code ###
-# load patron types table
+# load patron types table. Does not contain St. Louis County or Jefferson County.
 def load_patron_types_1():
     df = pd.read_csv('csv_files/PatronTypes.csv')
     df = df[df['County'] != 'Saint Louis County']
@@ -24,133 +20,103 @@ def load_patron_types_2():
     return df
 
 
-# edit column names and process 'GEO CODE' column
-def modify_df(df):
+# edit column names and process 'geo code' column
+def modify_zip_sheet(df):
     new_list = []
     for item in list(df.columns):
         new_list.append(item.replace("\n", ""))
-
     new_list[3] = new_list[3][:11]
+    new_list = [item.lower() for item in new_list]
     df.columns = new_list
 
-    df['GEO CODE'] = df['GEO CODE'].str.replace('\n', '', regex=False)
-    df['GEO CODE'] = df['GEO CODE'].str.split('or')
-    df['GEO CODE'] = df['GEO CODE'].apply(lambda lst: [w.strip() for w in lst])
+    df['geo code'] = df['geo code'].str.replace('\n', '', regex=False)
+    df['geo code'] = df['geo code'].str.split('or')
+    df['geo code'] = df['geo code'].apply(lambda lst: [w.strip() for w in lst])
 
 
-# find possible geo codes
-def find_geo_codes(df, zip):
-    geo_codes = df.loc[df['ZIP CODE'] == zip, 'GEO CODE'].iloc[0]
-    return geo_codes
+### Census API ###
+def call_census_api(street, zip):
 
+    returntype = "geographies"
 
-### functions for USPS API ###
-def get_token():
-    payload = {
-        "client_id": "cO2VbnmRHijlhai22yAAeVnoqoVBwnj4nwiIAlSUNJVPaMlC",
-        "client_secret":
-        "awV02jZVtPrHWg3jbiPOyBRxsS6HG7439JTS6f4QkuyACq3nNcGkSalum3SoPtL0",
-        "grant_type": "client_credentials"
-    }
-    response = requests.post("https://apis.usps.com/oauth2/v3/token",
-                             json=payload)
+    searchtype = "address"
 
-    return response
+    BASE_URL = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?"
 
-
-def validate_address(access_token, params):
-
-    headers = {
-        "accept": "application/json",
-        "authorization": "Bearer " + access_token
+    params = {
+        "benchmark": "Public_AR_Current",
+        "vintage": "Current_Current",
+        "street": street,
+        "zip": zip,
+        "format": "json",
+        # "layers": "all"
     }
 
-    response = requests.get("https://apis.usps.com/addresses/v3/address",
-                            headers=headers,
-                            params=params)
-    return response
+    resp = requests.get(BASE_URL, params=params)
+    data = resp.json()
+    addressMatches = data.get("result", {}) \
+                         .get("addressMatches", [])
+    if addressMatches == []:
+        raise Exception('Address not found.')
+    return data
 
 
-def create_and_save_response(access_token, params):
-    response = validate_address(access_token, params)
-    with open('json_output/address_response.json', 'w') as f:
-        json.dump(response.json(), f, indent=4)
-
-
-def open_address_response():
-    with open('json_output/address_response.json', 'r') as f:
-        data = json.load(f)
-        return data
-
-
-def format_address(response):
-    streetAddress = response['streetAddress']
-    secondaryAddress = response['secondaryAddress']
-    city = response['city']
-    state = response['state']
-    ZIPCode = response['ZIPCode']
-
-    if secondaryAddress == '':
-        pretty_address = streetAddress + '\n' + city + ', ' + state + ' ' + ZIPCode
-        google_address = streetAddress + ', ' + city + ', ' + state + ' ' + ZIPCode
-        stlcounty_address = streetAddress
-    else:
-        pretty_address = streetAddress + ' APT ' + secondaryAddress + '\n' + city + ', ' + state + ' ' + ZIPCode
-        google_address = streetAddress + ' APT ' + secondaryAddress + ', ' + city + ', ' + state + ' ' + ZIPCode
-        stlcounty_address = streetAddress + ' APT ' + secondaryAddress
-
-    formatted_address = {
-        'pretty_address': pretty_address,
-        'google_address': google_address,
-        'stlcounty_address': stlcounty_address
-    }
-
-    return formatted_address
-
-
-### functions for Google Maps API ###
-# Address is 'street, city, state'
-def save_geocode_result(gmaps, address):
-
-    geocode_result = gmaps.geocode(address)
-
-    with open('json_output/geocode_result.json', 'w') as f:
-        json.dump(geocode_result, f, indent=4)
-
-
-def load_geocode_result():
-    with open('json_output/geocode_result.json', 'r') as f:
-        data = json.load(f)
-        return data
-
-
-def get_county(google_address):
-    my_secret = os.environ['maps_api']
-    gmaps = googlemaps.Client(key=my_secret)
-    save_geocode_result(gmaps, google_address)
-    result = load_geocode_result()
-    result = result[0]['address_components']
+def get_matched_address(data):
     try:
-        county = [
-            item["long_name"] for item in result
-            if "administrative_area_level_2" in item["types"]
-        ][0]
-        return county
-    except IndexError:
-        city = [
-            item["long_name"] for item in result
-            if item["long_name"] == "St. Louis"
-        ][0]
-        if city == "St. Louis":
-            return "Saint Louis City"
+        return data.get("result", {}) \
+                   .get("addressMatches", [])[0] \
+                   .get("matchedAddress")
+    except (IndexError, AttributeError):
+        return None
+
+
+def get_county(data):
+    try:
+        return (data.get("result",
+                         {}).get("addressMatches",
+                                 [])[0].get("geographies",
+                                            {}).get("Counties",
+                                                    [])[0].get("NAME"))
+    except (IndexError, AttributeError):
+        return None
+
+
+def get_street(data):
+    try:
+        address = get_matched_address(data)
+        return address.split(',')[0].strip()
+    except TypeError:
+        return None
+
+
+def get_city(data):
+    try:
+        address = get_matched_address(data)
+        return address.split(',')[1].strip()
+    except TypeError:
+        return None
+
+
+def get_state(data):
+    try:
+        address = get_matched_address(data)
+        return address.split(',')[2].strip()
+    except TypeError:
+        return None
+
+
+def get_zip(data):
+    try:
+        address = get_matched_address(data)
+        return address.split(',')[3].strip()
+    except TypeError:
+        return None
 
 
 ### Functions for St. Louis County Maps ###
 def address_slcl(address):
-    # get address from USPS API
 
     ### Use address_points to get PARENT_LOC ###
-    # maybe using querying would be faster than find
     BASE_URL = "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"
 
     params = {
@@ -165,7 +131,7 @@ def address_slcl(address):
 
     parent_loc = data['results'][0]['attributes']['PARENT_LOC']
 
-    ### Use AGS_Parcels to get library code ###
+    ### On AGS Parcels, use PARENT_LOC to get library code ###
     BASE_URL = "https://maps.stlouisco.com/hosting/rest/services/Maps/AGS_Parcels/MapServer/find"
 
     params = {
@@ -201,98 +167,93 @@ def check_jeffco_school(street_address):
 
 
 # run all functions
-def address_and_county(params):
+def address_lookup(street, zip):
 
-    df = pd.read_csv(
+    # load zip code sheet (is this necessary now?)
+    zip_code_sheet = pd.read_csv(
         "csv_files/Loan Rule and Registration Cheat Sheets - ZIP Codes.csv")
 
-    modify_df(df)
+    # format zip code sheet
+    modify_zip_sheet(zip_code_sheet)
 
-    # Find possible geo codes
-    possible_codes = find_geo_codes(df, '63123')
-
-    # Return code if only one code is possible
-    if len(possible_codes) == 1:
-        # need to return geo code and patron type
-        return possible_codes[0]
-
-    ### USPS API
-    token = get_token()
-    token = token.json()
-    access_token = token["access_token"]
-
-    # work on error handling here.
-    create_and_save_response(access_token, params)
-    response = open_address_response()
-    response = response['address']
-
-    # format address from response
-    formatted_address = format_address(response)
-    # pretty_address = formatted_address['pretty_address']
-
-    # prepare address for google api
-    google_address = formatted_address['google_address']
-
-    # prepare address for st louis county maps api
-    stlcounty_address = formatted_address['stlcounty_address']
+    # call census api
+    data = call_census_api(street, zip)
 
     # initialize location variables
-    street_address = response['streetAddress']
-    city = response['city']
-    state = response['state']
-    county = get_county(google_address)
-    print(county)
+    address = get_matched_address(data)
+    street = get_street(data)
+    city = get_city(data)
+    state = get_state(data)
+    zip = get_zip(data)
+    county = get_county(data)
 
-    # load patron types csv as df
+    # Doesn't include St Louis or Jefferson county
     patron_types = load_patron_types_1()
 
-    ### find geo_code and patron_type ###
+    # If zip code has only one match, return geo code and patron type
+    selected_row = zip_code_sheet[zip_code_sheet['zip code'] == zip]
+    if len(selected_row['geo code']) == 1:
+        geo_code = selected_row['geo code'].iloc[0][0]
+        patron_type = selected_row['patron type'].iloc[0]
+        return {
+            "address": address,
+            "county": county,
+            "geo code": geo_code,
+            "patron type": patron_type
+        }
+
+    # Check if patron is part of Washington Public Library
     if city == "Washington" and state == "MO":
         return {
-            "address": google_address,
+            "address": street,
             "city": city,
             "state": state,
             "geo_code": "Washington Public Library",
             "patron_type": "Reciprocal"
         }
 
-    # find different way to find st louis city
-    for location in patron_types['County']:
-        if location == county:
-            print("True!")
-            select_row = patron_types[patron_types['County'] == county]
-            geo_code = select_row['Geographic Code'].iloc[0]
-            patron_type = select_row['Patron Type'].iloc[0]
-            return {
-                "address": google_address,
-                "county": county,
-                "geo_code": geo_code, 
-                "patron_type": patron_type
-            }
+    # Check for St Louis City and other counties
+    try:
+        for location in patron_types['County']:
+            if location.lower() == county.lower():
+                # patron_types is without st louis county
+                select_row = patron_types[patron_types['County'].str.lower() ==
+                                          location.lower()]
+                geo_code = select_row['Geographic Code'].iloc[0]
+                patron_type = select_row['Patron Type'].iloc[0]
+                return {
+                    "address": street,
+                    "county": county,
+                    "geo_code": geo_code,
+                    "patron_type": patron_type
+                }
+    except AttributeError:
+        print('No county to compare!')
 
+    # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
-        # filtered_df needs to have all lowercase geo codes
-        library = address_slcl(stlcounty_address)
+        library = address_slcl(street)
         select_row = patron_types_stlc[patron_types_stlc['Geographic Code'].
                                        str.lower() == library.lower()]
         geo_code = select_row['Geographic Code'].iloc[0]
         patron_type = select_row['Patron Type'].iloc[0]
         return {
-            "address": google_address,
+            "address": address,
             "county": county,
             "library": library,
-            "geo_code": geo_code, 
+            "geo_code": geo_code,
             "patron_type": patron_type
         }
 
+    # If county is Jefferson County, find school district
     elif county == "Jefferson County":
         # check school
-        school = check_jeffco_school(street_address)
+        school = check_jeffco_school(street)
         valid_jeffco_schools = ['Fox', 'Northwest', 'Windsor']
         if school in valid_jeffco_schools:
             return {
-                "address": google_address,
+                "address": address,
                 "county": county,
                 "school_district": school,
                 "geo_code": "Jefferson County",
@@ -300,7 +261,7 @@ def address_and_county(params):
             }
         else:
             return {
-                "address": google_address,
+                "address": address,
                 "county": county,
                 "school_district": school,
                 "geo_code": "Jefferson County",
@@ -309,34 +270,13 @@ def address_and_county(params):
 
     else:
         return {
-            "address": google_address,
+            "address": address,
             "state": state,
             "county": county,
-            "geo_code": "Ineligible", 
+            "geo_code": "Ineligible",
             "patron_type": "Ineligible"
         }
 
 
-# tested city address successfully
-# 7550 Lohmeyer Ave, Maplewood, MO 63143
-# 6704 ARMISTEAD CT 63012
-# 3301 ARMBRUSTER RD DE SOTO, MO 63020
-params = {
-    "streetAddress": "4214 summit knoll dr",
-    "secondaryAddress": "",
-    "city": "st louis",
-    "state": "MO",
-    "ZIPCode": "63129"
-}
-
-result = address_and_county(params)
-
-print(result)
-
-# def zip_and_geo_codes():
-#     df = pd.read_csv(
-#         "csv_files/Loan Rule and Registration Cheat Sheets - ZIP Codes.csv")
-
-#     modify_df(df)
-
-#     return df
+# 17419 Wildhorse Meadows Ln, Chesterfield, MO 63005
+result = address_lookup('17419 Wildhorse Meadows Ln', '63005')

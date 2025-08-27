@@ -1,20 +1,20 @@
 {
     "firm": "",
     "address": {
-        "streetAddress": "12 N CHERRY ST",
-        "streetAddressAbbreviation": "12 N CHERRY ST",
+        "streetAddress": "3602 TRACEY RICH RD",
+        "streetAddressAbbreviation": "3602 TRACEY RICH RD",
         "secondaryAddress": "",
-        "cityAbbreviation": "FREEBURG",
-        "city": "FREEBURG",
-        "state": "IL",
-        "ZIPCode": "62243",
-        "ZIPPlus4": "1411",
+        "cityAbbreviation": "SAINT LOUIS",
+        "city": "SAINT LOUIS",
+        "state": "MO",
+        "ZIPCode": "63125",
+        "ZIPPlus4": "3995",
         "urbanization": ""
     },
     "additionalInfo": {
-        "deliveryPoint": "12",
-        "carrierRoute": "C001",
-        "DPVConfirmation": "Y",
+        "deliveryPoint": "99",
+        "carrierRoute": "C070",
+        "DPVConfirmation": "D",
         "DPVCMRA": "N",
         "business": "N",
         "centralDeliveryPoint": "N",
@@ -22,14 +22,14 @@
     },
     "corrections": [
         {
-            "code": "",
-            "text": ""
+            "code": "32",
+            "text": "Default address: The address you entered was found but more information is needed (such as an apartment, suite, or box number) to match to a specific address."
         }
     ],
     "matches": [
         {
-            "code": "31",
-            "text": "Single Response - exact match"
+            "code": "",
+            "text": ""
         }
     ]
 }

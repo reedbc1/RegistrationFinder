@@ -16,7 +16,6 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "Run Flask App"
 
 [[workflows.workflow]]
 name = "run usps_api.py"
@@ -71,6 +70,15 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python3 app.py"
+
+[[workflows.workflow]]
+name = "run censusapi.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 censusapi.py"
 
 [[ports]]
 localPort = 5000
