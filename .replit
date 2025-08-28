@@ -12,7 +12,7 @@ language = "python3"
 requiredFiles = [".replit", "replit.nix"]
 
 [deployment]
-run = ["python3", "main.py"]
+run = ["sh", "-c", "gunicorn --config gunicorn.conf.py wsgi:app"]
 deploymentTarget = "cloudrun"
 
 [workflows]
@@ -70,7 +70,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 app.py"
+args = "gunicorn --config gunicorn.conf.py wsgi:app"
 
 [[workflows.workflow]]
 name = "run censusapi.py"
