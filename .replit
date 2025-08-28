@@ -16,6 +16,7 @@ run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
 
 [workflows]
+runButton = "Run Flask App"
 
 [[workflows.workflow]]
 name = "run usps_api.py"
@@ -79,6 +80,15 @@ author = 170199
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python3 censusapi.py"
+
+[[workflows.workflow]]
+name = "poetry"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "poetry export -f requirements.txt --output requirements.txt --without-hashes"
 
 [[ports]]
 localPort = 5000

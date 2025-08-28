@@ -191,16 +191,18 @@ def address_lookup(street, zip):
     patron_types = load_patron_types_1()
 
     # If zip code has only one match, return geo code and patron type
-    selected_row = zip_code_sheet[zip_code_sheet['zip code'] == zip]
-    if len(selected_row['geo code']) == 1:
-        geo_code = selected_row['geo code'].iloc[0][0]
-        patron_type = selected_row['patron type'].iloc[0]
-        return {
-            "address": address,
-            "county": county,
-            "geo code": geo_code,
-            "patron type": patron_type
-        }
+    # selected_row = zip_code_sheet[zip_code_sheet['zip code'] == zip]
+    # if len(selected_row['geo code']) == 1:
+    #     print()
+    #     print('1 geo code')
+    #     geo_code = selected_row['geo code'].iloc[0]
+    #     patron_type = selected_row['patron type'].iloc[0]
+    #     return {
+    #         "address": address,
+    #         "county": county,
+    #         "geo_code": geo_code,
+    #         "patron_type": patron_type
+    #     }
 
     # Check if patron is part of Washington Public Library
     if city == "Washington" and state == "MO":
@@ -279,4 +281,5 @@ def address_lookup(street, zip):
 
 
 # 17419 Wildhorse Meadows Ln, Chesterfield, MO 63005
-result = address_lookup('17419 Wildhorse Meadows Ln', '63005')
+# result = address_lookup('4444 weber rd', '63123')
+# print(result)

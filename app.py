@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, request, jsonify
-from main import address_lookup
+from regfinder import address_lookup
 
 app = Flask(__name__)
 
