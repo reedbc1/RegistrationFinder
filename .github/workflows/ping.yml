@@ -1,4 +1,4 @@
-name: Keep Render Service Awake
+name: Ping Render Service
 
 on:
   schedule:
