@@ -9,7 +9,8 @@ Staff can find the proper geographic code and patron type by entering a street a
 - Go to the app website: [registrationfinder.onrender.com](https://registrationfinder.onrender.com/)
 - Enter the street address (apartment number not required)
 - Enter the ZIP Code
-- Click “Submit”
+- Click “Submit”  
+![](images/Address_Lookup.png)
 
 ### Output
 Displays the following fields: 
