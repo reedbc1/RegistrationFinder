@@ -1,29 +1,30 @@
-What Is This?
+## What Is This?
 This app is meant for St. Louis County Library staff to simplify the process of checking addresses to determine geographic code and patron type for library card creation.
 
-Why Use This?
+## Why Use This?
 Staff can find the proper geographic code and patron type by entering a street address and ZIP code into a form. This simplifies the library card registration process for staff by eliminating the need to use the USPS website, the St. Louis County Real Estate Search, and the GreatSchools website. The app checks the address with data from the United States Census Bureau, St. Louis County, and Jefferson County to determine proper registration info.
 
-Usage Instructions
-Submitting the Form
-Go to the app website: https://registrationfinder.onrender.com/
-Enter the street address (apartment number not required)
-Enter the ZIP Code
-Click “Lookup Address” Change “Lookup Address” to “Submit”
-Output
-Displays the following fields: 
-Returned Address
-County (or city if in Washington, MO)
-Library District (if in St. Louis County)
-School District (if in Jefferson County)
-Geographic Code
-Patron Type
+## Usage Instructions
+### Submitting the Form
+- Go to the app website: [registrationfinder.onrender.com](https://registrationfinder.onrender.com/)
+- Enter the street address (apartment number not required)
+- Enter the ZIP Code
+- Click “Submit”
 
-How It Works
-Verifying the Address
+### Output
+Displays the following fields: 
+- Returned Address
+- County (or city if in Washington, MO)
+- Library District (if in St. Louis County)
+- School District (if in Jefferson County)
+- Geographic Code
+- Patron Type
+
+## How It Works
+### Verifying the Address
 The program first validates the address by checking it against the most current United States Census Bureau data. This returns the closest matched address information, including the county. 
 
-Finding Geographic Code and Patron Type
+### Finding Geographic Code and Patron Type
 If the geographic code and patron type can be inferred from the county alone (or the city in the case of Washington Public Library), the program stops there and returns the result. The county is checked against csv_files/PatronTypes.csv, which contains all counties eligible for a library card.
 
 If the address is in St. Louis County, the program checks St. Louis County data to see which library the address pays taxes to. 
@@ -32,17 +33,17 @@ If the address is in Jefferson County, the program checks Jefferson County data 
 
 If the address does not fall into any of these categories, the address is determined to be ineligible for a library card.
 
-Hosting the App
-The app is made accessible on the internet by Render.
+### Hosting the App
+The app is made accessible on the internet by [Render](https://render.com/).
 
-Data Sources
-United States Census Bureau
-Census Geocoder
+### Data Sources
+[United States Census Bureau](https://www.census.gov/)
+- [Census Geocoder](https://geocoding.geo.census.gov/geocoder/)
 
-Saint Louis County ArcGIS Site
-Address_Points
-AGS_Parcels
+[Saint Louis County ArcGIS Site](https://data-stlcogis.opendata.arcgis.com/)
+- [Address_Points](https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find)
+- [AGS_Parcels](https://maps.stlouisco.com/hosting/rest/services/Maps/AGS_Parcels/MapServer/find)
 
-Jefferson County ArcGIS Site
-Tax_Parcels
+[Jefferson County ArcGIS Site](https://jeffersoncomo.maps.arcgis.com/home/index.html)
+- [Tax_Parcels](https://services1.arcgis.com/Ur3TPhgM56qvxaar/arcgis/rest/services/Tax_Parcels/FeatureServer/query)
 
