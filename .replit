@@ -93,3 +93,6 @@ args = "poetry export -f requirements.txt --output requirements.txt --without-ha
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[agent]
+expertMode = true
