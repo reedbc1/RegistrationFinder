@@ -2,21 +2,18 @@ import requests
 import pandas as pd
 
 
-# load patron types table. Does not contain St. Louis County or Jefferson County.
+### Loading patron types tables ###
+# Does not contain St. Louis County or Jefferson County.
 def load_patron_types_1():
     df = pd.read_csv("csv_files/PatronTypes.csv")
     df = df[~df["County"].isin(["Saint Louis County", "Jefferson County"])]
     return df.dropna()
 
 
-# load patron types table for St. Louis County only
+# Contains St. Louis County only
 def load_patron_types_2():
     df = pd.read_csv("csv_files/PatronTypes.csv")
     return df[df["County"] == "Saint Louis County"].dropna()
-
-
-
-# edit column names and process 'geo code' column
 
 
 ### Census API ###
@@ -98,6 +95,35 @@ def get_zip(data):
         return None
 
 
+### Check zip code for only one option ###
+def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
+    # Load and clean
+    df = pd.read_csv(csv_path)
+
+    # Clean column names
+    cols = df.columns.str.replace("\n", "").str.lower().tolist()
+    cols[3] = cols[3][:11]  # adjust 4th col
+    df.columns = cols
+
+    # Clean and split 'geo code' and 'patron type'
+    for col in ["geo code", "patron type"]:
+        df[col] = (df[col].str.replace("\n", "", regex=False).str.split(
+            "or").apply(lambda lst: [w.strip() for w in lst]))
+        # Keep only rows with exactly one value
+        df = df[df[col].str.len() == 1]
+
+    # Select relevant cols
+    df = df[["zip code", "geo code", "patron type"]]
+
+    # Lookup zip code
+    filtered = df[df["zip code"] == int(zip_code)]
+    if filtered.empty:
+        return False
+
+    geo, ptype = filtered.iloc[0, 1], filtered.iloc[0, 2]
+    return [geo[0], ptype[0]]
+
+
 ### Functions for St. Louis County Maps ###
 def address_slcl(address):
 
@@ -134,7 +160,7 @@ def address_slcl(address):
     return library_district
 
 
-### Functions for JeffCo Maps
+### Functions for JeffCo Maps ###
 def check_jeffco_school(street_address):
     url = "https://services1.arcgis.com/Ur3TPhgM56qvxaar/ArcGIS/rest/services/Tax_Parcels/FeatureServer/2/query"
 
@@ -150,38 +176,8 @@ def check_jeffco_school(street_address):
     school = data["features"][0]['attributes']['SchDesc']
     return school
 
-def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
-    # Load and clean
-    df = pd.read_csv(csv_path)
 
-    # Clean column names
-    cols = df.columns.str.replace("\n", "").str.lower().tolist()
-    cols[3] = cols[3][:11]   # adjust 4th col
-    df.columns = cols
-
-    # Clean and split 'geo code' and 'patron type'
-    for col in ["geo code", "patron type"]:
-        df[col] = (
-            df[col]
-            .str.replace("\n", "", regex=False)
-            .str.split("or")
-            .apply(lambda lst: [w.strip() for w in lst])
-        )
-        # Keep only rows with exactly one value
-        df = df[df[col].str.len() == 1]
-
-    # Select relevant cols
-    df = df[["zip code", "geo code", "patron type"]]
-
-    # Lookup zip code
-    filtered = df[df["zip code"] == int(zip_code)]
-    if filtered.empty:
-        return False
-
-    geo, ptype = filtered.iloc[0, 1], filtered.iloc[0, 2]
-    return [geo[0], ptype[0]]
-    
-# run all functions
+### Main Function ###
 def address_lookup(street, zip):
 
     # call census api
@@ -207,7 +203,7 @@ def address_lookup(street, zip):
             "geo_code": one_possibility[0],
             "patron_type": one_possibility[1]
         }
-    
+
     # Check if patron is part of Washington Public Library
     if city == "Washington" and state == "MO":
         return {
@@ -282,6 +278,7 @@ def address_lookup(street, zip):
         }
 
 
+### Code to test ###
 if __name__ == "__main__":
     result = address_lookup('4214 summit knoll dr', '63129')
     print(result)
