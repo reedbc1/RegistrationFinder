@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Curl Render service
         run: |
-          curl -s --max-time 90 https://registrationfinder.onrender.com/ > /dev/null
+          curl -s --max-time 300 https://registrationfinder.onrender.com/ > /dev/null
           
