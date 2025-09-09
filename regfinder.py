@@ -154,62 +154,36 @@ def check_jeffco_school(street_address):
     school = data["features"][0]['attributes']['SchDesc']
     return school
 
+def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
+    # Load and clean
+    df = pd.read_csv(csv_path)
 
-def modify_zip_sheet(df):
-    # clean up zip_sheet column names
-    new_list = []
-    for item in list(df.columns):
-        new_list.append(item.replace("\n", ""))
-    new_list[3] = new_list[3][:11]
-    new_list = [item.lower() for item in new_list]
-    df.columns = new_list
+    # Clean column names
+    cols = df.columns.str.replace("\n", "").str.lower().tolist()
+    cols[3] = cols[3][:11]   # adjust 4th col
+    df.columns = cols
 
-    # process 'geo code' column
-    df['geo code'] = df['geo code'].str.replace('\n', '', regex=False)
-    df['geo code'] = df['geo code'].str.split('or')
-    df['geo code'] = df['geo code'].apply(lambda lst: [w.strip() for w in lst])
+    # Clean and split 'geo code' and 'patron type'
+    for col in ["geo code", "patron type"]:
+        df[col] = (
+            df[col]
+            .str.replace("\n", "", regex=False)
+            .str.split("or")
+            .apply(lambda lst: [w.strip() for w in lst])
+        )
+        # Keep only rows with exactly one value
+        df = df[df[col].str.len() == 1]
 
-    # process 'patron type' column
-    df['patron type'] = df['patron type'].str.split('or')
-    df['patron type'] = df['patron type'].apply(
-        lambda lst: [w.strip() for w in lst])
+    # Select relevant cols
+    df = df[["zip code", "geo code", "patron type"]]
 
-    # create counts of columns for filtering
-    df['geo code count'] = [
-        len(df['geo code'][i]) for i in range(len(df['geo code']))
-    ]
-    df['patron type count'] = [
-        len(df['patron type'][i]) for i in range(len(df['patron type']))
-    ]
-
-    # filer to zip codes with only one possible geo code and patron type
-    df = df[df['geo code count'] == 1]
-    df = df[df['patron type count'] == 1]
-
-    # select only the following columns
-    df = df[['zip code', 'geo code', 'patron type']]
-
-    # return dataframe
-    return df
-
-
-### See if there is only one possible geo. code ###
-def check_zip_code(zip):
-    # load zip code sheet
-    zip_code_sheet = pd.read_csv("csv_files/ZIPcodes.csv")
-
-    # format zip code sheet
-    zip_code_sheet = modify_zip_sheet(zip_code_sheet)
-
-    # check if zip code is found in zip_code sheet
-    filtered_zip = zip_code_sheet[zip_code_sheet['zip code'] == int(zip)]
-    
-    if filtered_zip.empty:
+    # Lookup zip code
+    filtered = df[df["zip code"] == int(zip_code)]
+    if filtered.empty:
         return False
-    else:
-        geo_and_type = [item[0] for item in filtered_zip.iloc[0].tolist()[1:3]]
-        return geo_and_type
 
+    geo, ptype = filtered.iloc[0, 1], filtered.iloc[0, 2]
+    return [geo[0], ptype[0]]
     
 # run all functions
 def address_lookup(street, zip):
@@ -232,9 +206,8 @@ def address_lookup(street, zip):
     one_possibility = check_zip_code(zip)
     if one_possibility:
         return {
-            "address": street,
+            "address": address,
             "county": county,
-            "state": state,
             "geo_code": one_possibility[0],
             "patron_type": one_possibility[1]
         }
@@ -242,9 +215,7 @@ def address_lookup(street, zip):
     # Check if patron is part of Washington Public Library
     if city == "Washington" and state == "MO":
         return {
-            "address": street,
-            "city": city,
-            "state": state,
+            "address": address,
             "geo_code": "Washington Public Library",
             "patron_type": "Reciprocal"
         }
@@ -259,7 +230,7 @@ def address_lookup(street, zip):
                 geo_code = select_row['Geographic Code'].iloc[0]
                 patron_type = select_row['Patron Type'].iloc[0]
                 return {
-                    "address": street,
+                    "address": address,
                     "county": county,
                     "geo_code": geo_code,
                     "patron_type": patron_type
