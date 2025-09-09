@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 
 
-### functions for finding possible geo codes from ZIP code ###
 # load patron types table. Does not contain St. Louis County or Jefferson County.
 def load_patron_types_1():
     df = pd.read_csv('csv_files/PatronTypes.csv')
@@ -13,6 +12,7 @@ def load_patron_types_1():
     return df
 
 
+# load patron types table for St. Louis County only
 def load_patron_types_2():
     df = pd.read_csv('csv_files/PatronTypes.csv')
     df = df[df['County'] == 'Saint Louis County']
@@ -21,17 +21,6 @@ def load_patron_types_2():
 
 
 # edit column names and process 'geo code' column
-def modify_zip_sheet(df):
-    new_list = []
-    for item in list(df.columns):
-        new_list.append(item.replace("\n", ""))
-    new_list[3] = new_list[3][:11]
-    new_list = [item.lower() for item in new_list]
-    df.columns = new_list
-
-    df['geo code'] = df['geo code'].str.replace('\n', '', regex=False)
-    df['geo code'] = df['geo code'].str.split('or')
-    df['geo code'] = df['geo code'].apply(lambda lst: [w.strip() for w in lst])
 
 
 ### Census API ###
@@ -166,15 +155,64 @@ def check_jeffco_school(street_address):
     return school
 
 
-# run all functions
-def address_lookup(street, zip):
+def modify_zip_sheet(df):
+    # clean up zip_sheet column names
+    new_list = []
+    for item in list(df.columns):
+        new_list.append(item.replace("\n", ""))
+    new_list[3] = new_list[3][:11]
+    new_list = [item.lower() for item in new_list]
+    df.columns = new_list
 
-    # load zip code sheet (is this necessary now?)
-    zip_code_sheet = pd.read_csv(
-        "csv_files/Loan Rule and Registration Cheat Sheets - ZIP Codes.csv")
+    # process 'geo code' column
+    df['geo code'] = df['geo code'].str.replace('\n', '', regex=False)
+    df['geo code'] = df['geo code'].str.split('or')
+    df['geo code'] = df['geo code'].apply(lambda lst: [w.strip() for w in lst])
+
+    # process 'patron type' column
+    df['patron type'] = df['patron type'].str.split('or')
+    df['patron type'] = df['patron type'].apply(
+        lambda lst: [w.strip() for w in lst])
+
+    # create counts of columns for filtering
+    df['geo code count'] = [
+        len(df['geo code'][i]) for i in range(len(df['geo code']))
+    ]
+    df['patron type count'] = [
+        len(df['patron type'][i]) for i in range(len(df['patron type']))
+    ]
+
+    # filer to zip codes with only one possible geo code and patron type
+    df = df[df['geo code count'] == 1]
+    df = df[df['patron type count'] == 1]
+
+    # select only the following columns
+    df = df[['zip code', 'geo code', 'patron type']]
+
+    # return dataframe
+    return df
+
+
+### See if there is only one possible geo. code ###
+def check_zip_code(zip):
+    # load zip code sheet
+    zip_code_sheet = pd.read_csv("csv_files/ZIPcodes.csv")
 
     # format zip code sheet
-    modify_zip_sheet(zip_code_sheet)
+    zip_code_sheet = modify_zip_sheet(zip_code_sheet)
+
+    # check if zip code is found in zip_code sheet
+    filtered_zip = zip_code_sheet[zip_code_sheet['zip code'] == int(zip)]
+    
+    if filtered_zip.empty:
+        return False
+    else:
+        geo_and_type = [item[0] for item in filtered_zip.iloc[0].tolist()[1:3]]
+        return geo_and_type
+
+    
+# run all functions
+def address_lookup(street, zip):
 
     # call census api
     data = call_census_api(street, zip)
@@ -190,20 +228,17 @@ def address_lookup(street, zip):
     # Doesn't include St Louis or Jefferson county
     patron_types = load_patron_types_1()
 
-    # If zip code has only one match, return geo code and patron type
-    # selected_row = zip_code_sheet[zip_code_sheet['zip code'] == zip]
-    # if len(selected_row['geo code']) == 1:
-    #     print()
-    #     print('1 geo code')
-    #     geo_code = selected_row['geo code'].iloc[0]
-    #     patron_type = selected_row['patron type'].iloc[0]
-    #     return {
-    #         "address": address,
-    #         "county": county,
-    #         "geo_code": geo_code,
-    #         "patron_type": patron_type
-    #     }
-
+    # Check if zip code has only one possible geo. code
+    one_possibility = check_zip_code(zip)
+    if one_possibility:
+        return {
+            "address": street,
+            "county": county,
+            "state": state,
+            "geo_code": one_possibility[0],
+            "patron_type": one_possibility[1]
+        }
+    
     # Check if patron is part of Washington Public Library
     if city == "Washington" and state == "MO":
         return {
@@ -280,6 +315,6 @@ def address_lookup(street, zip):
         }
 
 
-# 17419 Wildhorse Meadows Ln, Chesterfield, MO 63005
-# result = address_lookup('4444 weber rd', '63123')
-# print(result)
+if __name__ == "__main__":
+    result = address_lookup('4214 summit knoll dr', '63129')
+    print(result)

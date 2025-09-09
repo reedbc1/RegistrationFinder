@@ -16,7 +16,7 @@ run = ["sh", "-c", "gunicorn --config gunicorn.conf.py wsgi:app"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "Run Flask App"
+runButton = "run regfinder.py"
 
 [[workflows.workflow]]
 name = "run usps_api.py"
@@ -89,6 +89,15 @@ author = 170199
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "poetry export -f requirements.txt --output requirements.txt --without-hashes"
+
+[[workflows.workflow]]
+name = "run regfinder.py"
+mode = "sequential"
+author = 170199
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 regfinder.py"
 
 [[ports]]
 localPort = 5000

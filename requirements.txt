@@ -2,3 +2,6 @@ flask>=3.1.2     # web framework
 gunicorn>=23.0.0 # production WSGI server
 pandas==2.2.3    # data handling
 requests==2.32.3 # HTTP requests
+flask
+pandas
+requests

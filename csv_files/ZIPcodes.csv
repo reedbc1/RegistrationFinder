@@ -1,0 +1,400 @@
+ZIP CODE,"LIBRARY DISTRICT 
+or COUNTY",CITIES,"PATRON TYPE
+(ADULT or MINOR)",GEO CODE,NOTES
+63005,St. Louis County,-,Resident,St. Louis County,
+63011,St. Louis County,-,Resident,St. Louis County,
+63017,St. Louis County,-,Resident,St. Louis County,
+63021,St. Louis County,- ,Resident,St. Louis County,
+63031,St. Louis County,-,Resident,St. Louis County,
+63033,St. Louis County,-,Resident,St. Louis County,
+63034,St. Louis County,-,Resident,St. Louis County,
+63038,St. Louis County,-,Resident,St. Louis County,
+63040,St. Louis County,-,Resident,St. Louis County,
+63042,St. Louis County,-,Resident,St. Louis County,
+63043,St. Louis County,-,Resident,St. Louis County,
+63044,St. Louis County,-,Resident,St. Louis County,
+63074,St. Louis County,-,Resident,St. Louis County,
+63114,St. Louis County,-,Resident,St. Louis County,
+63126,St. Louis County,-,Resident,St. Louis County,
+63127,St. Louis County,-,Resident,St. Louis County,
+63128,St. Louis County,-,Resident,St. Louis County,
+63129,St. Louis County,-,Resident,St. Louis County,
+63131,St. Louis County,-,Resident,St. Louis County,
+63134,St. Louis County,-,Resident,St. Louis County,
+63140,St. Louis County,-,Resident,St. Louis County,
+63141,St. Louis County,-,Resident,St. Louis County,
+63146,St. Louis County,-,Resident,St. Louis County,
+63121,"St. Louis County or
+Ferguson",-,"Resident or
+Reciprocal","St. Louis County or
+Ferguson",Verify library district through property tax rate information.
+63135,"St. Louis County or
+Ferguson",-,"Resident or
+Reciprocal","St. Louis County or
+Ferguson",Verify library district through property tax rate information.
+63025,"St. Louis County or
+Jefferson County",Eureka,"Resident or
+Reciprocal or
+Non-Resident","St. Louis County or
+Jefferson County","Verify county through real estate the USPS site will be incorrect. For Jefferson County residents, verify school district. Must be in Fox, Northwest, or Windsor to hold a Reciprocal card - otherwise, use Non-Resident."
+63026,"St. Louis County or
+Jefferson County","Fenton, Murphy","Resident or
+Reciprocal","St. Louis County or
+Jefferson County","Verify county through USPS. For Jefferson County residents, verify school district. Must be in Fox, Northwest, or Windsor to hold a Reciprocal card - otherwise, use Non-Resident."
+63049,"St. Louis County or
+Jefferson County",High Ridge,"Resident or
+Reciprocal","St. Louis County or
+Jefferson County","Verify county through USPS. For Jefferson County residents, verify school district. Must be in Fox, Northwest, or Windsor to hold a Reciprocal card - otherwise, use Non-Resident."
+63069,"St. Louis County or
+Jefferson County or
+Franklin County","Pacific, Wildwood","Resident or
+Reciprocal or
+Non-Resident","St. Louis County or
+Jefferson County or
+Franklin County","Verify county through USPS. For Jefferson County residents, verify school district. Must be in Fox, Northwest, or Windsor to hold a Reciprocal card - otherwise, use Non-Resident."
+63122,"St. Louis County or
+Kirkwood",-,"Resident or
+Reciprocal","St. Louis County or
+Kirkwood",Verify library district through property tax rate information.
+63124,"St. Louis County or
+Richmond Heights or
+University City",-,"Resident or
+Reciprocal","St. Louis County or
+Richmond Heights or
+University City",Verify library district through property tax rate information.
+63120,"St. Louis County or
+St. Louis City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City",Verify county of residence through USPS.
+63123,"St. Louis County or
+St. Louis City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City",Verify county of residence through USPS.
+63125,"St. Louis County or
+St. Louis City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City",Verify county of residence through USPS.
+63136,"St. Louis County or
+St. Louis City or
+Ferguson",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City or
+Ferguson","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63137,"St. Louis County or
+St. Louis City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63138,"St. Louis County or
+St. Louis City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63117,"St. Louis County or
+St. Louis City or
+Richmond Heights",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City or
+Richmond Heights","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63119,"St. Louis County or
+St. Louis City or
+Rock Hill or
+Webster Groves",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City or
+Rock Hill or
+Webster Groves","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63105,"St. Louis County or
+St. Louis City or
+University City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City or
+University City","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63130,"St. Louis County or
+St. Louis City or
+University City",-,"Resident or
+Reciprocal","St. Louis County or
+St. Louis City or
+University City","Verify county of residence through USPS. If located in St. Louis County, verify library district through property tax rate information."
+63132,"St. Louis County or
+University City",-,"Resident or
+Reciprocal","St. Louis County or
+University City",Verify library district through property tax rate information.
+63133,"St. Louis County or
+University City",-,"Resident or
+Reciprocal","St. Louis County or
+University City",Verify library district through property tax rate information.
+63088,"St. Louis County or
+Valley Park",-,"Resident or
+Reciprocal","St. Louis County or
+Valley Park",Verify library district through property tax rate information.
+63101,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63102,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63103,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63104,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63106,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63107,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63108,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63109,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63110,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63111,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63112,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63113,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63115,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63116,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63118,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63139,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63147,St. Louis City,St. Louis,Reciprocal,St. Louis City,
+63143,"St. Louis City or
+Maplewood",-,Reciprocal,"St. Louis City or
+Maplewood",Verify county of residence through USPS.
+63144,Brentwood,-,Reciprocal,Brentwood,
+63301,St. Charles County,-,Reciprocal,St. Charles,
+63303,St. Charles County,-,Reciprocal,St. Charles,
+63304,St. Charles County,-,Reciprocal,St. Charles,
+63332,St. Charles County,-,Reciprocal,St. Charles,
+63341,St. Charles County,-,Reciprocal,St. Charles,
+63348,St. Charles County,-,Reciprocal,St. Charles,
+63366,St. Charles County,-,Reciprocal,St. Charles,
+63367,St. Charles County,-,Reciprocal,St. Charles,
+63368,St. Charles County,O'Fallon,Reciprocal,St. Charles,
+63373,St. Charles County,-,Reciprocal,St. Charles,
+63376,St. Charles County,-,Reciprocal,St. Charles,
+63385,St. Charles County,-,Reciprocal,St. Charles,
+63386,St. Charles County,-,Reciprocal,St. Charles,
+63010,Jefferson County,"Arnold, Maxville","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63012,Jefferson County,Barnhart,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63016,Jefferson County,"Cedar Hill, Lake Adelle","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63019,Jefferson County,"Crystal City, Festus","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63020,Jefferson County,"De Soto, Olympian Village, Valles Mines","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63023,Jefferson County,Dittmer,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63028,Jefferson County,Festus,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63030,Jefferson County,Fletcher,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63047,Jefferson County,Hematite,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63048,Jefferson County,Herculaneum,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63050,Jefferson County,Hillsboro,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63051,Jefferson County,House Springs,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63052,Jefferson County,"Antonia, Imperial, Otto, Sulphur Springs","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63053,Jefferson County,"Imperial, Kimmswick","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63057,Jefferson County,Liguori,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63065,Jefferson County,Mapaville,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63066,Jefferson County,Morse Mill,"Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63070,Jefferson County,"Horine, Pevely","Reciprocal or
+Non-Resident",Jefferson County,"Verify school district. Jefferson County residents must be in Fox, Northwest, or Windsor to hold a reciprocal card type."
+63626,"Jefferson County or
+Saint Francois County or
+Washington County",Blackwell,"Reciprocal or
+Non-Resident or
+Ineligible","Jefferson County or
+N/A","Verify county of residence through USPS. For Jefferson County residents, verify school district. Must be in Fox, Northwest, or Windsor to hold a reciprocal card type. 
+
+If patron is outside of one of these districts but still in Jefferson County, they may purchase a non-resident card. Residents of Saint Francois County and Washington County are ineligible for a SLCL card.
+
+Note: Washington, MO (a city located in Franklin County) is distinct from Washington County (a separate county also located in Missouri)."
+63627,"Jefferson County or
+Sainte Genevieve County",Bloomsdale,"Reciprocal or
+Non-Resident or
+Ineligible","Jefferson County or
+N/A","Verify county of residence through USPS. For Jefferson County residents, verify school district. Must be in Fox, Northwest, or Windsor to hold a reciprocal card type. 
+
+If patron is outside of one of these districts but still in Jefferson County, they may purchase a non-resident card. Residents of Sainte Genevieve County are ineligible for a SLCL card."
+63013,Franklin County,Beaufort,Reciprocal,Franklin County,
+63015,Franklin County,Catawissa,Reciprocal,Franklin County,
+63037,Franklin County,Gerald,Reciprocal,Franklin County,
+63039,Franklin County,Gray Summit,Reciprocal,Franklin County,
+63041,Franklin County,Grubville,Reciprocal,Franklin County,
+63055,Franklin County,"Labadie or
+Pacific",Reciprocal,Franklin County,
+63056,Franklin County,Leslie,Reciprocal,Franklin County,
+63060,Franklin County,"Lonedell or
+Luebbering",Reciprocal,Franklin County,
+63061,Franklin County,Luebbering,Reciprocal,Franklin County,
+63068,Franklin County,"Campbellton, Detmold, Dissen, Lyon, New Haven, Stony Hill",Reciprocal,Franklin County,
+63072,Franklin County,Robertsville,Reciprocal,Franklin County,
+63073,Franklin County,Saint Albans,Reciprocal,Franklin County,
+63077,Franklin County,Saint Clair,Reciprocal,Warren County,
+63079,Franklin County,Stanton,Reciprocal,Franklin County,
+63080,Franklin County,"Japan, Pea Ridge, Spring Bluff, Strain, Sullivan",Reciprocal,Franklin County,
+63084,Franklin County,"Moselle, Union",Reciprocal,Franklin County,
+63089,Franklin County,Villa Ridge,Reciprocal,Franklin County,
+63014,"Franklin County or
+Gasconade County","Berger, Etlah",Reciprocal,"Franklin County or
+Gasconade County",Verify county of residence through USPS.
+63091,"Franklin County or
+Gasconade County",Rosebud,Reciprocal,"Franklin County or
+Gasconade County",Verify county of residence through USPS.
+63090,"Franklin County or
+Washington City","Campbellton, Clover Bottom, Washington",Reciprocal,"Franklin County or
+Washington Public Library","If patron is a resident of the city of Washington, MO, use the Washington Public Library geo code. Otherwise, use Franklin County."
+65036,Gasconade County,"Gasconade, Morrison",Reciprocal,Gasconade County,
+65062,Gasconade County,"Bland, Mount Sterling",Reciprocal,Gasconade County,
+63342,Warren County,Dutzow,Reciprocal,Warren County,
+63357,Warren County,"Lake Sherwood, Marthasville",Reciprocal,Warren County,
+63378,Warren County,Treloar,Reciprocal,Warren County,
+63383,Warren County,"Camp Branch, Elkhorn, Pendleton, Truesdale, Warrenton",Reciprocal,Warren County,
+63390,Warren County,"Innsbrook, Wright City",Reciprocal,Warren County,
+65441,"Franklin County or
+Crawford County",Bourbon,"Reciprocal or
+Ineligible","Franklin County or
+N/A",Verify county of residence through USPS.
+65066,"Gasconade County or
+Crawford County","Bem, Brush Creek, Drake, Old Woollam, Owensville","Reciprocal or
+Ineligible","Gasconade County or 
+N/A",Verify county of residence through USPS.
+65453,"Gasconade County or
+Crawford County",Cuba,"Reciprocal or
+Ineligible","Gasconade County or
+N/A",Verify county of residence through USPS.
+63381,"Warren County or
+Lincoln County","New Truxton, Truxton","Reciprocal or
+Non-Resident","Warren County or
+Other MO",Verify county of residence through USPS.
+63071,"Franklin County or
+Washington County",Richwoods,"Reciprocal or
+Ineligible","Franklin County or
+N/A","Verify county of residence through USPS. Only Franklin residents can obtain a SLCL card; other residents in this ZIP code are ineligible.
+
+Note: Washington, MO (a city located in Franklin County) is distinct from Washington County (a separate county also located in Missouri)."
+65041,"Gasconade County or
+Mongomery County","Case, Hermann, McKittrick, Swiss","Reciprocal or
+Ineligible","Gasconade County or
+N/A",Verify county of residence through USPS. Only Gasconade County residents can obtain a SLCL card; other residents in this ZIP code are ineligible.
+65014,"Gasconade County or
+Osage County",Red Bird,"Reciprocal or
+Ineligible","Gasconade County or
+N/A",Verify county of residence through USPS. Only Gasconade County residents can obtain a SLCL card; other residents in this ZIP code are ineligible.
+65061,"Gasconade County or
+Osage County","Fredericksburg, Gasconade, Hope, Morrison, Pershing","Reciprocal or
+Ineligible","Gasconade County or
+N/A",Verify county of residence through USPS. Only Gasconade County residents can obtain a SLCL card; other residents in this ZIP code are ineligible.
+63351,"Warren County or
+Montgomery County",Jonesburg,"Reciprocal or
+Ineligible","Warren County or
+N/A",Verify county of residence through USPS. Only Warren County residents are eligible for a SLCL card.
+63343,Lincoln County,"Auburn, Elsberry, New Hope",Non-Resident,Other MO,
+63347,Lincoln County,Foley,Non-Resident,Other MO,
+63349,Lincoln County,Hawk Point,Non-Resident,Other MO,
+63362,Lincoln County,Moscow Mill,Non-Resident,Other MO,
+63369,Lincoln County,"Chain of Rocks, Ethlyn, Maryknoll, Old Monroe",Non-Resident,Other MO,
+63370,Lincoln County,Olney,Non-Resident,Other MO,
+63377,Lincoln County,"Corso, Millwood, Silex",Non-Resident,Other MO,
+63379,Lincoln County,"Briscoe, Davis, Old Alexandria, Troy",Non-Resident,Other MO,
+63387,Lincoln County,Whiteside,Non-Resident,Other MO,
+63389,Lincoln County,Winfield,Non-Resident,Other MO,
+62246,Bond County (IL),Greenville,Non-Resident,Illinois,
+62284,Bond County (IL),Smithboro,Non-Resident,Illinois,
+62006,Calhoun County (IL),Batchtown,Non-Resident,Illinois,
+62013,Calhoun County (IL),Brussells,Non-Resident,Illinois,
+62036,Calhoun County (IL),Golden Eagle,Non-Resident,Illinois,
+62045,Calhoun County (IL),Hamburg,Non-Resident,Illinois,
+62047,Calhoun County (IL),Hardin,Non-Resident,Illinois,
+62053,Calhoun County (IL),Kampsville,Non-Resident,Illinois,
+62065,Calhoun County (IL),Michael,Non-Resident,Illinois,
+62070,Calhoun County (IL),Moizer,Non-Resident,Illinois,
+62355,Calhoun County (IL),Nebo,Non-Resident,Illinois,
+62361,Calhoun County (IL),Pearl,Non-Resident,Illinois,
+62215,Clinton County (IL),Alberts,Non-Resident,Illinois,
+62218,Clinton County (IL),Bartelso,Non-Resident,Illinois,
+62230,Clinton County (IL),Breese,Non-Resident,Illinois,
+62231,Clinton County (IL),Carlyle,Non-Resident,Illinois,
+62245,Clinton County (IL),Germantown,Non-Resident,Illinois,
+62253,Clinton County (IL),Keyesport,Non-Resident,Illinois,
+62265,Clinton County (IL),New Baden,Non-Resident,Illinois,
+62275,Clinton County (IL),Pocahontas,Non-Resident,Illinois,
+62283,Clinton County (IL),Shattuc,Non-Resident,Illinois,
+62293,Clinton County (IL),Trenton,Non-Resident,Illinois,
+62471,Clinton County (IL),Vandalia,Non-Resident,Illinois,
+62801,Clinton County (IL),Centralia,Non-Resident,Illinois,
+62012,Jersey County (IL),Brighton,Non-Resident,Illinois,
+62022,Jersey County (IL),Dow,Non-Resident,Illinois,
+62028,Jersey County (IL),Elsah,Non-Resident,Illinois,
+62030,Jersey County (IL),Fidelity,Non-Resident,Illinois,
+62031,Jersey County (IL),Fieldon,Non-Resident,Illinois,
+62037,Jersey County (IL),Grafton,Non-Resident,Illinois,
+62052,Jersey County (IL),Jerseyville,Non-Resident,Illinois,
+62063,Jersey County (IL),Medora,Non-Resident,Illinois,
+62009,Macoupin County (IL),Benld,Non-Resident,Illinois,
+62014,Macoupin County (IL),Bunker Hill,Non-Resident,Illinois,
+62033,Macoupin County (IL),Gillespie,Non-Resident,Illinois,
+62069,Macoupin County (IL),Mount Olive,Non-Resident,Illinois,
+62079,Macoupin County (IL),Piasa,Non-Resident,Illinois,
+62626,Macoupin County (IL),Carlinville,Non-Resident,Illinois,
+62630,Macoupin County (IL),Chesterfield,Non-Resident,Illinois,
+62640,Macoupin County (IL),Girard,Non-Resident,Illinois,
+62649,Macoupin County (IL),Hettick,Non-Resident,Illinois,
+62667,Macoupin County (IL),Modesto,Non-Resident,Illinois,
+62672,Macoupin County (IL),Nilwood,Non-Resident,Illinois,
+62674,Macoupin County (IL),Palmyra,Non-Resident,Illinois,
+62683,Macoupin County (IL),Scottville,Non-Resident,Illinois,
+62685,Macoupin County (IL),Shipman,Non-Resident,Illinois,
+62001,Madison County (IL),Alhambra,Non-Resident,Illinois,
+62002,Madison County (IL),Alton,Non-Resident,Illinois,
+62010,Madison County (IL),Bethalto,Non-Resident,Illinois,
+62018,Madison County (IL),Cottage Hills,Non-Resident,Illinois,
+62021,Madison County (IL),Dorsey,Non-Resident,Illinois,
+62024,Madison County (IL),East Alton,Non-Resident,Illinois,
+62025,Madison County (IL),Edwardsville,Non-Resident,Illinois,
+62034,Madison County (IL),Glen Carbon,Non-Resident,Illinois,
+62035,Madison County (IL),Godfrey,Non-Resident,Illinois,
+62040,Madison County (IL),Mitchell,Non-Resident,Illinois,
+62046,Madison County (IL),Hamel,Non-Resident,Illinois,
+62048,Madison County (IL),Hartford,Non-Resident,Illinois,
+62060,Madison County (IL),Marison,Non-Resident,Illinois,
+62061,Madison County (IL),Marine,Non-Resident,Illinois,
+62067,Madison County (IL),Moro,Non-Resident,Illinois,
+62074,Madison County (IL),New Douglas,Non-Resident,Illinois,
+62084,Madison County (IL),Roxana,Non-Resident,Illinois,
+62090,Madison County (IL),Venice,Non-Resident,Illinois,
+62095,Madison County (IL),Wood River,Non-Resident,Illinois,
+62097,Madison County (IL),Worden,Non-Resident,Illinois,
+62249,Madison County (IL),Highland,Non-Resident,Illinois,
+62281,Madison County (IL),Saint Jacob,Non-Resident,Illinois,
+62294,Madison County (IL),Troy,Non-Resident,Illinois,
+62234,"Madison County (IL) or
+St. Clair County (IL)",Collinsville,Non-Resident,Illinois,
+62236,Monroe County (IL),Columbia,Non-Resident,Illinois,
+62244,Monroe County (IL),Fults,Non-Resident,Illinois,
+62248,Monroe County (IL),Hecker,Non-Resident,Illinois,
+62256,Monroe County (IL),Maeystown,Non-Resident,Illinois,
+62278,Monroe County (IL),Red Bud,Non-Resident,Illinois,
+62279,Monroe County (IL),Renault,Non-Resident,Illinois,
+62295,Monroe County (IL),Valmeyer,Non-Resident,Illinois,
+62298,Monroe County (IL),Waterloo,Non-Resident,Illinois,
+62201,St. Clair County (IL),Sauget,Non-Resident,Illinois,
+62203,St. Clair County (IL),East St. Louis,Non-Resident,Illinois,
+62204,St. Clair County (IL),Washington Park,Non-Resident,Illinois,
+62205,St. Clair County (IL),East St. Louis,Non-Resident,Illinois,
+62206,St. Clair County (IL),Cahokia,Non-Resident,Illinois,
+62207,St. Clair County (IL),Alorton,Non-Resident,Illinois,
+62208,St. Clair County (IL),Fairview Heights,Non-Resident,Illinois,
+62220,St. Clair County (IL),Belleville,Non-Resident,Illinois,
+62221,St. Clair County (IL),Belleville,Non-Resident,Illinois,
+62223,St. Clair County (IL),Belleville,Non-Resident,Illinois,
+62225,St. Clair County (IL),Scott AFB,Non-Resident,Illinois,
+62232,St. Clair County (IL),Caseyville,Non-Resident,Illinois,
+62239,St. Clair County (IL),Dupo,Non-Resident,Illinois,
+62240,St. Clair County (IL),East Carondelet,Non-Resident,Illinois,
+62243,St. Clair County (IL),Freeburg,Non-Resident,Illinois,
+62254,St. Clair County (IL),Lebanon,Non-Resident,Illinois,
+62255,St. Clair County (IL),Lenzberg,Non-Resident,Illinois,
+62257,St. Clair County (IL),Marissa,Non-Resident,Illinois,
+62258,St. Clair County (IL),Mascoutah,Non-Resident,Illinois,
+62260,St. Clair County (IL),Millstadt,Non-Resident,Illinois,
+62264,St. Clair County (IL),New Athens,Non-Resident,Illinois,
+62269,St. Clair County (IL),Shiloh,Non-Resident,Illinois,
+62285,St. Clair County (IL),Smithton,Non-Resident,Illinois,
