@@ -4,20 +4,16 @@ import pandas as pd
 
 # load patron types table. Does not contain St. Louis County or Jefferson County.
 def load_patron_types_1():
-    df = pd.read_csv('csv_files/PatronTypes.csv')
-    df = df[df['County'] != 'Saint Louis County']
-    df = df[df['County'] != 'Jefferson County']
-
-    df = df.dropna()
-    return df
+    df = pd.read_csv("csv_files/PatronTypes.csv")
+    df = df[~df["County"].isin(["Saint Louis County", "Jefferson County"])]
+    return df.dropna()
 
 
 # load patron types table for St. Louis County only
 def load_patron_types_2():
-    df = pd.read_csv('csv_files/PatronTypes.csv')
-    df = df[df['County'] == 'Saint Louis County']
-    df = df.dropna()
-    return df
+    df = pd.read_csv("csv_files/PatronTypes.csv")
+    return df[df["County"] == "Saint Louis County"].dropna()
+
 
 
 # edit column names and process 'geo code' column
