@@ -191,6 +191,8 @@ def address_lookup(street, zip):
     zip = get_zip(data)
     county = get_county(data)
 
+    print(f"city: {city}")
+    print(f"state: {state}")
     # Doesn't include St Louis or Jefferson county
     patron_types = load_patron_types_1()
 
@@ -205,7 +207,7 @@ def address_lookup(street, zip):
         }
 
     # Check if patron is part of Washington Public Library
-    if city == "Washington" and state == "MO":
+    if city.upper() == "WASHINGTON" and state == "MO":
         return {
             "address": address,
             "geo_code": "Washington Public Library",
@@ -280,5 +282,5 @@ def address_lookup(street, zip):
 
 ### Code to test ###
 if __name__ == "__main__":
-    result = address_lookup('4214 summit knoll dr', '63129')
+    result = address_lookup('513 E 6th St', '63090')
     print(result)
