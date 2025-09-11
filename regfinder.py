@@ -191,8 +191,6 @@ def address_lookup(street, zip):
     zip = get_zip(data)
     county = get_county(data)
 
-    print(f"city: {city}")
-    print(f"state: {state}")
     # Doesn't include St Louis or Jefferson county
     patron_types = load_patron_types_1()
 
@@ -235,7 +233,7 @@ def address_lookup(street, zip):
     # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
-        library = address_slcl(street)
+        library = " ".join(list(map(str.capitalize, address_slcl(street).split(' '))))
         select_row = patron_types_stlc[patron_types_stlc['Geographic Code'].
                                        str.lower() == library.lower()]
         geo_code = select_row['Geographic Code'].iloc[0]
@@ -282,5 +280,5 @@ def address_lookup(street, zip):
 
 ### Code to test ###
 if __name__ == "__main__":
-    result = address_lookup('513 E 6th St', '63090')
+    result = address_lookup("4444 weber rd", "63123")
     print(result)
