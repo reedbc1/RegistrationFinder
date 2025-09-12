@@ -8,7 +8,6 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 app = Flask(__name__)
-
 logging.basicConfig(level=logging.INFO)
 
 @app.before_request
@@ -20,6 +19,8 @@ def limit_payload():
 def index():
     return render_template('index.html')
 
+limiter = Limiter(app, key_func=get_remote_address)
+@limiter.limit("10 per minute")
 @app.route('/lookup', methods=['POST'])
 def lookup_address():
     try:

@@ -63,6 +63,18 @@ def get_county(data):
         return None
 
 
+
+def split_address(address):
+    try:
+        street = address.split(',')[0].strip()
+        city = address.split(',')[1].strip()
+        state = address.split(',')[2].strip()
+        zip = address.split(',')[3].strip()
+        return street, city, state, zip
+    except (IndexError, AttributeError):
+        return None, None, None, None
+
+
 def get_street(data):
     try:
         address = get_matched_address(data)
@@ -179,17 +191,16 @@ def check_jeffco_school(street_address):
 
 ### Main Function ###
 def address_lookup(street, zip):
-    
+
     # call census api
     data = call_census_api(street, zip)
 
     # initialize location variables
     address = get_matched_address(data)
-    street = get_street(data)
-    city = get_city(data)
-    state = get_state(data)
-    zip = get_zip(data)
     county = get_county(data)
+    street, city, state, zip = split_address(address)
+    if not all([address, county, street, city, state, zip]):
+        raise Exception('Address not found.')
 
     # Doesn't include St Louis or Jefferson county
     patron_types = load_patron_types_1()
@@ -278,7 +289,7 @@ def address_lookup(street, zip):
         }
 
 
-### Code to test ###
+### Code for local testing ###
 if __name__ == "__main__":
     street = "4444 weber rd"
     zip = "63123"
