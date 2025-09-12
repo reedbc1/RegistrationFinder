@@ -179,7 +179,7 @@ def check_jeffco_school(street_address):
 
 ### Main Function ###
 def address_lookup(street, zip):
-
+    
     # call census api
     data = call_census_api(street, zip)
 
@@ -280,5 +280,7 @@ def address_lookup(street, zip):
 
 ### Code to test ###
 if __name__ == "__main__":
-    result = address_lookup("4444 weber rd", "63123")
+    street = "4444 weber rd"
+    zip = "63123"
+    result = address_lookup(street, zip)
     print(result)
