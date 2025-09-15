@@ -6,8 +6,8 @@ authors = ["Brendan Reed"]
 requires-python = ">=3.11"
 dependencies = [
     "flask>=3.1.2",
-    "googlemaps==4.10.0",
     "gunicorn>=23.0.0",
     "pandas==2.2.3",
     "requests==2.32.3",
+    "flask-limiter>=3.9.2"
 ]

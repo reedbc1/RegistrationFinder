@@ -63,7 +63,6 @@ def get_county(data):
         return None
 
 
-
 def split_address(address):
     try:
         street = address.split(',')[0].strip()
@@ -214,7 +213,9 @@ def address_lookup(street, zip):
     # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
-        library = " ".join(list(map(str.capitalize, address_slcl(street).split(' '))))
+        library = " ".join(
+            list(map(str.capitalize,
+                     address_slcl(street).split(' '))))
         select_row = patron_types_stlc[patron_types_stlc['Geographic Code'].
                                        str.lower() == library.lower()]
         geo_code = select_row['Geographic Code'].iloc[0]
