@@ -19,9 +19,10 @@ def limit_payload():
 def index():
     return render_template('index.html')
 
-limiter = Limiter(app, key_func=get_remote_address)
-@limiter.limit("10 per minute")
+limiter = Limiter(get_remote_address, app=app)
+
 @app.route('/lookup', methods=['POST'])
+@limiter.limit("10 per minute")
 def lookup_address():
     try:
         # Get form data
