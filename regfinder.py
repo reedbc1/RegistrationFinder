@@ -34,7 +34,7 @@ def call_census_api(street, zip):
         # "layers": "all"
     }
 
-    resp = requests.get(BASE_URL, params=params)
+    resp = requests.get(BASE_URL, params=params, timeout=5)
     data = resp.json()
     addressMatches = data.get("result", {}) \
                          .get("addressMatches", [])
@@ -63,36 +63,16 @@ def get_county(data):
         return None
 
 
-def get_street(data):
+
+def split_address(address):
     try:
-        address = get_matched_address(data)
-        return address.split(',')[0].strip()
-    except TypeError:
-        return None
-
-
-def get_city(data):
-    try:
-        address = get_matched_address(data)
-        return address.split(',')[1].strip()
-    except TypeError:
-        return None
-
-
-def get_state(data):
-    try:
-        address = get_matched_address(data)
-        return address.split(',')[2].strip()
-    except TypeError:
-        return None
-
-
-def get_zip(data):
-    try:
-        address = get_matched_address(data)
-        return address.split(',')[3].strip()
-    except TypeError:
-        return None
+        street = address.split(',')[0].strip()
+        city = address.split(',')[1].strip()
+        state = address.split(',')[2].strip()
+        zip = address.split(',')[3].strip()
+        return street, city, state, zip
+    except (IndexError, AttributeError):
+        return None, None, None, None
 
 
 ### Check zip code for only one option ###
@@ -137,7 +117,7 @@ def address_slcl(address):
         "f": "json"
     }
 
-    resp = requests.get(BASE_URL, params=params)
+    resp = requests.get(BASE_URL, params=params, timeout=5)
     data = resp.json()
 
     parent_loc = data['results'][0]['attributes']['PARENT_LOC']
@@ -164,13 +144,15 @@ def address_slcl(address):
 def check_jeffco_school(street_address):
     url = "https://services1.arcgis.com/Ur3TPhgM56qvxaar/ArcGIS/rest/services/Tax_Parcels/FeatureServer/2/query"
 
+    safe_address = street_address.replace("'", "''")  # escape single quotes
+
     params = {
-        "where": f"Situs='{street_address}'",  # exact match, case-sensitive
+        "where": f"Situs='{safe_address}'",  # exact match, case-sensitive
         "outFields": "Situs, SchDesc",
         "f": "json"
     }
 
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, timeout=5)
     data = response.json()
 
     school = data["features"][0]['attributes']['SchDesc']
@@ -185,11 +167,10 @@ def address_lookup(street, zip):
 
     # initialize location variables
     address = get_matched_address(data)
-    street = get_street(data)
-    city = get_city(data)
-    state = get_state(data)
-    zip = get_zip(data)
     county = get_county(data)
+    street, city, state, zip = split_address(address)
+    if not all([address, county, street, city, state, zip]):
+        raise Exception('Address not found.')
 
     # Doesn't include St Louis or Jefferson county
     patron_types = load_patron_types_1()
@@ -205,7 +186,7 @@ def address_lookup(street, zip):
         }
 
     # Check if patron is part of Washington Public Library
-    if city.upper() == "WASHINGTON" and state == "MO":
+    if city.upper() == "WASHINGTON" and state.upper() == "MO":
         return {
             "address": address,
             "geo_code": "Washington Public Library",
@@ -278,7 +259,9 @@ def address_lookup(street, zip):
         }
 
 
-### Code to test ###
+### Code for local testing ###
 if __name__ == "__main__":
-    result = address_lookup("4444 weber rd", "63123")
+    street = "4444 weber rd"
+    zip = "63123"
+    result = address_lookup(street, zip)
     print(result)

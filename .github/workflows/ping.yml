@@ -1,9 +1,6 @@
 name: Ping Render Service
 
 on:
-  schedule:
-    # Run every 5 minutes
-    - cron: "* * * * *"
   workflow_dispatch: # allows manual run
 
 jobs:
