@@ -16,7 +16,7 @@ run = ["sh", "-c", "gunicorn --config gunicorn.conf.py wsgi:app"]
 deploymentTarget = "cloudrun"
 
 [workflows]
-runButton = "run regfinder.py"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "run usps_api.py"
@@ -99,9 +99,34 @@ author = 170199
 task = "shell.exec"
 args = "python3 regfinder.py"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Flask App"
+
+[[workflows.workflow]]
+name = "Flask App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python app.py"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 36301
+externalPort = 3000
 
 [agent]
 expertMode = true
