@@ -66,14 +66,14 @@
         <h1>Address Lookup Results</h1>
         
         <div class="input-section">
-            <h3>Input Parameters:</h3>
+            <h3>Input:</h3>
             <p><span class="label">Street Address:</span><span class="value">{{ params[0] }}</span></p>
             <p><span class="label">ZIP Code:</span><span class="value">{{ params[1] }}</span></p>
         </div>
 
-        <!-- make separate section for Found Address and Results -->
+        <!-- Address Details Section -->
         <div class="result-section">
-            <h3>Results:</h3>
+            <h3>Address Details:</h3>
             {% if result.address %}
             <p><span class="label">Returned Address:</span><span class="value">{{ result.address }}</span></p>
             {% endif %}
@@ -97,7 +97,11 @@
             {% if result.school_district %}
             <p><span class="label">School District:</span><span class="value">{{ result.school_district }}</span></p>
             {% endif %}
-            
+        </div>
+
+        <!-- Geographic Code and Patron Type Section -->
+        <div class="result-section">
+            <h3>Geographic Code and Patron Type:</h3>
             <p><span class="label">Geographic Code:</span><span class="value">{{ result.geo_code }}</span></p>
             <p><span class="label">Patron Type:</span><span class="value">{{ result.patron_type }}</span></p>
         </div>
