@@ -1,7 +1,9 @@
 import requests
 import pandas as pd
-import logging
 import subprocess
+
+import logging
+logging.basicConfig(level=logging.INFO)
 
 result = subprocess.run(
     ["curl", "-i", "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"],
