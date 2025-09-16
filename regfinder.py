@@ -213,6 +213,7 @@ def address_lookup(street, zip):
     # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
+        print(address_slcl(street))
         library = " ".join(
             list(map(str.capitalize,
                      address_slcl(street).split(' '))))
