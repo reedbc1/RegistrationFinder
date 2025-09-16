@@ -3,12 +3,15 @@ import pandas as pd
 import subprocess
 
 import logging
+
 logging.basicConfig(level=logging.INFO)
 
-result = subprocess.run(
-    ["curl", "-i", "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"],
-    capture_output=True, text=True
-)
+result = subprocess.run([
+    "curl", "-i",
+    "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"
+],
+                        capture_output=True,
+                        text=True)
 
 logging.info(result.stdout)
 logging.info(result.stderr)
@@ -127,17 +130,15 @@ def address_slcl(address):
         "layers": "0",
         "f": "json"
     }
-    
-    resp = requests.get(BASE_URL, params=params, timeout=5)
+
+    resp = requests.post(BASE_URL, params=params, timeout=5)
 
     if resp.status_code == 200:
         logging.info(resp.json())  # or handle the data as needed
         data = resp.json()
     else:
         logging.info(f"Error: {resp.status_code}")
-        # raise Exception('Address not found.')
-    
-    
+        raise Exception('Address not found.')
 
     parent_loc = data['results'][0]['attributes']['PARENT_LOC']
 
@@ -151,7 +152,7 @@ def address_slcl(address):
         "f": "json"
     }
 
-    resp = requests.get(BASE_URL, params=params)
+    resp = requests.post(BASE_URL, params=params)
     data = resp.json()
 
     library_district = data['results'][0]['attributes']['LIBRARY_DISTRICT']
@@ -233,10 +234,10 @@ def address_lookup(street, zip):
     # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
-        
+
         logging.info("street:", street)
         logging.info("address_slcl:", address_slcl(street))
-        
+
         library = " ".join(
             list(map(str.capitalize,
                      address_slcl(street).split(' '))))
