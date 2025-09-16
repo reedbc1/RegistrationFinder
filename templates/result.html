@@ -23,12 +23,19 @@
             color: #333;
             text-align: center;
         }
+        .detail-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #4553f5;
+        }
         .result-section {
             margin: 20px 0;
             padding: 15px;
             background-color: #f8f9fa;
             border-radius: 5px;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #d9141d;
         }
         .input-section {
             margin: 20px 0;
@@ -74,10 +81,6 @@
         <!-- make separate section for Found Address and Results -->
         <div class="result-section">
             <h3>Results:</h3>  
-            
-            {% if result.address %}
-            <p><span class="label">Returned Address:</span><span class="value">{{ result.address }}</span></p>
-            {% endif %}
 
             <p><span class="label">Geographic Code:</span><span class="value">{{ result.geo_code }}</span></p>
             <p><span class="label">Patron Type:</span><span class="value">{{ result.patron_type }}</span></p>
@@ -85,8 +88,12 @@
 
         <!-- Details Card -->
         {% if result.city or result.state or result.county or result.library or result.school_district %}
-        <div class="result-section">
-            <h3>Details</h3>  
+        <div class="detail-section">
+            <h3>Details:</h3>  
+
+            {% if result.address %}
+            <p><span class="label">Returned Address:</span><span class="value">{{ result.address }}</span></p>
+            {% endif %}
             
             {% if result.city %}
             <p><span class="label">City:</span><span class="value">{{ result.city }}</span></p>
