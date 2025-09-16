@@ -1,6 +1,15 @@
 import requests
 import pandas as pd
 import logging
+import subprocess
+
+result = subprocess.run(
+    ["curl", "-i", "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"],
+    capture_output=True, text=True
+)
+
+logging.info(result.stdout)
+logging.info(result.stderr)
 
 
 ### Loading patron types tables ###
