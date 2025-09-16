@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+import logging
 
 
 ### Loading patron types tables ###
@@ -213,7 +214,10 @@ def address_lookup(street, zip):
     # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
-        print(address_slcl(street))
+        
+        logging.info("street:", street)
+        logging.info("address_slcl:", address_slcl(street))
+        
         library = " ".join(
             list(map(str.capitalize,
                      address_slcl(street).split(' '))))
