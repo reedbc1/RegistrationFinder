@@ -116,9 +116,17 @@ def address_slcl(address):
         "layers": "0",
         "f": "json"
     }
-
+    
     resp = requests.get(BASE_URL, params=params, timeout=5)
-    data = resp.json()
+
+    if resp.status_code == 200:
+        logging.info(resp.json())  # or handle the data as needed
+        data = resp.json()
+    else:
+        logging.info(f"Error: {resp.status_code}")
+        raise Exception('Address not found.')
+    
+    
 
     parent_loc = data['results'][0]['attributes']['PARENT_LOC']
 
