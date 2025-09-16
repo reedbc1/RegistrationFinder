@@ -133,7 +133,7 @@ def address_slcl(address):
         data = resp.json()
     else:
         logging.info(f"Error: {resp.status_code}")
-        raise Exception('Address not found.')
+        # raise Exception('Address not found.')
     
     
 
