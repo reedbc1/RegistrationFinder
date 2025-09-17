@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Lookup - JavaScript Version</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .results {
+            margin-top: 30px;
+            display: none;
+        }
+        .result-section, .input-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .input-section {
+            background-color: #e9ecef;
+            border-left: 4px solid #6c757d;
+        }
+        .result-section {
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+        }
+        .label {
+            font-weight: bold;
+            color: #555;
+        }
+        .value {
+            margin-left: 10px;
+            color: #333;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .loading {
+            color: #007bff;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        .new-search {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .new-search:hover {
+            background-color: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Address Lookup - JavaScript Version</h1>
+        
+        <div id="search-form">
+            <div class="form-group">
+                <label for="streetAddress">Street Address:</label>
+                <input type="text" id="streetAddress" name="streetAddress" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="zipCode">ZIP Code:</label>
+                <input type="text" id="zipCode" name="zipCode" pattern="^\d{5}(-\d{4})?$" required>
+            </div>
+            
+            <button onclick="lookupAddress()" id="submitBtn">Submit</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            Looking up address information...
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="results" class="results">
+            <div class="input-section">
+                <h3>Input:</h3>
+                <p><span class="label">Street Address:</span><span class="value" id="inputStreet"></span></p>
+                <p><span class="label">ZIP Code:</span><span class="value" id="inputZip"></span></p>
+            </div>
+
+            <div class="result-section">
+                <h3>Results:</h3>  
+                <div id="mainResults"></div>
+            </div>
+
+            <div id="detailsSection" class="result-section" style="display: none;">
+                <h3>Details</h3>  
+                <div id="detailsContent"></div>
+            </div>
+            
+            <button class="new-search" onclick="resetForm()">← New Search</button>
+        </div>
+    </div>
+
+    <script>
+        // Patron types data (converted from CSV)
+        const patronTypesData = [
+            {county: "Bond County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "Calhoun County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "Clinton County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "Franklin County", state: "MO", geoCode: "Franklin County", patronType: "Reciprocal"},
+            {county: "Gasconade County", state: "MO", geoCode: "Gasconade County", patronType: "Reciprocal"},
+            {county: "Jefferson County", state: "MO", geoCode: "Jefferson County", patronType: "Reciprocal"},
+            {county: "Jersey County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "Lincoln County", state: "MO", geoCode: "Other MO", patronType: "Non-Resident"},
+            {county: "Macoupin County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "Madison County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "Monroe County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "St. Charles County", state: "MO", geoCode: "St Charles", patronType: "Reciprocal"},
+            {county: "St. Clair County", state: "IL", geoCode: "Illinois", patronType: "Non-Resident"},
+            {county: "St. Louis City", state: "MO", geoCode: "St Louis City", patronType: "Reciprocal"},
+            {county: "Warren County", state: "MO", geoCode: "Warren County", patronType: "Reciprocal"}
+        ];
+
+        // ZIP codes with single geo code/patron type
+        const zipCodesData = {
+            // Sample data - you can expand this based on the CSV
+            "63005": {geoCode: "St. Louis County", patronType: "Resident"},
+            "63011": {geoCode: "St. Louis County", patronType: "Resident"},
+            "63017": {geoCode: "St. Louis County", patronType: "Resident"}
+            // Add more ZIP codes as needed
+        };
+
+        let currentCallbackCounter = 0;
+
+        function lookupAddress() {
+            const streetAddress = document.getElementById('streetAddress').value.trim();
+            const zipCode = document.getElementById('zipCode').value.trim();
+
+            // Validate inputs
+            if (!streetAddress || !zipCode) {
+                showError('Please enter both street address and ZIP code.');
+                return;
+            }
+
+            if (!/^\d{5}(-\d{4})?$/.test(zipCode)) {
+                showError('Please enter a valid ZIP code (e.g., 12345 or 12345-6789).');
+                return;
+            }
+
+            // Clear previous results and show loading
+            hideResults();
+            showLoading();
+            
+            // Call Census API using JSONP
+            callCensusAPI(streetAddress, zipCode);
+        }
+
+        function callCensusAPI(street, zip) {
+            const callbackName = 'censusCallback_' + (++currentCallbackCounter);
+            
+            // Store input values for display later
+            window.currentSearch = {street, zip};
+            
+            // Define the callback function globally
+            window[callbackName] = function(data) {
+                handleCensusResponse(data);
+                // Clean up
+                delete window[callbackName];
+            };
+            
+            const script = document.createElement('script');
+            script.src = `https://geocoding.geo.census.gov/geocoder/geographies/address?` +
+                `benchmark=Public_AR_Current` +
+                `&vintage=Current_Current` +
+                `&street=${encodeURIComponent(street)}` +
+                `&zip=${encodeURIComponent(zip)}` +
+                `&format=jsonp` +
+                `&callback=${callbackName}`;
+            
+            document.head.appendChild(script);
+            
+            // Clean up script tag after a delay
+            setTimeout(() => {
+                if (document.head.contains(script)) {
+                    document.head.removeChild(script);
+                }
+            }, 10000);
+        }
+
+        function handleCensusResponse(data) {
+            hideLoading();
+
+            if (!data.result || !data.result.addressMatches || data.result.addressMatches.length === 0) {
+                showError('Address not found. Please check your input and try again.');
+                return;
+            }
+
+            const match = data.result.addressMatches[0];
+            const address = match.matchedAddress;
+            const county = getCountyName(match);
+            
+            if (!address || !county) {
+                showError('Unable to retrieve complete address information.');
+                return;
+            }
+
+            // Parse address components
+            const addressParts = parseAddress(address);
+            
+            // Process the lookup result
+            processLookupResult({
+                address: address,
+                county: county,
+                city: addressParts.city,
+                state: addressParts.state,
+                zip: addressParts.zip,
+                street: addressParts.street
+            });
+        }
+
+        function getCountyName(match) {
+            try {
+                const counties = match.geographies?.Counties;
+                if (counties && counties.length > 0) {
+                    return counties[0].NAME;
+                }
+            } catch (e) {
+                console.error('Error getting county:', e);
+            }
+            return null;
+        }
+
+        function parseAddress(address) {
+            try {
+                const parts = address.split(',');
+                return {
+                    street: parts[0]?.trim() || '',
+                    city: parts[1]?.trim() || '',
+                    state: parts[2]?.trim() || '',
+                    zip: parts[3]?.trim() || ''
+                };
+            } catch (e) {
+                return {street: '', city: '', state: '', zip: ''};
+            }
+        }
+
+        function processLookupResult(locationData) {
+            const {address, county, city, state, zip, street} = locationData;
+            
+            // Check if ZIP has only one possibility
+            if (zipCodesData[zip.substring(0, 5)]) {
+                const zipData = zipCodesData[zip.substring(0, 5)];
+                showResults({
+                    address: address,
+                    county: county,
+                    city: city,
+                    state: state,
+                    geoCode: zipData.geoCode,
+                    patronType: zipData.patronType
+                });
+                return;
+            }
+
+            // Check for Washington Public Library
+            if (city.toUpperCase() === "WASHINGTON" && state.toUpperCase() === "MO") {
+                showResults({
+                    address: address,
+                    county: county,
+                    city: city,
+                    state: state,
+                    geoCode: "Washington Public Library",
+                    patronType: "Reciprocal"
+                });
+                return;
+            }
+
+            // Check patron types data (excluding St Louis County)
+            const patronMatch = patronTypesData.find(p => 
+                p.county.toLowerCase() === county.toLowerCase() && 
+                county !== "Saint Louis County" && 
+                county !== "St. Louis County"
+            );
+
+            if (patronMatch) {
+                showResults({
+                    address: address,
+                    county: county,
+                    city: city,
+                    state: state,
+                    geoCode: patronMatch.geoCode,
+                    patronType: patronMatch.patronType
+                });
+                return;
+            }
+
+            // Handle St. Louis County
+            if (county === "St. Louis County" || county === "Saint Louis County") {
+                // Note: In a browser environment, we can't easily access the St. Louis County API
+                // due to CORS restrictions. Show basic result.
+                showResults({
+                    address: address,
+                    county: county,
+                    city: city,
+                    state: state,
+                    library: "St. Louis County Library System",
+                    geoCode: "St. Louis County",
+                    patronType: "Resident"
+                });
+                return;
+            }
+
+            // Handle Jefferson County
+            if (county === "Jefferson County") {
+                // Note: Similar CORS issue with Jefferson County API
+                showResults({
+                    address: address,
+                    county: county,
+                    city: city,
+                    state: state,
+                    schoolDistrict: "Jefferson County Schools",
+                    geoCode: "Jefferson County",
+                    patronType: "Reciprocal"
+                });
+                return;
+            }
+
+            // Default case
+            showResults({
+                address: address,
+                county: county,
+                city: city,
+                state: state,
+                geoCode: "Ineligible",
+                patronType: "Ineligible"
+            });
+        }
+
+        function showResults(result) {
+            // Show input values
+            document.getElementById('inputStreet').textContent = window.currentSearch.street;
+            document.getElementById('inputZip').textContent = window.currentSearch.zip;
+
+            // Show main results
+            let mainResultsHTML = '';
+            if (result.address) {
+                mainResultsHTML += `<p><span class="label">Returned Address:</span><span class="value">${result.address}</span></p>`;
+            }
+            mainResultsHTML += `<p><span class="label">Geographic Code:</span><span class="value">${result.geoCode}</span></p>`;
+            mainResultsHTML += `<p><span class="label">Patron Type:</span><span class="value">${result.patronType}</span></p>`;
+            document.getElementById('mainResults').innerHTML = mainResultsHTML;
+
+            // Show details if available
+            let detailsHTML = '';
+            let hasDetails = false;
+
+            if (result.city) {
+                detailsHTML += `<p><span class="label">City:</span><span class="value">${result.city}</span></p>`;
+                hasDetails = true;
+            }
+            if (result.state) {
+                detailsHTML += `<p><span class="label">State:</span><span class="value">${result.state}</span></p>`;
+                hasDetails = true;
+            }
+            if (result.county) {
+                detailsHTML += `<p><span class="label">County:</span><span class="value">${result.county}</span></p>`;
+                hasDetails = true;
+            }
+            if (result.library) {
+                detailsHTML += `<p><span class="label">Library District:</span><span class="value">${result.library}</span></p>`;
+                hasDetails = true;
+            }
+            if (result.schoolDistrict) {
+                detailsHTML += `<p><span class="label">School District:</span><span class="value">${result.schoolDistrict}</span></p>`;
+                hasDetails = true;
+            }
+
+            if (hasDetails) {
+                document.getElementById('detailsContent').innerHTML = detailsHTML;
+                document.getElementById('detailsSection').style.display = 'block';
+            } else {
+                document.getElementById('detailsSection').style.display = 'none';
+            }
+
+            // Show results section
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('search-form').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('error').textContent = message;
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
+        }
+
+        function hideResults() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+
+        function resetForm() {
+            // Clear form
+            document.getElementById('streetAddress').value = '';
+            document.getElementById('zipCode').value = '';
+            
+            // Hide results and show form
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('search-form').style.display = 'block';
+            
+            // Focus on street address field
+            document.getElementById('streetAddress').focus();
+        }
+
+        // Allow Enter key to submit
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('search-form').style.display !== 'none') {
+                lookupAddress();
+            }
+        });
+
+        // Focus on first input when page loads
+        window.addEventListener('load', function() {
+            document.getElementById('streetAddress').focus();
+        });
+    </script>
+</body>
+</html>

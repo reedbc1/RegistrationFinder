@@ -106,23 +106,27 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Flask App"
+args = "JavaScript App"
 
 [[workflows.workflow]]
-name = "Flask App"
+name = "JavaScript App"
 author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python app.py"
-waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -m http.server 5000"
+waitForPort = 5000
+
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 45815
+externalPort = 3000
 
 [agent]
 expertMode = true
