@@ -131,7 +131,7 @@ def address_slcl(address):
         "f": "json"
     }
 
-    resp = requests.post(BASE_URL, params=params, timeout=5)
+    resp = requests.get(BASE_URL, params=params, timeout=5)
 
     if resp.status_code == 200:
         logging.info(resp.json())  # or handle the data as needed
@@ -152,7 +152,7 @@ def address_slcl(address):
         "f": "json"
     }
 
-    resp = requests.post(BASE_URL, params=params)
+    resp = requests.get(BASE_URL, params=params)
     data = resp.json()
 
     library_district = data['results'][0]['attributes']['LIBRARY_DISTRICT']
