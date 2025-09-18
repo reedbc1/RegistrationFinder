@@ -31,15 +31,15 @@ Displays the following fields:
 The program first validates the address by checking it against the most current United States Census Bureau data. This returns the closest matched address information, including the county. 
 
 ### Finding Geographic Code and Patron Type
-If there is only one possible geographic code and patron type for the ZIP code, the program returns the result. 
+- If there is only one possible geographic code and patron type for the ZIP code, the program returns the result. 
 
-Otherwise, if the geographic code and patron type can be inferred from the county alone (or the city in the case of Washington Public Library), the program stops there. The county is checked against csv_files/PatronTypes.csv, which contains all counties eligible for a library card.
+- Otherwise, if the geographic code and patron type can be inferred from the county alone (or the city in the case of Washington Public Library), the program stops there. The county is checked against csv_files/PatronTypes.csv, which contains all counties eligible for a library card.
 
-If the address is in St. Louis County, the program checks St. Louis County data to see which library the address pays taxes to. 
+- If the address is in St. Louis County, the program checks St. Louis County data to see which library the address pays taxes to. 
 
-If the address is in Jefferson County, the program checks Jefferson County data to see which school district the residence is in.
+- If the address is in Jefferson County, the program checks Jefferson County data to see which school district the residence is in.
 
-If the address does not fall into any of these categories, the address is determined to be ineligible for a library card.
+- If the address does not fall into any of these categories, the address is determined to be ineligible for a library card.
 
 ### Hosting the App
 The app is made accessible on the internet by [Render](https://render.com/).
