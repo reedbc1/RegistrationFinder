@@ -138,7 +138,6 @@ def address_slcl(address):
     BASE_URL = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Property_Built_by_Year/FeatureServer/0/query"
 
     params = {
-        #where=PARENT_LOC+%3D+'26H531423'
         "where": f"PARENT_LOC = '{parent_loc}'",
         "outFields": "PROP_ADD, LIBRARY_DISTRICT",
         "f": "pjson"
@@ -157,8 +156,7 @@ def address_slcl(address):
         logging.info(f"{len(data['features'])} feature sets found.")
 
     library_district = " ".join(
-        list(map(str.capitalize,
-                 library_district.split(' '))))
+        list(map(str.capitalize, library_district.split(' '))))
 
     return library_district
 
@@ -201,15 +199,16 @@ def address_lookup(street, zip):
 
     # Check if zip code has only one possible geo. code
     one_possibility = check_zip_code(zip)
-    
+
     if one_possibility:
         if county == 'St. Louis County':
             library = 'St Louis County'
         else:
             library = None
-        
+
         return {
-            k: v for k, v in {
+            k: v
+            for k, v in {
                 "address": address,
                 "county": county,
                 "library": library,
@@ -231,7 +230,7 @@ def address_lookup(street, zip):
         if location.lower() == county.lower():
             # patron_types is without st louis county
             select_row = patron_types[patron_types['County'].str.lower() ==
-                                        location.lower()]
+                                      location.lower()]
             geo_code = select_row['Geographic Code'].iloc[0]
             patron_type = select_row['Patron Type'].iloc[0]
             return {
@@ -246,7 +245,7 @@ def address_lookup(street, zip):
         patron_types_stlc = load_patron_types_2()
 
         library = address_slcl(street)
-        
+
         select_row = patron_types_stlc[patron_types_stlc['Geographic Code'].
                                        str.lower() == library.lower()]
         geo_code = select_row['Geographic Code'].iloc[0]
@@ -293,7 +292,7 @@ def address_lookup(street, zip):
 
 ### Code for local testing ###
 if __name__ == "__main__":
-    street = "244 US HWY 50"
-    zip = "63091"
+    street = "4444 WEBER RD"
+    zip = "63123"
     result = address_lookup(street, zip)
     print(result)
