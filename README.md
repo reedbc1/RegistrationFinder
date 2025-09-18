@@ -33,7 +33,7 @@ The program first validates the address by checking it against the most current 
 ### Finding Geographic Code and Patron Type
 If there is only one possible geographic code and patron type for the ZIP code, the program returns the result. 
 
-Otherwise, if the geographic code and patron type can be inferred from the county alone (or the city in the case of Washington Public Library), the program stops there and returns the result. The county is checked against csv_files/PatronTypes.csv, which contains all counties eligible for a library card.
+Otherwise, if the geographic code and patron type can be inferred from the county alone (or the city in the case of Washington Public Library), the program stops there. The county is checked against csv_files/PatronTypes.csv, which contains all counties eligible for a library card.
 
 If the address is in St. Louis County, the program checks St. Louis County data to see which library the address pays taxes to. 
 
