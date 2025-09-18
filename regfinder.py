@@ -33,7 +33,7 @@ def call_census_api(street, zip):
         "vintage": "Current_Current",
         "street": street,
         "zip": zip,
-        "format": "json",
+        "format": "json"
     }
 
     resp = requests.get(BASE_URL, params=params, timeout=5)
@@ -204,12 +204,18 @@ def address_lookup(street, zip):
     
     if one_possibility:
         if county == 'St. Louis County':
-        logging.info(county)
+            library = 'St Louis County'
+        else:
+            library = None
+        
         return {
-            "address": address,
-            "county": county,
-            "geo_code": one_possibility[0],
-            "patron_type": one_possibility[1]
+            k: v for k, v in {
+                "address": address,
+                "county": county,
+                "library": library,
+                "geo_code": one_possibility[0],
+                "patron_type": one_possibility[1]
+            }.items() if v is not None
         }
 
     # Check if patron is part of Washington Public Library
@@ -287,7 +293,7 @@ def address_lookup(street, zip):
 
 ### Code for local testing ###
 if __name__ == "__main__":
-    street = "4214 summit knoll dr"
-    zip = "63129"
+    street = "244 US HWY 50"
+    zip = "63091"
     result = address_lookup(street, zip)
     print(result)

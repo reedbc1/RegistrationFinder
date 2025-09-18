@@ -12,14 +12,19 @@ Staff can find the proper geographic code and patron type by entering a street a
 - Click “Submit”  
 ![](images/Address_Lookup.png)
 
-### Output
-Displays the following fields: 
+## Output
+Displays the following fields:
+
+### Results
 - Returned Address
+- Geographic Code
+- Patron Type
+
+### Details
 - County (or city if in Washington, MO)
 - Library District (if in St. Louis County)
 - School District (if in Jefferson County)
-- Geographic Code
-- Patron Type
+
 
 ## How It Works
 ### Verifying the Address
@@ -44,8 +49,8 @@ The app is made accessible on the internet by [Render](https://render.com/).
 - [Census Geocoder](https://geocoding.geo.census.gov/geocoder/)
 
 [Saint Louis County ArcGIS Site](https://data-stlcogis.opendata.arcgis.com/)
-- [Address_Points](https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find)
-- [AGS_Parcels](https://maps.stlouisco.com/hosting/rest/services/Maps/AGS_Parcels/MapServer/find)
+- [Address Points](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Points/FeatureServer/2)
+- [Property Built by Year](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Property_Built_by_Year/FeatureServer/0)
 
 [Jefferson County ArcGIS Site](https://jeffersoncomo.maps.arcgis.com/home/index.html)
 - [Tax_Parcels](https://services1.arcgis.com/Ur3TPhgM56qvxaar/arcgis/rest/services/Tax_Parcels/FeatureServer/query)

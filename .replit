@@ -19,51 +19,6 @@ deploymentTarget = "cloudrun"
 runButton = "Project"
 
 [[workflows.workflow]]
-name = "run usps_api.py"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 usps_api.py"
-
-[[workflows.workflow]]
-name = "run googlemapsapi.py"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 googlemapsapi.py"
-
-[[workflows.workflow]]
-name = "run geo_codes.py"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 geo_codes.py"
-
-[[workflows.workflow]]
-name = "run slcgeocode.py"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 slcgeocode.py"
-
-[[workflows.workflow]]
-name = "run jeffcoschooldistricts.py"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3  jeffcoschooldistricts.py"
-
-[[workflows.workflow]]
 name = "Run Flask App"
 author = 170199
 mode = "sequential"
@@ -71,24 +26,6 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "gunicorn --config gunicorn.conf.py wsgi:app"
-
-[[workflows.workflow]]
-name = "run censusapi.py"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 censusapi.py"
-
-[[workflows.workflow]]
-name = "poetry"
-mode = "sequential"
-author = 170199
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "poetry export -f requirements.txt --output requirements.txt --without-hashes"
 
 [[workflows.workflow]]
 name = "run regfinder.py"
