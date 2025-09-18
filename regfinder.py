@@ -1,20 +1,8 @@
 import requests
 import pandas as pd
-import subprocess
-
 import logging
 
 logging.basicConfig(level=logging.INFO)
-
-result = subprocess.run([
-    "curl", "-i",
-    "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"
-],
-                        capture_output=True,
-                        text=True)
-
-logging.info(result.stdout)
-logging.info(result.stderr)
 
 
 ### Loading patron types tables ###
@@ -122,40 +110,56 @@ def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
 def address_slcl(address):
 
     ### Use address_points to get PARENT_LOC ###
-    BASE_URL = "https://maps.stlouisco.com/hosting/rest/services/Address_Points/MapServer/find"
+    BASE_URL = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Points/FeatureServer/2/query"
 
     params = {
-        "searchText": address,
-        "searchFields": "FULL_ADDRESS",
-        "layers": "0",
-        "f": "json"
+        "where": f"PROP_ADD = '{address}'",
+        "outFields": "PROP_ADD, PARENT_LOC",
+        "f": "pjson"
     }
 
     resp = requests.get(BASE_URL, params=params, timeout=5)
 
     if resp.status_code == 200:
-        logging.info(resp.json())  # or handle the data as needed
         data = resp.json()
     else:
         logging.info(f"Error: {resp.status_code}")
         raise Exception('Address not found.')
 
-    parent_loc = data['results'][0]['attributes']['PARENT_LOC']
+    parent_loc = data['features'][0]['attributes']['PARENT_LOC']
+
+    # logging for debugging
+    if len(data['features']) > 1:
+        logging.info(
+            "Warning: More than one address returned for Address_Points API. Might be apartments."
+        )
+        logging.info(f"{len(data['features'])} feature sets found.")
 
     ### On AGS Parcels, use PARENT_LOC to get library code ###
-    BASE_URL = "https://maps.stlouisco.com/hosting/rest/services/Maps/AGS_Parcels/MapServer/find"
+    BASE_URL = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Property_Built_by_Year/FeatureServer/0/query"
 
     params = {
-        "searchText": parent_loc,
-        "searchFields": "PARENT_LOC",
-        "layers": "0",
-        "f": "json"
+        #where=PARENT_LOC+%3D+'26H531423'
+        "where": f"PARENT_LOC = '{parent_loc}'",
+        "outFields": "PROP_ADD, LIBRARY_DISTRICT",
+        "f": "pjson"
     }
 
     resp = requests.get(BASE_URL, params=params)
     data = resp.json()
 
-    library_district = data['results'][0]['attributes']['LIBRARY_DISTRICT']
+    library_district = data["features"][0]["attributes"]["LIBRARY_DISTRICT"]
+
+    # logging for debugging
+    if len(data['features']) > 1:
+        logging.info(
+            "Warning: More than one address returned for Property_Built_by_Year API. Results should be unique."
+        )
+        logging.info(f"{len(data['features'])} feature sets found.")
+
+    library_district = " ".join(
+        list(map(str.capitalize,
+                 library_district.split(' '))))
 
     return library_district
 
@@ -164,12 +168,13 @@ def address_slcl(address):
 def check_jeffco_school(street_address):
     url = "https://services1.arcgis.com/Ur3TPhgM56qvxaar/ArcGIS/rest/services/Tax_Parcels/FeatureServer/2/query"
 
+    # this only really needs to be done in the beginning with the census api call.
     safe_address = street_address.replace("'", "''")  # escape single quotes
 
     params = {
         "where": f"Situs='{safe_address}'",  # exact match, case-sensitive
         "outFields": "Situs, SchDesc",
-        "f": "json"
+        "f": "pjson"
     }
 
     response = requests.get(url, params=params, timeout=5)
@@ -214,33 +219,26 @@ def address_lookup(street, zip):
         }
 
     # Check for St Louis City and other counties
-    try:
-        for location in patron_types['County']:
-            if location.lower() == county.lower():
-                # patron_types is without st louis county
-                select_row = patron_types[patron_types['County'].str.lower() ==
-                                          location.lower()]
-                geo_code = select_row['Geographic Code'].iloc[0]
-                patron_type = select_row['Patron Type'].iloc[0]
-                return {
-                    "address": address,
-                    "county": county,
-                    "geo_code": geo_code,
-                    "patron_type": patron_type
-                }
-    except AttributeError:
-        print('No county to compare!')
+    for location in patron_types['County']:
+        if location.lower() == county.lower():
+            # patron_types is without st louis county
+            select_row = patron_types[patron_types['County'].str.lower() ==
+                                        location.lower()]
+            geo_code = select_row['Geographic Code'].iloc[0]
+            patron_type = select_row['Patron Type'].iloc[0]
+            return {
+                "address": address,
+                "county": county,
+                "geo_code": geo_code,
+                "patron_type": patron_type
+            }
 
     # If county is St. Louis County, find library
     if county == "St. Louis County":
         patron_types_stlc = load_patron_types_2()
 
-        logging.info("street:", street)
-        logging.info("address_slcl:", address_slcl(street))
-
-        library = " ".join(
-            list(map(str.capitalize,
-                     address_slcl(street).split(' '))))
+        library = address_slcl(street)
+        
         select_row = patron_types_stlc[patron_types_stlc['Geographic Code'].
                                        str.lower() == library.lower()]
         geo_code = select_row['Geographic Code'].iloc[0]
@@ -287,7 +285,7 @@ def address_lookup(street, zip):
 
 ### Code for local testing ###
 if __name__ == "__main__":
-    street = "4444 weber rd"
-    zip = "63123"
+    street = "832 Sunset Dr"
+    zip = "63010"
     result = address_lookup(street, zip)
     print(result)

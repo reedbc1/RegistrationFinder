@@ -70,7 +70,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "gunicorn --config gunicorn.conf.py -b 0.0.0.0:$5000 wsgi:wsgi"
+args = "gunicorn --config gunicorn.conf.py wsgi:app"
 
 [[workflows.workflow]]
 name = "run censusapi.py"
@@ -123,6 +123,10 @@ outputType = "webview"
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 43379
+externalPort = 3000
 
 [agent]
 expertMode = true
