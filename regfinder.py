@@ -203,7 +203,7 @@ def address_lookup(street, zip):
     one_possibility = check_zip_code(zip)
     
     if one_possibility:
-        
+        if county == 'St. Louis County':
         logging.info(county)
         return {
             "address": address,
