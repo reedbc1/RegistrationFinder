@@ -34,7 +34,6 @@ def call_census_api(street, zip):
         "street": street,
         "zip": zip,
         "format": "json",
-        # "layers": "all"
     }
 
     resp = requests.get(BASE_URL, params=params, timeout=5)
@@ -202,7 +201,10 @@ def address_lookup(street, zip):
 
     # Check if zip code has only one possible geo. code
     one_possibility = check_zip_code(zip)
+    
     if one_possibility:
+        
+        logging.info(county)
         return {
             "address": address,
             "county": county,
@@ -285,7 +287,7 @@ def address_lookup(street, zip):
 
 ### Code for local testing ###
 if __name__ == "__main__":
-    street = "832 Sunset Dr"
-    zip = "63010"
+    street = "4214 summit knoll dr"
+    zip = "63129"
     result = address_lookup(street, zip)
     print(result)
