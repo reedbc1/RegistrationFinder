@@ -109,7 +109,7 @@ def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
 def address_slcl(address):
 
     ### Use address_points to get PARENT_LOC ###
-    BASE_URL = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Points/FeatureServer/2/query"
+    BASE_URL = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Lookup1_WFL1/FeatureServer/0/query"
 
     params = {
         "where": f"PROP_ADD = '{address}'",
@@ -294,5 +294,5 @@ def address_lookup(street, zip):
 if __name__ == "__main__":
     street = "4444 WEBER RD"
     zip = "63123"
-    result = address_lookup(street, zip)
+    result = address_slcl(street)
     print(result)
