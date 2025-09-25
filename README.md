@@ -49,7 +49,7 @@ The app is made accessible on the internet by [Render](https://render.com/).
 - [Census Geocoder](https://geocoding.geo.census.gov/geocoder/)
 
 [Saint Louis County ArcGIS Site](https://data-stlcogis.opendata.arcgis.com/)
-- [Address Points](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Points/FeatureServer/2)
+- [Address Points](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Lookup1_WFL1/FeatureServer/0)
 - [Property Built by Year](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Property_Built_by_Year/FeatureServer/0)
 
 [Jefferson County ArcGIS Site](https://jeffersoncomo.maps.arcgis.com/home/index.html)
