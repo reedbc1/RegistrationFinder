@@ -1,7 +1,7 @@
-## What Is This?
+## Purpose
 This app is meant for St. Louis County Library staff to simplify the process of finding the geographic code and patron type for patron registration.
 
-## Why Use This?
+## Benefits
 Staff can find the proper geographic code and patron type by entering a street address and ZIP code into a form. This simplifies the library card registration process for staff by eliminating the need to use the USPS website, the St. Louis County Real Estate Search, and the GreatSchools website. The app checks the address with data from the United States Census Bureau, St. Louis County, and Jefferson County to determine proper registration info.
 
 ## Usage Instructions
