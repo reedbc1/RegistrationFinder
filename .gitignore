@@ -159,7 +159,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# testing code
+# My files to ignore
 test.py
 csv_files/exp_csv/
 .replit
+
