@@ -24,8 +24,7 @@ def goog_geocode(address, zip):
 
     # extract the first result
     result = data[0]
-    print(result)
-    
+
     # get longitude and latitude
     lng = result.get("geometry", {}).get("location", {}).get("lng")
     lat = result.get("geometry", {}).get("location", {}).get("lat")
@@ -124,7 +123,16 @@ def address_lookup(address, zip):
             }.items() if v is not None
         }
 
-print(address_lookup('4214 summit knoll dr', '63129'))
+address_lookup('4214 summit knoll dr', '63129')
+
+patron_types = pd.read_csv("csv_files/PatronTypes.csv")
+patron_types = patron_types[~patron_types["County"].isin(['Saint Louis County', 'Jefferson County'])]
+
+
+result = patron_types[patron_types["County"] == "poop"].loc[:,["Geographic Code", "Patron Type"]]
+geo_code = result.iloc[0][0]
+patron_type = result.iloc[1][0]
+
 
 # check for only one result for county
 
