@@ -56,11 +56,15 @@ def get_matched_address(data):
 
 def get_county(data):
     try:
-        return (data.get("result",
+        county = (data.get("result",
                          {}).get("addressMatches",
                                  [])[0].get("geographies",
                                             {}).get("Counties",
                                                     [])[0].get("NAME"))
+        
+        county_cap = ' '.join(list(map(str.capitalize, county.split(' '))))
+        return county_cap
+
     except (IndexError, AttributeError):
         return None
 
