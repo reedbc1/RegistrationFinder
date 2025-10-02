@@ -133,8 +133,11 @@ def check_county(county):
 
     return [geo_code, patron_type]
 
-def st_louis_county_libs(county, lng, lat):
+def slc_libs(lng, lat, county):
     if county.lower() == "st. louis county":
+        patron_types = pd.read_csv("csv_files/PatronTypes.csv")
+        patron_types = patron_types[patron_types["County"] == 'Saint Louis County']
+        patron_types = patron_types[["Geographic Code", "Patron Type"]]
 
         url = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8/query"
 
@@ -152,6 +155,60 @@ def st_louis_county_libs(county, lng, lat):
         # fix with better message for error handling
         response = requests.get(url, params=params, timeout=5)
         response.raise_for_status()
+        
+        data = response.json()
+
+        library = (
+            data.get("features", [{}])[0]        # get first feature safely
+                .get("attributes", {})           # get attributes dict
+                .get("LIBRARY_DISTRICT")         # get LIBRARY_DISTRICT
+            )
+        selected_row = patron_types[patron_types["Geographic Code"].str.lower() == library.lower()]
+        geo_code = selected_row.iloc[0,0]
+        patron_type = selected_row.iloc[0,1]
+
+        return [geo_code, patron_type, library]
+
+    else:
+        return None
+    
+def jeffco_schools(lng, lat, county):
+    if county.lower() == "jefferson county":
+
+        url = "https://services1.arcgis.com/Ur3TPhgM56qvxaar/arcgis/rest/services/Tax_Districts/FeatureServer/0/query"
+        
+        params = {
+            "geometry": f"{lng},{lat}",
+            "geometryType": "esriGeometryPoint",
+            "inSR": "4326",
+            "spatialRel": "esriSpatialRelIntersects",
+            "outFields": "*",
+            "returnGeometry": "false",
+            "defaultSR": "4326",
+            "f": "pjson"
+        }
+
+        # fix with better message for error handling
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+        
+        data = response.json()
+
+        school = (
+            data.get("features", [{}])[0]
+                .get("attributes", {})
+                .get("Name")
+            )
+        
+        return school
+        
+        
+        # selected_row = patron_types[patron_types["Geographic Code"].str.lower() == library.lower()]
+        # print(selected_row)
+        # geo_code = selected_row.iloc[0,0]
+        # patron_type = selected_row.iloc[0,1]
+
+        # return [geo_code, patron_type, library]
 
     else:
         return None
@@ -162,6 +219,7 @@ def address_lookup(address, zip):
     library = None
 
     county = find_county(lng, lat)
+    print(county)
 
     ### Check for only one result based on zip code ###
     # is this necessary now?
@@ -206,11 +264,33 @@ def address_lookup(address, zip):
             }.items() if v is not None
         }
     
-    # if in st louis county, check for library district
-    
+    # if in st louis county, check library district
+    lookup_library = slc_libs(lng, lat, county)
 
-# 5645 Bischoff Ave, St. Louis, MO 63110
-result = address_lookup('4214 summit knoll dr', '63129')
+    if lookup_library:
+        return {
+            k: v
+            for k, v in {
+                "address": address,
+                "county": county,
+                "library": lookup_library[2],
+                "geo_code": lookup_library[0],
+                "patron_type": lookup_library[1]
+            }.items() if v is not None
+        }
+    
+    # if in jeffco, check school district
+    lookup_school = jeffco_schools(lng, lat, county)
+
+    if lookup_school:
+        eligible_schools = ["northwest", "fox", "windsor"]
+        if lookup_school in eligible_schools:
+            return ...
+        else:
+            return ...
+
+# 888 Main St, Herculaneum, MO 63048
+result = address_lookup('888 Main St', '63048')
 print(result)
 
 
