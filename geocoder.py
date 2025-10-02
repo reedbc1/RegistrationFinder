@@ -29,6 +29,8 @@ def goog_geocode(address, zip):
     lng = result.get("geometry", {}).get("location", {}).get("lng")
     lat = result.get("geometry", {}).get("location", {}).get("lat")
 
+    formatted_address = format_address(result.get("formatted_address"))
+
     # Extract postal code
     zip = None
     for component in result.get('address_components', []):
@@ -36,7 +38,19 @@ def goog_geocode(address, zip):
             zip = component.get('long_name')
             break
 
-    return lng, lat, format_address(result.get("formatted_address")), zip
+    city = None
+    for component in result.get('address_components', []):
+        if 'locality' in component.get('types', []):
+            city = component.get('long_name')
+            break
+
+    state = None
+    for component in result.get('address_components', []):
+        if 'administrative_area_level_1' in component.get('types', []):
+            state = component.get('short_name')
+            break
+
+    return lng, lat, formatted_address, zip, city, state
 
 def format_address(address):
     # replace ST in county names with SAINT
@@ -61,11 +75,12 @@ def find_county(lng, lat):
     data = response.json()
     county = data.get("features", [])[0].get("attributes", {}).get("NAME", None)
 
+    # reintroduce after PatronTypes is standardized
     # replace ST in county names with SAINT
-    county = county.split(' ')
-    if county[0] == 'St.':
-        county[0] = 'Saint'
-    county = ' '.join(county)
+    # county = county.split(' ')
+    # if county[0] == 'St.':
+    #     county[0] = 'Saint'
+    # county = ' '.join(county)
 
     return county
 
@@ -84,29 +99,75 @@ def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
     for col in ["geo code", "patron type"]:
         df[col] = (df[col].str.replace("\n", "", regex=False).str.split(
             "or").apply(lambda lst: [w.strip() for w in lst]))
+        
         # Keep only rows with exactly one value
         df = df[df[col].str.len() == 1]
+        df[col] = df[col].apply(lambda x: x[0] if isinstance(x, list) and len(x) > 0 else None)
 
     # Select relevant cols
     df = df[["zip code", "geo code", "patron type"]]
 
+    df.to_csv('exclusive_zips.csv')
+
     # Lookup zip code
     filtered = df[df["zip code"] == int(zip_code)]
     if filtered.empty:
-        return False
+        return None
 
     geo, ptype = filtered.iloc[0, 1], filtered.iloc[0, 2]
-    return [geo[0], ptype[0]]
+    return [geo, ptype]
+
+
+# check for only one result for county
+def check_county(county):
+    patron_types = pd.read_csv("csv_files/PatronTypes.csv")
+    patron_types = patron_types[~patron_types["County"].isin(['Saint Louis County', 'Jefferson County'])]
+
+    try:
+        result = patron_types[patron_types["County"].str.lower() == county.lower()].loc[:,["Geographic Code", "Patron Type"]]
+        geo_code = result.iloc[0,0]
+        patron_type = result.iloc[0,1]
+
+    except IndexError:
+        return None
+
+    return [geo_code, patron_type]
+
+def st_louis_county_libs(county, lng, lat):
+    if county.lower() == "st. louis county":
+
+        url = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8/query"
+
+        params = {
+            "geometry": f"{lng},{lat}",
+            "geometryType": "esriGeometryPoint",
+            "inSR": "4326",
+            "spatialRel": "esriSpatialRelIntersects",
+            "outFields": "LIBRARY_DISTRICT",
+            "returnGeometry": "false",
+            "defaultSR": "4326",
+            "f": "pjson"
+        }
+
+        # fix with better message for error handling
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+
+    else:
+        return None
+
 
 def address_lookup(address, zip):
-    lng, lat, address, zip = goog_geocode(address, zip)
+    lng, lat, address, zip, city, state = goog_geocode(address, zip)
+    library = None
 
     county = find_county(lng, lat)
 
     ### Check for only one result based on zip code ###
-    one_possibility = check_zip_code(zip)
+    # is this necessary now?
+    lookup_zip = check_zip_code(zip)
 
-    if one_possibility:
+    if lookup_zip:
         if county == 'St. Louis County':
                 library = 'St Louis County'
         else:
@@ -118,28 +179,42 @@ def address_lookup(address, zip):
                 "address": address,
                 "county": county,
                 "library": library,
-                "geo_code": one_possibility[0],
-                "patron_type": one_possibility[1]
+                "geo_code": lookup_zip[0],
+                "patron_type": lookup_zip[1]
             }.items() if v is not None
         }
+    
+    if city.upper() == "WASHINGTON" and state.upper() == "MO":
+        return {
+            "address": address,
+            "geo_code": "Washington Public Library",
+            "patron_type": "Reciprocal"
+        }
 
-address_lookup('4214 summit knoll dr', '63129')
+    # standardize patrontypes table names - all saint instead of st
+    lookup_county = check_county(county)
 
-patron_types = pd.read_csv("csv_files/PatronTypes.csv")
-patron_types = patron_types[~patron_types["County"].isin(['Saint Louis County', 'Jefferson County'])]
+    if lookup_county:
+        return {
+            k: v
+            for k, v in {
+                "address": address,
+                "county": county,
+                "library": library,
+                "geo_code": lookup_county[0],
+                "patron_type": lookup_county[1]
+            }.items() if v is not None
+        }
+    
+    # if in st louis county, check for library district
+    
+
+# 5645 Bischoff Ave, St. Louis, MO 63110
+result = address_lookup('4214 summit knoll dr', '63129')
+print(result)
 
 
-result = patron_types[patron_types["County"] == "poop"].loc[:,["Geographic Code", "Patron Type"]]
-geo_code = result.iloc[0][0]
-patron_type = result.iloc[1][0]
 
-
-# check for only one result for county
-
-
-# if in franklin county, check for washington, mo (city)
-
-# if in st louis county, check for library district
 
 # if in jefferson county, check for school district
 
