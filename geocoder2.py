@@ -11,9 +11,7 @@ load_dotenv()
 def goog_geocode(address, zip):
 
     api_key = os.getenv("GOOGLE_MAPS_API_KEY")
-
     gmaps = googlemaps.Client(key=api_key)
-
     data = gmaps.geocode(address + " " + zip)
 
     if len(data) == 0:
@@ -57,28 +55,26 @@ def format_address(address):
     return address.upper().strip().replace('.', '').replace("'", ' ').replace(", USA", '')
 
 def find_county(lng, lat):
-    base_url = "https://services2.arcgis.com/FiaPA4ga0iQKduv3/ArcGIS/rest/services/TIGERweb_Counties_v1/FeatureServer/0/query"
+    url = "https://services2.arcgis.com/FiaPA4ga0iQKduv3/ArcGIS/rest/services/TIGERweb_Counties_v1/FeatureServer/0/query"
 
     params = {
-        "where": "1=1",
-        "geometryType": "esriGeometryPoint",
-        "spatialRel": "esriSpatialRelIntersects",
-        "geometry": f"{lng},{lat}",
-        "inSR": "4326",
-        "outFields": "NAME",
-        "returnGeometry": "false",
-        "f": "json"
-    }
+            "geometry": f"{lng},{lat}",
+            "geometryType": "esriGeometryPoint",
+            "inSR": "4326",
+            "spatialRel": "esriSpatialRelIntersects",
+            "outFields": "NAME",
+            "returnGeometry": "false",
+            "defaultSR": "4326",
+            "f": "json"
+        }
+    
 
     # handle timeout errors and other request exceptions
-    response = requests.get(base_url, params=params, timeout=5)
+    response = requests.get(url, params=params, timeout=5)
     data = response.json()
     county = data.get("features", [])[0].get("attributes", {}).get("NAME", None)
 
     return county
-
-# check for only one result for zip code
-### Check zip code for only one option ###
 
 
 def check_zip(zip):
@@ -124,7 +120,7 @@ def slc_libs(lng, lat, county):
             "outFields": "LIBRARY_DISTRICT",
             "returnGeometry": "false",
             "defaultSR": "4326",
-            "f": "pjson"
+            "f": "json"
         }
 
         # fix with better message for error handling
@@ -160,7 +156,7 @@ def jeffco_schools(lng, lat, county):
             "outFields": "*",
             "returnGeometry": "false",
             "defaultSR": "4326",
-            "f": "pjson"
+            "f": "json"
         }
 
         # fix with better message for error handling
@@ -179,82 +175,87 @@ def jeffco_schools(lng, lat, county):
 
     else:
         return None
+   
+class AddressDetails:
+    def __init__(self):
+        attributes = ["address", "county", "library", "school", "geo_code", "patron_type"]
+        for attr in attributes:
+            setattr(self, attr, None)
 
-def diplay_data(address, county, library, school, geo_code, patron_type):
-    return {
-        k: v
-        for k, v in {
-            "address": address,
-            "county": county,
-            "library": library,
-            "school": school,
-            "geo_code": geo_code,
-            "patron_type": patron_type
-        }.items() if v is not None
-    }     
+    def address_lookup(self, address, zip):
 
-def address_lookup(address, zip):
+        lng, lat, self.address, zip, city, state = goog_geocode(address, zip)
 
-    lng, lat, address, zip, city, state = goog_geocode(address, zip)
+        self.county = find_county(lng, lat)
 
-    library, school, geo_code, patron_type = None, None, None, None
+        lookup_zip = check_zip(zip)
 
-    county = find_county(lng, lat)
-
-    lookup_zip = check_zip(zip)
-
-    if lookup_zip:
-        geo_code = lookup_zip[0]
-        patron_type = lookup_zip[1]
-        if county == 'St. Louis County':
-                library = 'St Louis County'
-        return diplay_data(address, county, library, school, geo_code, patron_type)
-    
-    if city.upper() == "WASHINGTON" and state.upper() == "MO":
-        geo_code = "Washington Public Library"
-        patron_type = "Reciprocal"
-        return diplay_data(address, county, library, school, geo_code, patron_type)
-
-    # standardize patrontypes table names - all saint instead of st
-    lookup_county = check_county(county)
-
-    if lookup_county:
-        geo_code = lookup_county[0]
-        patron_type = lookup_county[1]
-        return diplay_data(address, county, library, school, geo_code, patron_type)
-    
-    # if in st louis county, check library district
-    lookup_library = slc_libs(lng, lat, county)
-
-    if lookup_library:
-        geo_code = lookup_library[0]
-        patron_type = lookup_library[1]
-        library = lookup_library[2]
-        return diplay_data(address, county, library, school, geo_code, patron_type) 
-    
-    # if in jeffco, check school district
-    school = jeffco_schools(lng, lat, county)
-
-    if school:
-
-        patron_type = "Reciprocal"
-
-        eligible_schools = ["northwest", "fox", "windsor"]
-        if school.lower() in eligible_schools:
-            geo_code = "Reciprocal"
-        else:
-            geo_code = "Non-Resident"
+        if lookup_zip:
+            self.geo_code = lookup_zip[0]
+            self.patron_type = lookup_zip[1]
+            if self.county == 'St. Louis County':
+                    library = 'St Louis County'
+            return self.display_data()
         
-        return diplay_data(address, county, library, school, geo_code, patron_type)
+        if city.upper() == "WASHINGTON" and state.upper() == "MO":
+            self.geo_code = "Washington Public Library"
+            self.patron_type = "Reciprocal"
+            return self.diplay_data()
+
+        # standardize patrontypes table names - all saint instead of st
+        lookup_county = check_county(self.county)
+
+        if lookup_county:
+            self.geo_code = lookup_county[0]
+            self.patron_type = lookup_county[1]
+            return self.display_data()
+        
+        # if in st louis county, check library district
+        lookup_library = slc_libs(lng, lat, self.county)
+
+        if lookup_library:
+            self.geo_code = lookup_library[0]
+            self.patron_type = lookup_library[1]
+            self.library = lookup_library[2]
+            return self.diplay_data()
+        
+        # if in jeffco, check school district
+        self.school = jeffco_schools(lng, lat, self.county)
+
+        if self.school:
+
+            self.patron_type = "Reciprocal"
+
+            eligible_schools = ["northwest", "fox", "windsor"]
+            if self.school.lower() in eligible_schools:
+                self.geo_code = "Reciprocal"
+            else:
+                self.geo_code = "Non-Resident"
+            
+            return self.diplay_data()
+        
+        self.geo_code = "Ineligible"
+        self.patron_type = "Ineligible"
+        return self.display_data()
     
-    geo_code = "Ineligible"
-    patron_type = "Ineligible"
-    return diplay_data(address, county, library, school, geo_code, patron_type)
+    def diplay_data(self):
+        return {
+            k: v
+            for k, v in {
+                "address": self.address,
+                "county": self.county,
+                "library": self.library,
+                "school": self.school,
+                "geo_code": self.geo_code,
+                "patron_type": self.patron_type
+            }.items() if v is not None
+        }  
 
 if __name__ == "__main__":
-    # 888 Main St, Herculaneum, MO 63048
-    result = address_lookup('4444 weber rd', '63123')
+    submission = AddressDetails()
+    result = submission.address_lookup("4444 weber rd", "63123")
     print(result)
+
 
 
 
