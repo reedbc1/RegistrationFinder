@@ -75,42 +75,17 @@ def find_county(lng, lat):
     data = response.json()
     county = data.get("features", [])[0].get("attributes", {}).get("NAME", None)
 
-    # reintroduce after PatronTypes is standardized
-    # replace ST in county names with SAINT
-    # county = county.split(' ')
-    # if county[0] == 'St.':
-    #     county[0] = 'Saint'
-    # county = ' '.join(county)
-
     return county
 
 # check for only one result for zip code
 ### Check zip code for only one option ###
-def check_zip_code(zip_code, csv_path="csv_files/ZIPcodes.csv"):
-    # Load and clean
-    df = pd.read_csv(csv_path)
 
-    # Clean column names
-    cols = df.columns.str.replace("\n", "").str.lower().tolist()
-    cols[3] = cols[3][:11]  # adjust 4th col
-    df.columns = cols
 
-    # Clean and split 'geo code' and 'patron type'
-    for col in ["geo code", "patron type"]:
-        df[col] = (df[col].str.replace("\n", "", regex=False).str.split(
-            "or").apply(lambda lst: [w.strip() for w in lst]))
-        
-        # Keep only rows with exactly one value
-        df = df[df[col].str.len() == 1]
-        df[col] = df[col].apply(lambda x: x[0] if isinstance(x, list) and len(x) > 0 else None)
-
-    # Select relevant cols
-    df = df[["zip code", "geo code", "patron type"]]
-
-    df.to_csv('exclusive_zips.csv')
+def check_zip(zip):
+    df = pd.read_csv("csv_files\ExclusiveZips.csv")
 
     # Lookup zip code
-    filtered = df[df["zip code"] == int(zip_code)]
+    filtered = df[df["zip code"] == int(zip)]
     if filtered.empty:
         return None
 
@@ -223,7 +198,7 @@ def address_lookup(address, zip):
 
     ### Check for only one result based on zip code ###
     # is this necessary now?
-    lookup_zip = check_zip_code(zip)
+    lookup_zip = check_zip(zip)
 
     if lookup_zip:
         if county == 'St. Louis County':
@@ -283,11 +258,26 @@ def address_lookup(address, zip):
     lookup_school = jeffco_schools(lng, lat, county)
 
     if lookup_school:
+
+        patron_type = "Reciprocal"
+
         eligible_schools = ["northwest", "fox", "windsor"]
-        if lookup_school in eligible_schools:
-            return ...
+        if lookup_school.lower() in eligible_schools:
+            geo_code = "Reciprocal"
         else:
-            return ...
+            geo_code = "Non-Resident"
+        
+        return {
+                k: v
+                for k, v in {
+                    "address": address,
+                    "county": county,
+                    "library": library,
+                    "school": lookup_school,
+                    "geo_code": geo_code,
+                    "patron_type": patron_type
+                }.items() if v is not None
+            }
 
 # 888 Main St, Herculaneum, MO 63048
 result = address_lookup('888 Main St', '63048')
@@ -295,7 +285,5 @@ print(result)
 
 
 
-
-# if in jefferson county, check for school district
 
 # if still not found, return ineligible
