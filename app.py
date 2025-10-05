@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, request, jsonify, abort
-from regfinder import address_lookup
+from geocoder2 import AddressDetails
 import re
 from markupsafe import escape
 import logging
@@ -37,10 +37,10 @@ def lookup_address():
             abort(400, "Invalid ZIP code")
 
         # Call the main function
-        result = address_lookup(street, zip_safe)
+        result = AddressDetails().address_lookup(street_safe, zip_safe)
 
         # fix params = params
-        return render_template('result.html', params=[street_safe, zip], result=result)
+        return render_template('result.html', params=[street_safe, zip_safe], result=result)
     
     except Exception as e:
         logging.exception(str(e))

@@ -22,6 +22,7 @@ def goog_geocode(address, zip):
 
     # extract the first result
     result = data[0]
+    print(result)
 
     # get longitude and latitude
     lng = result.get("geometry", {}).get("location", {}).get("lng")
@@ -36,12 +37,11 @@ def goog_geocode(address, zip):
             zip = component.get('long_name')
             break
 
-    city = None
-    for component in result.get('address_components', []):
-        if 'locality' in component.get('types', []):
-            city = component.get('long_name')
-            break
-
+    try:
+        city = formatted_address.split(", ")[0]
+    except IndexError:
+        city = None
+    
     state = None
     for component in result.get('address_components', []):
         if 'administrative_area_level_1' in component.get('types', []):
@@ -224,13 +224,13 @@ class AddressDetails:
 
         if self.school:
 
-            self.patron_type = "Reciprocal"
+            self.geo_code = "Jefferson County"
 
             eligible_schools = ["northwest", "fox", "windsor"]
             if self.school.lower() in eligible_schools:
-                self.geo_code = "Reciprocal"
+                self.patron_type = "Reciprocal"
             else:
-                self.geo_code = "Non-Resident"
+                self.patron_type = "Non-Resident"
             
             return self.diplay_data()
         
@@ -252,6 +252,7 @@ class AddressDetails:
         }  
 
 if __name__ == "__main__":
+    # 6911 TIMBERLINE, HOUSE SPRINGS, MO 63051
     submission = AddressDetails()
     result = submission.address_lookup("4444 weber rd", "63123")
     print(result)

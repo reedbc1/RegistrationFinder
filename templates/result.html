@@ -91,7 +91,7 @@
         </div>
 
         <!-- Details Card -->
-        {% if result.city or result.state or result.county or result.library or result.school_district %}
+        {% if result.city or result.state or result.county or result.library or result.school %}
         <div class="detail-section">
             <h3>Details:</h3>  
             
@@ -111,8 +111,8 @@
             <p><span class="label">Library District:</span><span class="value">{{ result.library }}</span></p>
             {% endif %}
 
-            {% if result.school_district %}
-            <p><span class="label">School District:</span><span class="value">{{ result.school_district }}</span></p>
+            {% if result.school %}
+            <p><span class="label">School District:</span><span class="value">{{ result.school }}</span></p>
             {% endif %}
         </div>
         {% endif %}
