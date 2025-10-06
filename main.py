@@ -28,8 +28,14 @@ def call_census_api(street, zip):
         "format": "json"
     }
 
-    resp = requests.get(url, params=params, timeout=5)
-    data = resp.json()
+    response = requests.get(url, params=params, timeout=5)
+
+    if response.status_code != requests.codes.ok:
+        logging.info("Census API call was unsuccessful. " \
+                     f"Response status code: {response.status_code}")
+        response.raise_for_status()
+        
+    data = response.json()
 
     addressMatches = data.get("result", {}) \
                          .get("addressMatches", [])
@@ -65,7 +71,14 @@ def goog_geocode(address, zip):
 
     api_key = os.getenv("GOOGLE_MAPS_API_KEY")
     gmaps = googlemaps.Client(key=api_key)
-    data = gmaps.geocode(address + " " + zip)
+
+    try:
+        data = gmaps.geocode(address + " " + zip)
+
+    except Exception as e:
+        logging.info("Google Geocoder API call was unsuccessful. "
+                     f"Error: {e}")
+        raise e
 
     if len(data) == 0:
         raise Exception('Address not found.')
@@ -124,6 +137,12 @@ def find_county(lng, lat):
 
     # handle timeout errors and other request exceptions
     response = requests.get(url, params=params, timeout=5)
+
+    if response.status_code != requests.codes.ok:
+        logging.info("Census API call was unsuccessful. " \
+                     f"Response status code: {response.status_code}")
+        response.raise_for_status()
+
     data = response.json()
     county = data.get("features", [])[0].get("attributes",
                                              {}).get("NAME", None)
@@ -181,9 +200,12 @@ def slc_libs(lng, lat, county):
             "f": "json"
         }
 
-        # fix with better message for error handling
         response = requests.get(url, params=params, timeout=5)
-        response.raise_for_status()
+        
+        if response.status_code != requests.codes.ok:
+            logging.info("Census API call was unsuccessful. " \
+                        f"Response status code: {response.status_code}")
+            response.raise_for_status()
 
         data = response.json()
 
@@ -225,9 +247,11 @@ def jeffco_schools(lng, lat, county):
             "f": "json"
         }
 
-        # fix with better message for error handling
         response = requests.get(url, params=params, timeout=5)
-        response.raise_for_status()
+        if response.status_code != requests.codes.ok:
+            logging.info("Census API call was unsuccessful. " \
+                        f"Response status code: {response.status_code}")
+            response.raise_for_status()
 
         data = response.json()
 
@@ -278,7 +302,6 @@ class AddressDetails:
             self.patron_type = "Reciprocal"
             return self.display_data()
 
-        # standardize patrontypes table names - all saint instead of st
         lookup_county = check_county(self.county)
 
         if lookup_county:
@@ -329,6 +352,8 @@ class AddressDetails:
 
 
 if __name__ == "__main__":
-    submission = AddressDetails()
-    result = submission.address_lookup("4444 weber rd", "63123")
-    print(result)
+    # submission = AddressDetails()
+    # result = submission.address_lookup("4444 weber rd", "63123")
+    # print(result)
+
+    goog_geocode("4444 weber rd", "63123")
