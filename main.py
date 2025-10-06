@@ -352,8 +352,6 @@ class AddressDetails:
 
 
 if __name__ == "__main__":
-    # submission = AddressDetails()
-    # result = submission.address_lookup("4444 weber rd", "63123")
-    # print(result)
-
-    print(goog_geocode("4444 weber rd", "63123"))
+    submission = AddressDetails()
+    result = submission.address_lookup("4444 weber rd", "63123")
+    print(result)
