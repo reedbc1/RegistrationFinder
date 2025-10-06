@@ -154,11 +154,11 @@ def check_zip(zip):
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
 
     # Lookup zip code
-    filtered = df[df["zip code"] == int(zip)]
+    filtered = df[df["zip code"] == int(zip)].loc[:, ["geo code", "patron type"]]
     if filtered.empty:
         return None
 
-    geo_code, patron_type = filtered.iloc[0, 1], filtered.iloc[0, 2]
+    geo_code, patron_type = filtered.iloc[0, 0], filtered.iloc[0, 1]
     return [geo_code, patron_type]
 
 
@@ -352,6 +352,7 @@ class AddressDetails:
 
 
 if __name__ == "__main__":
-    submission = AddressDetails()
-    result = submission.address_lookup("4444 weber rd", "63123")
-    print(result)
+    # submission = AddressDetails()
+    # result = submission.address_lookup("4444 weber rd", "63123")
+    # print(result)
+    print(check_zip(63129))
