@@ -25,10 +25,9 @@ Displays the following fields:
 - Library District (if in St. Louis County)
 - School District (if in Jefferson County)
 
-
 ## How It Works
 ### Verifying the Address
-The program first validates the address by checking it against the most current United States Census Bureau data. This returns the closest matched address information, including the county. If the address is not found, the program checks the address with Google Maps data.
+The program first validates the address by checking it against the most current United States Census Bureau data.  If the address is not found, the program checks the address with Google Maps data.
 
 ### Finding Geographic Code and Patron Type
 - If there is only one possible geographic code and patron type for the ZIP code, the program returns the result. 
@@ -50,6 +49,9 @@ The app is made accessible on the internet by [Render](https://render.com/).
 
 [Google Maps Platform](https://developers.google.com/maps)
 - [Geocoding API](https://developers.google.com/maps/documentation/geocoding)
+
+[Esri Federal Data](https://www.arcgis.com/home/item.html?id=1b63e857b9594fcaa6f64445f6844526)
+- [Counties](https://services2.arcgis.com/FiaPA4ga0iQKduv3/ArcGIS/rest/services/TIGERweb_Counties_v1/FeatureServer/0)
 
 [Saint Louis County ArcGIS Site](https://data-stlcogis.opendata.arcgis.com/)
 - [Library Districts](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8)
