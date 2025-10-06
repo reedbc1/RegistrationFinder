@@ -4,7 +4,7 @@ import logging
 import requests
 import pandas as pd
 
-logging.basicConfig(level = logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 if __name__ == "__main__":
     # load variables from .env into local environment
@@ -13,9 +13,9 @@ if __name__ == "__main__":
 
 
 def call_census_api(street, zip):
+    api_key = os.getenv("CENSUS_DATA_API_KEY")
 
     returntype = "geographies"
-
     searchtype = "address"
 
     url = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?"
@@ -25,7 +25,8 @@ def call_census_api(street, zip):
         "vintage": "Current_Current",
         "street": street,
         "zip": zip,
-        "format": "json"
+        "format": "json",
+        "key": api_key
     }
 
     response = requests.get(url, params=params, timeout=5)
@@ -34,26 +35,26 @@ def call_census_api(street, zip):
         logging.info("Census API call was unsuccessful. " \
                      f"Response status code: {response.status_code}")
         response.raise_for_status()
-        
+
     data = response.json()
 
     addressMatches = data.get("result", {}) \
                          .get("addressMatches", [])
-    
+
     if addressMatches == []:
         raise Exception('Address not found.')
-    
+
     address = addressMatches[0].get("matchedAddress")
 
     lng = addressMatches[0].get("coordinates", {}).get("x")
     lat = addressMatches[0].get("coordinates", {}).get("y")
 
-    county_reg = (data.get("result", {})
-                      .get("addressMatches",[])[0]
-                      .get("geographies", {})
-                      .get("Counties", [])[0]
-                      .get("NAME"))
-        
+    county_reg = (data.get("result",
+                           {}).get("addressMatches",
+                                   [])[0].get("geographies",
+                                              {}).get("Counties",
+                                                      [])[0].get("NAME"))
+
     county = ' '.join(list(map(str.capitalize, county_reg.split(' '))))
 
     try:
@@ -154,7 +155,8 @@ def check_zip(zip):
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
 
     # Lookup zip code
-    filtered = df[df["zip code"] == int(zip)].loc[:, ["geo code", "patron type"]]
+    filtered = df[df["zip code"] == int(zip)].loc[:,
+                                                  ["geo code", "patron type"]]
     if filtered.empty:
         return None
 
@@ -201,7 +203,7 @@ def slc_libs(lng, lat, county):
         }
 
         response = requests.get(url, params=params, timeout=5)
-        
+
         if response.status_code != requests.codes.ok:
             logging.info("Census API call was unsuccessful. " \
                         f"Response status code: {response.status_code}")
@@ -209,13 +211,12 @@ def slc_libs(lng, lat, county):
 
         data = response.json()
 
-        library = (data.get("features", [{}])[0]
-                           .get("attributes", {})
-                           .get("LIBRARY_DISTRICT"))
+        library = (data.get("features",
+                            [{}])[0].get("attributes",
+                                         {}).get("LIBRARY_DISTRICT"))
 
         selected_row = patron_types[
-            patron_types["Geographic Code"].str.lower() == library.lower()
-            ]
+            patron_types["Geographic Code"].str.lower() == library.lower()]
         geo_code = selected_row.iloc[0, 0]
         patron_type = selected_row.iloc[0, 1]
 
@@ -276,16 +277,19 @@ class AddressDetails:
     def address_lookup(self, address, zip):
 
         try:
-            lng, lat, self.address, zip, city, state, self.county = call_census_api(address, zip)
-            
+            lng, lat, self.address, zip, city, state, self.county = call_census_api(
+                address, zip)
+
             if None in [lng, lat, self.address, zip, city, state]:
-                raise Exception("Census geocoder api failed to find all address details.")
+                raise Exception(
+                    "Census geocoder api failed to find all address details.")
 
         except Exception as e:
             logging.info("Address not found using Census Geocoder API. " \
                         "Using Google Geocoder instead.")
-            
-            lng, lat, self.address, zip, city, state = goog_geocode(address, zip)
+
+            lng, lat, self.address, zip, city, state = goog_geocode(
+                address, zip)
             self.county = find_county(lng, lat)
 
         lookup_zip = check_zip(zip)
