@@ -5,8 +5,60 @@ import logging
 import requests
 import pandas as pd
 
-# load variables from .env into environment
-load_dotenv()
+logging.basicConfig(level = logging.INFO)
+
+if __name__ == "__main__":
+    # load variables from .env into environment
+    load_dotenv()
+
+
+def call_census_api(street, zip):
+
+    returntype = "geographies"
+
+    searchtype = "address"
+
+    url = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?"
+
+    params = {
+        "benchmark": "Public_AR_Current",
+        "vintage": "Current_Current",
+        "street": street,
+        "zip": zip,
+        "format": "json"
+    }
+
+    resp = requests.get(url, params=params, timeout=5)
+    data = resp.json()
+
+    addressMatches = data.get("result", {}) \
+                         .get("addressMatches", [])
+    
+    if addressMatches == []:
+        raise Exception('Address not found.')
+    
+    address = addressMatches[0].get("matchedAddress")
+
+    lng = addressMatches[0].get("coordinates", {}).get("x")
+    lat = addressMatches[0].get("coordinates", {}).get("y")
+
+    county_reg = (data.get("result", {})
+                      .get("addressMatches",[])[0]
+                      .get("geographies", {})
+                      .get("Counties", [])[0]
+                      .get("NAME"))
+        
+    county = ' '.join(list(map(str.capitalize, county_reg.split(' '))))
+
+    try:
+        city = address.split(',')[1].strip()
+        state = address.split(',')[2].strip()
+        zip = address.split(',')[3].strip()
+
+    except (IndexError, AttributeError):
+        city, state, zip = None, None, None
+
+    return lng, lat, address, zip, city, state, county
 
 
 def goog_geocode(address, zip):
@@ -23,7 +75,6 @@ def goog_geocode(address, zip):
 
     # extract the first result
     result = data[0]
-    print(result)
 
     # get longitude and latitude
     lng = result.get("geometry", {}).get("location", {}).get("lng")
@@ -53,7 +104,6 @@ def goog_geocode(address, zip):
 
 
 def format_address(address):
-    # replace ST in county names with SAINT
     return address.upper().strip().replace('.', '').replace("'", ' ').replace(
         ", USA", '')
 
@@ -137,13 +187,21 @@ def slc_libs(lng, lat, county):
 
         data = response.json()
 
-        library = (data.get("features",
-                            [{}])[0].get("attributes",
-                                         {}).get("LIBRARY_DISTRICT"))
+        library = (data.get("features", [{}])[0]
+                           .get("attributes", {})
+                           .get("LIBRARY_DISTRICT"))
+
         selected_row = patron_types[
-            patron_types["Geographic Code"].str.lower() == library.lower()]
+            patron_types["Geographic Code"].str.lower() == library.lower()
+            ]
         geo_code = selected_row.iloc[0, 0]
         patron_type = selected_row.iloc[0, 1]
+
+        library_format = list(map(str.capitalize, library.split(' ')))
+        if library_format[0] == "St":
+            library_format[0] = "St."
+
+        library = ' '.join(library_format)
 
         return [geo_code, patron_type, library]
 
@@ -193,9 +251,18 @@ class AddressDetails:
 
     def address_lookup(self, address, zip):
 
-        lng, lat, self.address, zip, city, state = goog_geocode(address, zip)
+        try:
+            lng, lat, self.address, zip, city, state, self.county = call_census_api(address, zip)
+            
+            if None in [lng, lat, self.address, zip, city, state]:
+                raise Exception("Census geocoder api failed to find all address details.")
 
-        self.county = find_county(lng, lat)
+        except Exception as e:
+            logging.info("Address not found using Census Geocoder API. " \
+                        "Using Google Geocoder instead.")
+            
+            lng, lat, self.address, zip, city, state = goog_geocode(address, zip)
+            self.county = find_county(lng, lat)
 
         lookup_zip = check_zip(zip)
 
@@ -203,13 +270,13 @@ class AddressDetails:
             self.geo_code = lookup_zip[0]
             self.patron_type = lookup_zip[1]
             if self.county == 'St. Louis County':
-                library = 'St Louis County'
+                self.library = 'St. Louis County'
             return self.display_data()
 
         if city.upper() == "WASHINGTON" and state.upper() == "MO":
             self.geo_code = "Washington Public Library"
             self.patron_type = "Reciprocal"
-            return self.diplay_data()
+            return self.display_data()
 
         # standardize patrontypes table names - all saint instead of st
         lookup_county = check_county(self.county)
@@ -226,7 +293,7 @@ class AddressDetails:
             self.geo_code = lookup_library[0]
             self.patron_type = lookup_library[1]
             self.library = lookup_library[2]
-            return self.diplay_data()
+            return self.display_data()
 
         # if in jeffco, check school district
         self.school = jeffco_schools(lng, lat, self.county)
@@ -241,13 +308,13 @@ class AddressDetails:
             else:
                 self.patron_type = "Non-Resident"
 
-            return self.diplay_data()
+            return self.display_data()
 
         self.geo_code = "Ineligible"
         self.patron_type = "Ineligible"
         return self.display_data()
 
-    def diplay_data(self):
+    def display_data(self):
         return {
             k: v
             for k, v in {
@@ -262,7 +329,6 @@ class AddressDetails:
 
 
 if __name__ == "__main__":
-    # 6911 TIMBERLINE, HOUSE SPRINGS, MO 63051
     submission = AddressDetails()
     result = submission.address_lookup("4444 weber rd", "63123")
     print(result)

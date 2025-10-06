@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template, request, jsonify, abort
-from geocoder2 import AddressDetails
+from main import AddressDetails
 import re
 from markupsafe import escape
 import logging

@@ -28,7 +28,7 @@ Displays the following fields:
 
 ## How It Works
 ### Verifying the Address
-The program first validates the address by checking it against the most current United States Census Bureau data. This returns the closest matched address information, including the county. 
+The program first validates the address by checking it against the most current United States Census Bureau data. This returns the closest matched address information, including the county. If the address is not found, the program checks the address with Google Maps data.
 
 ### Finding Geographic Code and Patron Type
 - If there is only one possible geographic code and patron type for the ZIP code, the program returns the result. 
@@ -48,10 +48,12 @@ The app is made accessible on the internet by [Render](https://render.com/).
 [United States Census Bureau](https://www.census.gov/)
 - [Census Geocoder](https://geocoding.geo.census.gov/geocoder/)
 
+[Google Maps Platform](https://developers.google.com/maps)
+- [Geocoding API](https://developers.google.com/maps/documentation/geocoding)
+
 [Saint Louis County ArcGIS Site](https://data-stlcogis.opendata.arcgis.com/)
-- [Address Points](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Address_Lookup1_WFL1/FeatureServer/0)
-- [Property Built by Year](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/Property_Built_by_Year/FeatureServer/0)
+- [Library Districts](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8)
 
 [Jefferson County ArcGIS Site](https://jeffersoncomo.maps.arcgis.com/home/index.html)
-- [Tax_Parcels](https://services1.arcgis.com/Ur3TPhgM56qvxaar/arcgis/rest/services/Tax_Parcels/FeatureServer/query)
+- [School](https://services1.arcgis.com/Ur3TPhgM56qvxaar/arcgis/rest/services/Tax_Districts/FeatureServer/0)
 
