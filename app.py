@@ -6,6 +6,7 @@ from markupsafe import escape
 import logging
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import os
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +20,12 @@ def limit_payload():
 def index():
     return render_template('index.html')
 
-limiter = Limiter(get_remote_address, app=app)
+limiter = Limiter(
+    get_remote_address, 
+    app=app,
+    storage_uri="redis://red-d3i6c03e5dus738s497g:6379",
+    storage_options={}
+    )
 
 @app.route('/lookup', methods=['POST'])
 @limiter.limit("10 per minute")
