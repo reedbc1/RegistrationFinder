@@ -8,6 +8,13 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import os
 
+if __name__ == "__main__":
+    # load variables from .env into local environment
+    from dotenv import load_dotenv
+    load_dotenv()
+
+storage_uri = os.getenv("REDIS_URL")
+
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
@@ -23,7 +30,7 @@ def index():
 limiter = Limiter(
     get_remote_address, 
     app=app,
-    storage_uri="redis://red-d3i6c03e5dus738s497g:6379",
+    storage_uri=storage_uri,
     storage_options={}
     )
 
