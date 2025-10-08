@@ -110,8 +110,6 @@ def goog_geocode(address, zip):
     lat = result.get("geometry", {}).get("location", {}).get("lat")
 
     formatted_address = format_address(result.get("formatted_address"))
-    # logging.info(f"formatted_address: {formatted_address}" \
-    #              f"type: {type(formatted_address)}")
 
     # Extract postal code
     zip = None
@@ -222,8 +220,6 @@ def slc_libs(lng, lat, county):
         response = requests.get(url, params=params, timeout=5)
 
         if response.status_code != requests.codes.ok:
-            logging.info("Census API call was unsuccessful. " \
-                        f"Response status code: {response.status_code}")
             response.raise_for_status()
 
         data = response.json()
@@ -267,8 +263,6 @@ def jeffco_schools(lng, lat, county):
 
         response = requests.get(url, params=params, timeout=5)
         if response.status_code != requests.codes.ok:
-            logging.info("Census API call was unsuccessful. " \
-                        f"Response status code: {response.status_code}")
             response.raise_for_status()
 
         data = response.json()
@@ -303,8 +297,7 @@ class AddressDetails:
 
         except Exception as e:
             logging.info(e)
-            logging.info("Address not found using Census Geocoder API. " \
-                        "Using Google Geocoder instead.")
+            logging.info("Using Google Geocoder instead.")
 
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
@@ -374,11 +367,11 @@ class AddressDetails:
 
 
 if __name__ == "__main__":
-    # submission = AddressDetails()
-    # result = submission.address_lookup("4444 weber rd", "63123")
-    # print(result)
+    submission = AddressDetails()
+    result = submission.address_lookup("4444 weber rd", "63123")
+    print(result)
 
     # test google geocoder
     # this should return an exception
-    result = goog_geocode("fake address", "63129")
-    print(result)
+    # result = goog_geocode("fake address", "63123")
+    # print(result)
