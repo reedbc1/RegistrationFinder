@@ -77,7 +77,7 @@ def goog_geocode(address, zip):
         data = gmaps.geocode(address + " " + zip)
 
     except Exception as e:
-        logging.info("Google Geocoder API call was unsuccessful. "
+        logging.info("Google Geocoder API call was unsuccessful."
                      f"Error: {e}")
         raise e
 
@@ -90,15 +90,32 @@ def goog_geocode(address, zip):
     # extract the first result
     result = data[0]
 
+    # Extract the components
+    # Use components for code down below, too
+    components = result.get('address_components', [])
+
+    # Find street number and route
+    street_number = next(
+        (c['long_name'] for c in components if 'street_number' in c['types']),
+        None)
+    route = next((c['long_name'] for c in components if 'route' in c['types']),
+                 None)
+
+    # Check if both exist, otherwise raise error.
+    if not (street_number and route):
+        raise Exception("Address not found.")
+
     # get longitude and latitude
     lng = result.get("geometry", {}).get("location", {}).get("lng")
     lat = result.get("geometry", {}).get("location", {}).get("lat")
 
     formatted_address = format_address(result.get("formatted_address"))
+    # logging.info(f"formatted_address: {formatted_address}" \
+    #              f"type: {type(formatted_address)}")
 
     # Extract postal code
     zip = None
-    for component in result.get('address_components', []):
+    for component in components:
         if 'postal_code' in component.get('types', []):
             zip = component.get('long_name')
             break
@@ -109,7 +126,7 @@ def goog_geocode(address, zip):
         city = None
 
     state = None
-    for component in result.get('address_components', []):
+    for component in components:
         if 'administrative_area_level_1' in component.get('types', []):
             state = component.get('short_name')
             break
@@ -285,6 +302,7 @@ class AddressDetails:
                     "Census geocoder api failed to find all address details.")
 
         except Exception as e:
+            logging.info(e)
             logging.info("Address not found using Census Geocoder API. " \
                         "Using Google Geocoder instead.")
 
@@ -359,4 +377,8 @@ if __name__ == "__main__":
     # submission = AddressDetails()
     # result = submission.address_lookup("4444 weber rd", "63123")
     # print(result)
-    print(check_zip(63129))
+
+    # test google geocoder
+    # this should return an exception
+    result = goog_geocode("fake address", "63129")
+    print(result)
