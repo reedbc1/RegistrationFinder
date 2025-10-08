@@ -70,7 +70,7 @@ def call_census_api(street, zip):
 
 def goog_geocode(address, zip):
 
-    api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
     gmaps = googlemaps.Client(key=api_key)
 
     try:

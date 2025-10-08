@@ -6,6 +6,14 @@ from markupsafe import escape
 import logging
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import os
+
+if __name__ == "__main__":
+    # load variables from .env into local environment
+    from dotenv import load_dotenv
+    load_dotenv()
+
+storage_uri = os.getenv("REDIS_URL")
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -19,10 +27,15 @@ def limit_payload():
 def index():
     return render_template('index.html')
 
-limiter = Limiter(get_remote_address, app=app)
+limiter = Limiter(
+    get_remote_address, 
+    app=app,
+    storage_uri=storage_uri,
+    storage_options={}
+    )
 
 @app.route('/lookup', methods=['POST'])
-@limiter.limit("10 per minute")
+@limiter.limit("100 per minute")
 def lookup_address():
     try:
         # Get form data
