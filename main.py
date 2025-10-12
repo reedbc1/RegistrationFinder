@@ -370,8 +370,3 @@ if __name__ == "__main__":
     submission = AddressDetails()
     result = submission.address_lookup("4444 weber rd", "63123")
     print(result)
-
-    # test google geocoder
-    # this should return an exception
-    # result = goog_geocode("fake address", "63123")
-    # print(result)
