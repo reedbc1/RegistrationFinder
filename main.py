@@ -154,16 +154,16 @@ def find_county(lng, lat):
     # handle timeout errors and other request exceptions
     response = requests.get(url, params=params, timeout=5)
 
-    if response.status_code != requests.codes.ok:
-        logging.info("Census API call was unsuccessful. " \
-                     f"Response status code: {response.status_code}")
+    try:
         response.raise_for_status()
+        data = response.json()
+        county = data.get("features", [])[0].get("attributes",
+                                                 {}).get("NAME", None)
+        return county
 
-    data = response.json()
-    county = data.get("features", [])[0].get("attributes",
-                                             {}).get("NAME", None)
-
-    return county
+    except Exception as e:
+        logging.info(e)
+        return None
 
 
 def check_zip(zip):
@@ -301,6 +301,7 @@ class AddressDetails:
 
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
+            print(f"lng: {lng}\nlat: {lat}")
             self.county = find_county(lng, lat)
 
         lookup_zip = check_zip(zip)
@@ -368,10 +369,19 @@ class AddressDetails:
 
 if __name__ == "__main__":
     submission = AddressDetails()
-    result = submission.address_lookup("4444 weber rd", "63123")
-    print(result)
+    # "1800 STONEY PKWY
+    # APT 200
+    # BARNHART, MO 63012"
+    # result = submission.address_lookup("1800 STONEY PKWY", "63012")
+    # print(result)
 
     # test google geocoder
     # this should return an exception
     # result = goog_geocode("fake address", "63123")
     # print(result)
+
+    # ,
+    # Doesn't work:
+    # -90.40439429999999, 38.3518789
+    county = find_county(-90.33172137313932, 38.48393664607593)
+    print(county)
