@@ -50,9 +50,6 @@ The app is made accessible on the internet by [Render](https://render.com/).
 [Google Maps Platform](https://developers.google.com/maps)
 - [Geocoding API](https://developers.google.com/maps/documentation/geocoding)
 
-[Esri Federal Data](https://www.arcgis.com/home/item.html?id=1b63e857b9594fcaa6f64445f6844526)
-- [Counties](https://services2.arcgis.com/FiaPA4ga0iQKduv3/ArcGIS/rest/services/TIGERweb_Counties_v1/FeatureServer/0)
-
 [Saint Louis County ArcGIS Site](https://data-stlcogis.opendata.arcgis.com/)
 - [Library Districts](https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8)
 
