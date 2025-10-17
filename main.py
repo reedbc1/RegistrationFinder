@@ -12,7 +12,7 @@ if __name__ == "__main__":
     load_dotenv()
 
 
-def call_census_api(street, zip):
+def census_address(street, zip):
     api_key = os.getenv("CENSUS_DATA_API_KEY")
 
     returntype = "geographies"
@@ -137,34 +137,35 @@ def format_address(address):
         ", USA", '')
 
 
-def find_county(lng, lat):
-    url = "https://services2.arcgis.com/FiaPA4ga0iQKduv3/ArcGIS/rest/services/TIGERweb_Counties_v1/FeatureServer/0/query"
-
+def census_county(x, y):
+    returntype = "geographies"
+    searchtype = "coordinates"
     params = {
-        "geometry": f"{lng},{lat}",
-        "geometryType": "esriGeometryPoint",
-        "inSR": "4326",
-        "spatialRel": "esriSpatialRelIntersects",
-        "outFields": "NAME",
-        "returnGeometry": "false",
-        "defaultSR": "4326",
-        "f": "json"
+        "benchmark": "Public_AR_Current",
+        "vintage": "4",
+        "x": x,
+        "y": y,
+        "format": "json",
+        "layers": "82"
     }
 
-    # handle timeout errors and other request exceptions
+    url = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?{params}"
+
     response = requests.get(url, params=params, timeout=5)
-
+    data = response.json()
     try:
-        response.raise_for_status()
-        data = response.json()
-        county = data.get("features", [])[0].get("attributes",
-                                                 {}).get("NAME", None)
-        return county
-
+        county = data.get("result") \
+            .get("geographies") \
+            .get("Counties", [])[0] \
+            .get("NAME")
+        
     except Exception as e:
-        logging.info(e)
-        return None
+        logging.info(f"No county found.")
+        logging.info(f"Exception: {e}")
+        county = None
 
+    return county
+    
 
 def check_zip(zip):
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
@@ -288,7 +289,7 @@ class AddressDetails:
     def address_lookup(self, address, zip):
 
         try:
-            lng, lat, self.address, zip, city, state, self.county = call_census_api(
+            lng, lat, self.address, zip, city, state, self.county = census_address(
                 address, zip)
 
             if None in [lng, lat, self.address, zip, city, state]:
@@ -302,7 +303,7 @@ class AddressDetails:
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
             print(f"lng: {lng}\nlat: {lat}")
-            self.county = find_county(lng, lat)
+            self.county = census_county(lng, lat)
 
         lookup_zip = check_zip(zip)
 
@@ -369,19 +370,5 @@ class AddressDetails:
 
 if __name__ == "__main__":
     submission = AddressDetails()
-    # "1800 STONEY PKWY
-    # APT 200
-    # BARNHART, MO 63012"
-    # result = submission.address_lookup("1800 STONEY PKWY", "63012")
-    # print(result)
-
-    # test google geocoder
-    # this should return an exception
-    # result = goog_geocode("fake address", "63123")
-    # print(result)
-
-    # ,
-    # Doesn't work:
-    # -90.40439429999999, 38.3518789
-    county = find_county(-90.33172137313932, 38.48393664607593)
-    print(county)
+    result = submission.address_lookup("4444 weber rd", "63123")
+    print(result)
