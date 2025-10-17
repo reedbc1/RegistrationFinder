@@ -138,6 +138,8 @@ def format_address(address):
 
 
 def census_county(x, y):
+    api_key = os.getenv("CENSUS_DATA_API_KEY")
+
     returntype = "geographies"
     searchtype = "coordinates"
     params = {
@@ -146,7 +148,8 @@ def census_county(x, y):
         "x": x,
         "y": y,
         "format": "json",
-        "layers": "82"
+        "layers": "82",
+        "key": api_key
     }
 
     url = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?{params}"
@@ -302,7 +305,6 @@ class AddressDetails:
 
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
-            print(f"lng: {lng}\nlat: {lat}")
             self.county = census_county(lng, lat)
 
         lookup_zip = check_zip(zip)
