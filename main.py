@@ -158,14 +158,14 @@ def census_county(x, y):
             .get("geographies") \
             .get("Counties", [])[0] \
             .get("NAME")
-        
+
     except Exception as e:
-        logging.info(f"No county found.")
+        logging.info("No county found.")
         logging.info(f"Exception: {e}")
         county = None
 
     return county
-    
+
 
 def check_zip(zip):
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
@@ -302,7 +302,10 @@ class AddressDetails:
 
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
-            print(f"lng: {lng}\nlat: {lat}")
+            if None in [lng, lat, self.address, zip, city, state]:
+                raise Exception(
+                    "Google geocoder failed to find all address details")
+
             self.county = census_county(lng, lat)
 
         lookup_zip = check_zip(zip)
