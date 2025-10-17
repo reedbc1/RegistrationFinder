@@ -138,6 +138,7 @@ def format_address(address):
 
 
 def census_county(x, y):
+    api_key = os.getenv("CENSUS_DATA_API_KEY")
     returntype = "geographies"
     searchtype = "coordinates"
     params = {
@@ -146,7 +147,8 @@ def census_county(x, y):
         "x": x,
         "y": y,
         "format": "json",
-        "layers": "82"
+        "layers": "82",
+        "key": api_key
     }
 
     url = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?{params}"
