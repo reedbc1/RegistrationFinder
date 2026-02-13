@@ -35,7 +35,7 @@ limiter = Limiter(
     )
 
 @app.route('/lookup', methods=['POST'])
-@limiter.limit("100 per minute")
+# @limiter.limit("100 per minute")
 def lookup_address():
     try:
         # Get form data
