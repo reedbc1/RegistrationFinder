@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,25 +13,30 @@
             padding: 20px;
             background-color: #F8F8F8;
         }
+
         .container {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
             color: #555;
         }
+
         input[type="text"] {
             width: 100%;
             padding: 10px;
@@ -39,6 +44,7 @@
             border-radius: 5px;
             box-sizing: border-box;
         }
+
         button {
             background-color: #007bff;
             color: white;
@@ -49,11 +55,23 @@
             font-size: 16px;
             width: 100%;
         }
+
         button:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C43394JCYB"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-C43394JCYB');
+</script>
+
 <body>
     <div class="container">
         <h1>Address Lookup</h1>
@@ -62,14 +80,15 @@
                 <label for="streetAddress">Street Address:</label>
                 <input type="text" id="streetAddress" name="streetAddress" required>
             </div>
-            
+
             <div class="form-group">
                 <label for="ZIPCode">ZIP Code:</label>
                 <input type="text" id="ZIPCode" name="ZIPCode" required>
             </div>
-            
+
             <button type="submit">Submit</button>
         </form>
     </div>
 </body>
+
 </html>

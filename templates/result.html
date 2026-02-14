@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,16 +13,19 @@
             padding: 20px;
             background-color: #F8F8F8;
         }
+
         .container {
             background: white;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
         }
+
         .detail-section {
             margin: 20px 0;
             padding: 15px;
@@ -30,6 +33,7 @@
             border-radius: 5px;
             border-left: 4px solid #4553f5;
         }
+
         .result-section {
             margin: 20px 0;
             padding: 15px;
@@ -37,6 +41,7 @@
             border-radius: 5px;
             border-left: 4px solid #d9141d;
         }
+
         .input-section {
             margin: 20px 0;
             padding: 15px;
@@ -44,14 +49,17 @@
             border-radius: 5px;
             border-left: 4px solid #6c757d;
         }
+
         .label {
             font-weight: bold;
             color: #555;
         }
+
         .value {
             margin-left: 10px;
             color: #333;
         }
+
         .back-button {
             background-color: #6c757d;
             color: white;
@@ -63,15 +71,27 @@
             display: inline-block;
             margin-top: 20px;
         }
+
         .back-button:hover {
             background-color: #545b62;
         }
     </style>
 </head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-C43394JCYB"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-C43394JCYB');
+</script>
+
 <body>
     <div class="container">
         <h1>Address Lookup Results</h1>
-        
+
         <div class="input-section">
             <h3>Input:</h3>
             <p><span class="label">Street Address:</span><span class="value">{{ params[0] }}</span></p>
@@ -80,12 +100,12 @@
 
         <!-- make separate section for Found Address and Results -->
         <div class="result-section">
-            <h3>Results:</h3>  
+            <h3>Results:</h3>
 
             {% if result.address %}
             <p><span class="label">Returned Address:</span><span class="value">{{ result.address }}</span></p>
             {% endif %}
-            
+
             <p><span class="label">Geographic Code:</span><span class="value">{{ result.geo_code }}</span></p>
             <p><span class="label">Patron Type:</span><span class="value">{{ result.patron_type }}</span></p>
         </div>
@@ -93,8 +113,8 @@
         <!-- Details Card -->
         {% if result.city or result.state or result.county or result.library or result.school %}
         <div class="detail-section">
-            <h3>Details:</h3>  
-            
+            <h3>Details:</h3>
+
             {% if result.city %}
             <p><span class="label">City:</span><span class="value">{{ result.city }}</span></p>
             {% endif %}
@@ -116,8 +136,9 @@
             {% endif %}
         </div>
         {% endif %}
-        
+
         <a href="/" class="back-button">← Back to Search</a>
     </div>
 </body>
+
 </html>
