@@ -68,6 +68,9 @@ def census_address(street, zip):
     return lng, lat, address, zip, city, state, county
 
 
+# change code to use url and requests
+# this will return json including "status"
+# which will make issues more transparent
 def goog_geocode(address, zip):
 
     api_key = os.getenv("GOOGLE_MAPS_API_KEY")
@@ -137,37 +140,35 @@ def format_address(address):
         ", USA", '')
 
 
-def census_county(x, y):
-    api_key = os.getenv("CENSUS_DATA_API_KEY")
-    returntype = "geographies"
-    searchtype = "coordinates"
-    params = {
-        "benchmark": "Public_AR_Current",
-        "vintage": "4",
-        "x": x,
-        "y": y,
-        "format": "json",
-        "layers": "82",
-        "key": api_key
-    }
+def arcgis_county(lng, lat):
+    url = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
-    url = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?{params}"
+    params = {
+                "geometry": f"{lng},{lat}",
+                "geometryType": "esriGeometryPoint",
+                "inSR": "4326",
+                "spatialRel": "esriSpatialRelIntersects",
+                "outFields": "NAME",
+                "returnGeometry": "false",
+                "defaultSR": "4326",
+                "f": "json"
+            }
 
     response = requests.get(url, params=params, timeout=5)
     data = response.json()
+    print(data)
+
     try:
-        county = data.get("result") \
-            .get("geographies") \
-            .get("Counties", [])[0] \
-            .get("NAME")
+        county_name = (
+            data.get("features", [{}])[0]
+                .get("attributes", {})
+                .get("NAME")
+        )
+        return county_name
 
     except Exception as e:
-        logging.info("No county found.")
-        logging.info(f"Exception: {e}")
-        county = None
-
-    return county
-
+        print(e)
+        raise Exception("Address not found.")
 
 def check_zip(zip):
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
@@ -308,7 +309,7 @@ class AddressDetails:
                 raise Exception(
                     "Google geocoder failed to find all address details")
 
-            self.county = census_county(lng, lat)
+            self.county = arcgis_county(lng, lat)
 
         lookup_zip = check_zip(zip)
 
