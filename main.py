@@ -156,7 +156,6 @@ def arcgis_county(lng, lat):
 
     response = requests.get(url, params=params, timeout=5)
     data = response.json()
-    print(data)
 
     try:
         county_name = (
