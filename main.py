@@ -239,7 +239,7 @@ def slc_libs(lng, lat, county):
         library = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
-        logging.log(f"library is: {library}")
+        logging.info(f"library is: {library}")
 
         selected_row = patron_types[
             patron_types["Geographic Code"].str.lower() == library.lower()]
@@ -335,7 +335,7 @@ class AddressDetails:
         #         self.library = 'St. Louis County'
         #         logging.info(f"library: {self.library}")
         #     return self.display_data()
-        
+
         # <-- end of removed code -->
 
         if city.upper() == "WASHINGTON" and state.upper() == "MO":
@@ -352,7 +352,7 @@ class AddressDetails:
             return self.display_data()
 
         ### debugging ###
-        logging.log(f"lng: {lng}\nlat: {lat}\ncounty: {self.county}")
+        logging.info(f"lng: {lng}\nlat: {lat}\ncounty: {self.county}")
         # if in st louis county, check library district
         lookup_library = slc_libs(lng, lat, self.county)
 
