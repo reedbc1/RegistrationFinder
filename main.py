@@ -170,6 +170,7 @@ def arcgis_county(lng, lat):
         raise Exception("Address not found.")
 
 def check_zip(zip):
+
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
 
     # Lookup zip code
@@ -201,6 +202,7 @@ def check_county(county):
 
 
 def slc_libs(lng, lat, county):
+
     if county.lower() == "st. louis county":
         patron_types = pd.read_csv("csv_files/PatronTypes.csv")
         patron_types = patron_types[patron_types["County"] ==
@@ -227,10 +229,10 @@ def slc_libs(lng, lat, county):
 
         data = response.json()
 
+        # the problem
         library = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
-
         selected_row = patron_types[
             patron_types["Geographic Code"].str.lower() == library.lower()]
         geo_code = selected_row.iloc[0, 0]
@@ -310,20 +312,13 @@ class AddressDetails:
 
             self.county = arcgis_county(lng, lat)
 
-        lookup_zip = check_zip(zip)
-
-        if lookup_zip:
-            self.geo_code = lookup_zip[0]
-            self.patron_type = lookup_zip[1]
-            if self.county == 'St. Louis County':
-                self.library = 'St. Louis County'
-            return self.display_data()
-
+        # if address is in Washington, MO, return details
         if city.upper() == "WASHINGTON" and state.upper() == "MO":
             self.geo_code = "Washington Public Library"
             self.patron_type = "Reciprocal"
             return self.display_data()
 
+        # see if address is in county other than st. louis or jefferson
         lookup_county = check_county(self.county)
 
         if lookup_county:
@@ -331,7 +326,7 @@ class AddressDetails:
             self.patron_type = lookup_county[1]
             return self.display_data()
 
-        # if in st louis county, check library district
+        # Check St. Louis County ArcGIS - library layer
         lookup_library = slc_libs(lng, lat, self.county)
 
         if lookup_library:
@@ -340,7 +335,7 @@ class AddressDetails:
             self.library = lookup_library[2]
             return self.display_data()
 
-        # if in jeffco, check school district
+        # Check Jefferson County ArcGIS - schools layer
         self.school = jeffco_schools(lng, lat, self.county)
 
         if self.school:
@@ -355,6 +350,7 @@ class AddressDetails:
 
             return self.display_data()
 
+        # If the address has made it this far, it's ineligible
         self.geo_code = "Ineligible"
         self.patron_type = "Ineligible"
         return self.display_data()
@@ -375,5 +371,5 @@ class AddressDetails:
 
 if __name__ == "__main__":
     submission = AddressDetails()
-    result = submission.address_lookup("4444 weber rd", "63123")
+    result = submission.address_lookup("1610 Oriole", "63144")
     print(result)
