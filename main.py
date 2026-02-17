@@ -13,6 +13,7 @@ if __name__ == "__main__":
 
 
 def census_address(street, zip):
+    logging.info("calling census_address...")
     api_key = os.getenv("CENSUS_DATA_API_KEY")
 
     returntype = "geographies"
@@ -170,15 +171,19 @@ def arcgis_county(lng, lat):
         raise Exception("Address not found.")
 
 def check_zip(zip):
+    logging.info("calling check_zip...")
+
     df = pd.read_csv("csv_files/ExclusiveZips.csv")
 
     # Lookup zip code
     filtered = df[df["zip code"] == int(zip)].loc[:,
                                                   ["geo code", "patron type"]]
     if filtered.empty:
+        logging.info("returning none")
         return None
 
     geo_code, patron_type = filtered.iloc[0, 0], filtered.iloc[0, 1]
+    logging.info(f"returning {geo_code, patron_type}")
     return [geo_code, patron_type]
 
 
@@ -201,7 +206,10 @@ def check_county(county):
 
 
 def slc_libs(lng, lat, county):
+    logging.info("calling slc_libs...")
+
     if county.lower() == "st. louis county":
+        logging.info("county is == st. louis county!")
         patron_types = pd.read_csv("csv_files/PatronTypes.csv")
         patron_types = patron_types[patron_types["County"] ==
                                     'Saint Louis County']
@@ -227,9 +235,11 @@ def slc_libs(lng, lat, county):
 
         data = response.json()
 
+        # the problem
         library = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
+        logging.log(f"library is: {library}")
 
         selected_row = patron_types[
             patron_types["Geographic Code"].str.lower() == library.lower()]
@@ -310,20 +320,30 @@ class AddressDetails:
 
             self.county = arcgis_county(lng, lat)
 
-        lookup_zip = check_zip(zip)
+        # <-- try removing the following code... -->
 
-        if lookup_zip:
-            self.geo_code = lookup_zip[0]
-            self.patron_type = lookup_zip[1]
-            if self.county == 'St. Louis County':
-                self.library = 'St. Louis County'
-            return self.display_data()
+        # see if there is only one valid zip code
+        # returns [geo_code, patron_type]
+        # lookup_zip = check_zip(zip)
+
+        # # if one valid zip code is found, execute following code
+        # if lookup_zip:
+        #     self.geo_code = lookup_zip[0]
+        #     self.patron_type = lookup_zip[1]
+        #     if self.county == 'St. Louis County':
+        #         # replace following with function to find st. louis county library
+        #         self.library = 'St. Louis County'
+        #         logging.info(f"library: {self.library}")
+        #     return self.display_data()
+        
+        # <-- end of removed code -->
 
         if city.upper() == "WASHINGTON" and state.upper() == "MO":
             self.geo_code = "Washington Public Library"
             self.patron_type = "Reciprocal"
             return self.display_data()
 
+        # see if address is in county other than st. louis or jefferson
         lookup_county = check_county(self.county)
 
         if lookup_county:
@@ -331,6 +351,8 @@ class AddressDetails:
             self.patron_type = lookup_county[1]
             return self.display_data()
 
+        ### debugging ###
+        logging.log(f"lng: {lng}\nlat: {lat}\ncounty: {self.county}")
         # if in st louis county, check library district
         lookup_library = slc_libs(lng, lat, self.county)
 
@@ -375,5 +397,5 @@ class AddressDetails:
 
 if __name__ == "__main__":
     submission = AddressDetails()
-    result = submission.address_lookup("4444 weber rd", "63123")
+    result = submission.address_lookup("1610 Oriole", "63144")
     print(result)
