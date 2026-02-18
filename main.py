@@ -3,6 +3,7 @@ import googlemaps
 import logging
 import requests
 import pandas as pd
+import json
 
 logging.basicConfig(level=logging.INFO)
 
@@ -371,5 +372,5 @@ class AddressDetails:
 
 if __name__ == "__main__":
     submission = AddressDetails()
-    result = submission.address_lookup("1610 Oriole", "63144")
-    print(result)
+    result = submission.address_lookup("405 E 7th St", "63090")
+    print(json.dumps(result, indent=4))
