@@ -137,11 +137,22 @@ def goog_geocode(address, zip):
 
 
 def format_address(address):
+    """
+    Formats address from google geocoder.
+    Example input: 4444 Weber Rd, St. Louis, MO 63123, USA
+    Example output: 4444 WEBER RD, ST LOUIS, MO 63123
+    """
+
     return address.upper().strip().replace('.', '').replace("'", ' ').replace(
         ", USA", '')
 
 
 def arcgis_county(lng, lat):
+    """
+    Takes lng and lat as floats.
+    Example output: St. Louis County
+    """
+
     url = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
     params = {
@@ -230,7 +241,6 @@ def slc_libs(lng, lat, county):
 
         data = response.json()
 
-        # the problem
         library = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
