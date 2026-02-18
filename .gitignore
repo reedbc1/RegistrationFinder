@@ -160,6 +160,4 @@ cython_debug/
 #.idea/
 
 # testing code
-test.py
-clean.py
-csv_files/ZIPcodes.csv
+test_script.py
