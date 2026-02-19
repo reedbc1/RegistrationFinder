@@ -181,19 +181,6 @@ def arcgis_county(lng, lat):
         print(e)
         raise Exception("Address not found.")
 
-def check_zip(zip):
-
-    df = pd.read_csv("csv_files/ExclusiveZips.csv")
-
-    # Lookup zip code
-    filtered = df[df["zip code"] == int(zip)].loc[:,
-                                                  ["geo code", "patron type"]]
-    if filtered.empty:
-        return None
-
-    geo_code, patron_type = filtered.iloc[0, 0], filtered.iloc[0, 1]
-    return [geo_code, patron_type]
-
 
 # check for only one result for county
 def check_county(county):
