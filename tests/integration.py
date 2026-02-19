@@ -1,9 +1,13 @@
+import sys
+sys.path.append(r"C:\Users\reedb\Documents\Git Repos\RegistrationFinder") 
 from main import AddressDetails
 import unittest
 
 """
 Integration testing for the AddressLookup app.
 Tests for all resident/reciprocal cases and verifies output.
+
+Future tests can be written to test non-resident and ineligible addresses.
 """
 
 class TestMunicipal(unittest.TestCase):
