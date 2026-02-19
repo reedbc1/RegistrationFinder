@@ -1,14 +1,15 @@
 import unittest
-
 import sys
 sys.path.append(r"C:\Users\reedb\Documents\Git Repos\RegistrationFinder") 
-
 import main
+
 from dotenv import load_dotenv
 load_dotenv()
 
 """
 Unit testing for the AddressLookup app.
+
+Left off at check_county function in main.py
 """
 
 class TestFunctions(unittest.TestCase):
@@ -48,8 +49,6 @@ class TestFunctions(unittest.TestCase):
         test_case = 'St. Louis County'
         self.assertEqual(result, test_case)
 
-    
-
 
 if __name__ == "__main__":
-    ...
+    unittest.main(verbosity=2)
