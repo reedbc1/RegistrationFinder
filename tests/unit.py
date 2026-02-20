@@ -49,6 +49,21 @@ class TestFunctions(unittest.TestCase):
         test_case = 'St. Louis County'
         self.assertEqual(result, test_case)
 
+    def test_check_county(self):
+        result = main.check_county('Warren County')
+        test_case = ['Warren County', 'Reciprocal']
+        self.assertEqual(result, test_case)
+
+    def test_slc_libs(self):
+        result = main.slc_libs(lng = -90.2980285287216, lat = 38.55093349998459, county = 'St. Louis County')
+        test_case = ['St Louis County', 'Resident', 'St. Louis County']
+        self.assertEqual(result, test_case)
+
+    def test_jeffco_schools(self):
+        result = main.jeffco_schools(lng = -90.5096530409488, lat = 38.311159280927086, county = 'Jefferson County')
+        test_case = 'Fox'
+        self.assertEqual(result, test_case)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

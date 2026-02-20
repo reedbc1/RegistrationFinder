@@ -191,7 +191,7 @@ def arcgis_county(lng: float, lat: float) -> str:
 
 def check_county(county: str) -> list[str, str] | None:
     """
-    Check for recirprocal status for counties other 
+    Check for status for counties other 
     than St. Louis County and Jefferson County
     Returns [geo_code, patron_type]
     """
