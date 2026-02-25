@@ -20,8 +20,8 @@ jobs:
     steps:
     - name: Use step-specific environment variable
       env:
-        CENSUS_DATA_API_KEY: ${{ secrets.CENSUS_DATA_API_KEY }}
-      run: echo $CENSUS_DATA_API_KEY
+        GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+      run: echo $GOOGLE_MAPS_API_KEY
 
     
        
