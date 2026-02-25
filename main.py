@@ -79,16 +79,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
     Returns: (lng, lat, formatted_address, zip, city, state)
     Note: Same returns as census_address, but doesn't return county.
     """
-    print(os.environ)
     api_key = os.getenv("GOOGLE_MAPS_API_KEY")
-
-    """Temp. debugging code for github"""
-    if api_key is not None:
-        print(f"length of api key: {len(api_key)}")
-    elif api_key is None:
-        print(f"API key is None")
-    else:
-        print(f"API key is type: {type(api_key)}")
 
     gmaps = googlemaps.Client(key=api_key)
 
