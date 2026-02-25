@@ -29,5 +29,7 @@ jobs:
         GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         CENSUS_DATA_API_KEY: ${{ secrets.CENSUS_DATA_API_KEY }}
       run: |
+        echo "running unittest on tests/unit.py"
         python -m unittest tests/unit.py
+        echo "running unittest on tests/integration.py"
         python -m unittest tests/integration.py
