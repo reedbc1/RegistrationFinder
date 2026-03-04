@@ -56,8 +56,6 @@ The goal is to reduce cognitive load, eliminate manual lookups, and ensure consi
 
 ## Eligibility & Decision Logic
 
-The system applies rules in a deliberate order to minimize ambiguity:
-
 - **County-level inference**  
   If eligibility can be determined at the county (or city) level alone, the system returns a result without further geographic checks.
 
@@ -68,9 +66,7 @@ The system applies rules in a deliberate order to minimize ambiguity:
   Eligibility is inferred based on the school district associated with the residence.
 
 - **Ineligible addresses**  
-  If the address does not fall into any eligible jurisdiction, it is marked as ineligible.
-
-This approach favors clear failure states over silent or misleading results.
+  If the address does not fall into any eligible jurisdiction, it is marked as ineligible.  
 
 ---
 
@@ -86,7 +82,7 @@ This approach favors clear failure states over silent or misleading results.
 - Library district (St. Louis County)  
 - School district (Jefferson County)  
 
-These details help staff understand *why* a result was returned, not just what it is.
+Primary results provide the actionable information required for patron registration. Supporting details explain how the program arrived at the result. This increases transparency and trust in the program’s decision logic for staff and makes it easy to manually validate.  
 
 ---
 
