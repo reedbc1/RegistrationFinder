@@ -8,13 +8,14 @@ import time
 import functools
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 if __name__ == "__main__":
     # load variables from .env into local environment
     from dotenv import load_dotenv
     load_dotenv()
 
-# logger = logging.getLogger(__name__)
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
@@ -31,10 +32,10 @@ def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
 
                 except exceptions as e:
                     if attempt == max_attempts:
-                        logging.error("Max retries reached for %s", func.__name__)
+                        logger.error("Max retries reached for %s", func.__name__)
                         raise
 
-                    logging.warning(
+                    logger.warning(
                         "Attempt %s failed for %s: %s. Retrying in %ss",
                         attempt,
                         func.__name__,
@@ -75,7 +76,7 @@ def census_address(street: str, zip: str) -> tuple:
     response = requests.get(url, params=params, timeout=5)
 
     if response.status_code != requests.codes.ok:
-        logging.info("Census API call was unsuccessful. " \
+        logger.info("Census API call was unsuccessful. " \
                      f"Response status code: {response.status_code}")
         response.raise_for_status()
 
@@ -126,7 +127,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
         data: list = gmaps.geocode(address + " " + zip)
 
     except Exception as e:
-        logging.info("Google Geocoder API call was unsuccessful."
+        logger.info("Google Geocoder API call was unsuccessful."
                      f"Error: {e}")
         raise e
 
@@ -134,7 +135,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
         raise Exception('Address not found.')
 
     elif len(data) > 1:
-        logging.warning('Multiple addresses found, using the first one.')
+        logger.warning('Multiple addresses found, using the first one.')
 
     # extract the first result
     result: dict = data[0]
@@ -151,7 +152,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
 
     # Check if both exist, otherwise raise error.
     if not (street_number and route):
-        logging.info("street_number and/or route not found.")
+        logger.info("street_number and/or route not found.")
         raise Exception("Address not found.")
 
     # get longitude and latitude
@@ -224,8 +225,8 @@ def arcgis_county(lng: float, lat: float) -> str:
         return county_name
 
     except Exception as e:
-        logging.error("County name not found by function: arcgis_county")
-        logging.info(e)
+        logger.error("County name not found by function: arcgis_county")
+        logger.info(e)
         raise Exception("Address not found.")
 
 
@@ -378,8 +379,8 @@ class AddressDetails:
                     "Census geocoder api failed to find all address details.")
 
         except Exception as e:
-            logging.info(e)
-            logging.info("Using Google Geocoder instead.")
+            logger.info(e)
+            logger.info("Using Google Geocoder instead.")
 
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
