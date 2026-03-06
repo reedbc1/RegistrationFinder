@@ -4,6 +4,8 @@ import logging
 import requests
 import pandas as pd
 import json
+import time
+import functools
 
 logging.basicConfig(level=logging.INFO)
 
@@ -12,7 +14,43 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
 
+# logger = logging.getLogger(__name__)
 
+def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
+    """Define decorator function for retries if APIs time out."""
+    def decorator(func):
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+
+            current_delay = delay
+
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return func(*args, **kwargs)
+
+                except exceptions as e:
+                    if attempt == max_attempts:
+                        logging.error("Max retries reached for %s", func.__name__)
+                        raise
+
+                    logging.warning(
+                        "Attempt %s failed for %s: %s. Retrying in %ss",
+                        attempt,
+                        func.__name__,
+                        e,
+                        current_delay,
+                    )
+
+                    time.sleep(current_delay)
+                    current_delay *= backoff
+
+        return wrapper
+
+    return decorator
+
+
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def census_address(street: str, zip: str) -> tuple:
     """
     Get data from census geocoder API.
@@ -73,6 +111,7 @@ def census_address(street: str, zip: str) -> tuple:
     return lng, lat, address, zip, city, state, county
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def goog_geocode(address: str, zip: str) -> tuple:
     """
     Get data from Google Geocoder API.
@@ -153,6 +192,7 @@ def format_address(address: str) -> str:
         ", USA", '')
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def arcgis_county(lng: float, lat: float) -> str:
     """
     Returns county_name or raises Exception('Address not found.')
@@ -212,6 +252,7 @@ def check_county(county: str) -> list[str, str] | None:
     return [geo_code, patron_type]
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
     """
     Checks for library district if county is St. Louis County.
@@ -265,6 +306,7 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
         return None
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
     """
     Checks for school district if county is Jefferson County.
