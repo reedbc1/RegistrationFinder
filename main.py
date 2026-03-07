@@ -4,8 +4,12 @@ import logging
 import requests
 import pandas as pd
 import json
+import time
+import functools
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 if __name__ == "__main__":
     # load variables from .env into local environment
@@ -13,6 +17,41 @@ if __name__ == "__main__":
     load_dotenv()
 
 
+def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
+    """Define decorator function for retries if APIs time out."""
+    def decorator(func):
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+
+            current_delay = delay
+
+            for attempt in range(1, max_attempts + 1):
+                try:
+                    return func(*args, **kwargs)
+
+                except exceptions as e:
+                    if attempt == max_attempts:
+                        logger.error("Max retries reached for %s", func.__name__)
+                        raise
+
+                    logger.warning(
+                        "Attempt %s failed for %s: %s. Retrying in %ss",
+                        attempt,
+                        func.__name__,
+                        e,
+                        current_delay,
+                    )
+
+                    time.sleep(current_delay)
+                    current_delay *= backoff
+
+        return wrapper
+
+    return decorator
+
+
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def census_address(street: str, zip: str) -> tuple:
     """
     Get data from census geocoder API.
@@ -37,7 +76,7 @@ def census_address(street: str, zip: str) -> tuple:
     response = requests.get(url, params=params, timeout=5)
 
     if response.status_code != requests.codes.ok:
-        logging.info("Census API call was unsuccessful. " \
+        logger.info("Census API call was unsuccessful. " \
                      f"Response status code: {response.status_code}")
         response.raise_for_status()
 
@@ -73,6 +112,7 @@ def census_address(street: str, zip: str) -> tuple:
     return lng, lat, address, zip, city, state, county
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def goog_geocode(address: str, zip: str) -> tuple:
     """
     Get data from Google Geocoder API.
@@ -87,7 +127,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
         data: list = gmaps.geocode(address + " " + zip)
 
     except Exception as e:
-        logging.info("Google Geocoder API call was unsuccessful."
+        logger.info("Google Geocoder API call was unsuccessful."
                      f"Error: {e}")
         raise e
 
@@ -95,7 +135,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
         raise Exception('Address not found.')
 
     elif len(data) > 1:
-        logging.warning('Multiple addresses found, using the first one.')
+        logger.warning('Multiple addresses found, using the first one.')
 
     # extract the first result
     result: dict = data[0]
@@ -112,7 +152,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
 
     # Check if both exist, otherwise raise error.
     if not (street_number and route):
-        logging.info("street_number and/or route not found.")
+        logger.info("street_number and/or route not found.")
         raise Exception("Address not found.")
 
     # get longitude and latitude
@@ -153,6 +193,7 @@ def format_address(address: str) -> str:
         ", USA", '')
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def arcgis_county(lng: float, lat: float) -> str:
     """
     Returns county_name or raises Exception('Address not found.')
@@ -184,8 +225,8 @@ def arcgis_county(lng: float, lat: float) -> str:
         return county_name
 
     except Exception as e:
-        logging.error("County name not found by function: arcgis_county")
-        logging.info(e)
+        logger.error("County name not found by function: arcgis_county")
+        logger.info(e)
         raise Exception("Address not found.")
 
 
@@ -212,6 +253,7 @@ def check_county(county: str) -> list[str, str] | None:
     return [geo_code, patron_type]
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
     """
     Checks for library district if county is St. Louis County.
@@ -265,6 +307,7 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
         return None
 
 
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
     """
     Checks for school district if county is Jefferson County.
@@ -336,8 +379,8 @@ class AddressDetails:
                     "Census geocoder api failed to find all address details.")
 
         except Exception as e:
-            logging.info(e)
-            logging.info("Using Google Geocoder instead.")
+            logger.info(e)
+            logger.info("Using Google Geocoder instead.")
 
             lng, lat, self.address, zip, city, state = goog_geocode(
                 address, zip)
