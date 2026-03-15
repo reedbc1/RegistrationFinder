@@ -73,7 +73,7 @@ def census_address(street: str, zip: str) -> tuple:
         "key": api_key
     }
 
-    response = requests.get(url, params=params, timeout=5)
+    response = requests.get(url, params=params, timeout=(3,10))
 
     if response.status_code != requests.codes.ok:
         logger.info("Census API call was unsuccessful. " \
@@ -213,7 +213,7 @@ def arcgis_county(lng: float, lat: float) -> str:
                 "f": "json"
             }
 
-    response = requests.get(url, params=params, timeout=5)
+    response = requests.get(url, params=params, timeout=(3,10))
     data: dict = response.json()
 
     try:
@@ -280,7 +280,7 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
             "f": "json"
         }
 
-        response = requests.get(url, params=params, timeout=5)
+        response = requests.get(url, params=params, timeout=(3,10))
 
         if response.status_code != requests.codes.ok:
             response.raise_for_status()
@@ -330,7 +330,7 @@ def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
             "f": "json"
         }
 
-        response = requests.get(url, params=params, timeout=5)
+        response = requests.get(url, params=params, timeout=(3,10))
         if response.status_code != requests.codes.ok:
             response.raise_for_status()
 
