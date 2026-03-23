@@ -30,7 +30,7 @@ class TestFunctions(unittest.TestCase):
         result = main.goog_geocode('4444 Weber Rd.', '63123')
         test_case = (
             -90.2980178, 38.5509335, 
-            '4444 WEBER RD, ST LOUIS, MO 63123', 
+            '4444 WEBER RD, ST LOUIS, MO, 63123', 
             '63123', 
             '4444 WEBER RD', 
             'MO'

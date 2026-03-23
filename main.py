@@ -17,6 +17,9 @@ if __name__ == "__main__":
     load_dotenv()
 
 
+# Define custom exceptions
+
+
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
     def decorator(func):
@@ -159,7 +162,10 @@ def goog_geocode(address: str, zip: str) -> tuple:
     lng: float = result.get("geometry", {}).get("location", {}).get("lng")
     lat: float = result.get("geometry", {}).get("location", {}).get("lat")
 
-    formatted_address: str = format_address(result.get("formatted_address"))
+    address: str = format_address(result.get("formatted_address"))
+    address_split = address.split(", ")
+    address_split[2] = address_split[2].replace(" ", ", ")
+    formatted_address = ", ".join(address_split)
 
     # Extract postal code
     zip: None = None
