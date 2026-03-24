@@ -75,6 +75,36 @@
         .back-button:hover {
             background-color: #545b62;
         }
+
+        .container-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .container-footer .back-button {
+            margin-top: 0;
+        }
+
+        .esri {
+            font-family: "Avenir Next W00","Helvetica Neue", Helvetica,Arial,sans-serif;
+            color: #323232;
+            background-color: #ffffff;
+            opacity: 65%;
+            font-size: 12pt;
+            margin: 0;
+        }
+
+        .esri a,
+        .esri a:visited,
+        .esri a:hover,
+        .esri a:active {
+            color: inherit;
+            text-decoration: none;
+        }
+
     </style>
 </head>
 
@@ -136,8 +166,10 @@
             {% endif %}
         </div>
         {% endif %}
-
-        <a href="/" class="back-button">← Back to Search</a>
+        <div class="container-footer">
+            <a href="/" class="back-button">← Back to Search</a>
+            <p class="esri">Powered by <a href="https://www.esri.com/en-us/home">Esri</a></p>
+        </div>
     </div>
 </body>
 
