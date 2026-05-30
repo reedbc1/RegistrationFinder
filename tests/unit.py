@@ -8,8 +8,6 @@ load_dotenv()
 
 """
 Unit testing for the AddressLookup app.
-
-Left off at check_county function in main.py
 """
 
 class TestFunctions(unittest.TestCase):
