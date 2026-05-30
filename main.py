@@ -17,9 +17,6 @@ if __name__ == "__main__":
     load_dotenv()
 
 
-# Define custom exceptions
-
-
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
     def decorator(func):
