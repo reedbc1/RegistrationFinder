@@ -80,7 +80,10 @@ def census_address(street: str, zip: str) -> tuple:
                      f"Response status code: {response.status_code}")
         response.raise_for_status()
 
-    data: dict = response.json()
+    try:
+        data: dict = response.json()
+    except:
+        raise(Exception('Address not found.'))
 
     addressMatches: list = data.get("result", {}) \
                          .get("addressMatches", [])
