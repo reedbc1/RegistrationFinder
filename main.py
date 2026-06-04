@@ -422,7 +422,8 @@ class AddressDetails:
         """
         Step: 4
         Check if address is in St. Louis County. 
-        If true, set library, geo code, and patron type and return.
+        If true, find the correct geo code and patron type
+        Returns library, geo code, and patron type.
         """
         lookup_library: list[str, str, str] | None = slc_libs(lng, lat, self.county)
 
