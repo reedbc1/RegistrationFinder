@@ -374,6 +374,7 @@ class AddressDetails:
         """
         Step 1:
         First, try Census Geocoder API. If it fails, try Google Geocoding API.
+        If Google Geocoding API is used, use ArcGIS API to identify county.
         Raise exception if details cannot be found from the address and zip.
         """
         try:
@@ -394,6 +395,7 @@ class AddressDetails:
                 raise Exception(
                     "Google geocoder failed to find all address details")
 
+            # identify county using arcgis API.
             self.county: str = arcgis_county(lng, lat)
 
         """
