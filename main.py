@@ -80,7 +80,10 @@ def census_address(street: str, zip: str) -> tuple:
                      f"Response status code: {response.status_code}")
         response.raise_for_status()
 
-    data: dict = response.json()
+    try:
+        data: dict = response.json()
+    except:
+        raise(Exception('Address not found.'))
 
     addressMatches: list = data.get("result", {}) \
                          .get("addressMatches", [])
@@ -371,6 +374,7 @@ class AddressDetails:
         """
         Step 1:
         First, try Census Geocoder API. If it fails, try Google Geocoding API.
+        If Google Geocoding API is used, use ArcGIS API to identify county.
         Raise exception if details cannot be found from the address and zip.
         """
         try:
@@ -391,6 +395,7 @@ class AddressDetails:
                 raise Exception(
                     "Google geocoder failed to find all address details")
 
+            # identify county using arcgis API.
             self.county: str = arcgis_county(lng, lat)
 
         """
@@ -419,7 +424,8 @@ class AddressDetails:
         """
         Step: 4
         Check if address is in St. Louis County. 
-        If true, set library, geo code, and patron type and return.
+        If true, find the correct geo code and patron type
+        Returns library, geo code, and patron type.
         """
         lookup_library: list[str, str, str] | None = slc_libs(lng, lat, self.county)
 

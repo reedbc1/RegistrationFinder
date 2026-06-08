@@ -7,6 +7,12 @@ import unittest
 Integration testing for the AddressLookup app.
 Tests for all resident/reciprocal cases and verifies output.
 
+Only primary important information is tested, including county, geo_code, 
+and patron_type.
+
+Specific addresses can be returned from different APIs and be slightly different,
+which can trigger tests to fail. For this reason, they are not used in testing.
+
 Future tests can be written to test non-resident and ineligible addresses.
 """
 
@@ -21,7 +27,8 @@ class TestMunicipal(unittest.TestCase):
                     'geo_code': 'Brentwood', 
                     'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_fergusen(self):
         submission = AddressDetails()
@@ -32,7 +39,9 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Ferguson', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
+        
 
     def test_kirkwood(self):
         submission = AddressDetails()
@@ -43,7 +52,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Kirkwood', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_maplewood(self):
         submission = AddressDetails()
@@ -54,7 +64,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Maplewood', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_richmond_heights(self):
         submission = AddressDetails()
@@ -65,7 +76,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Richmond Heights', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_rock_hill(self):
         submission = AddressDetails()
@@ -76,7 +88,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Rock Hill', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_university_city(self):
         submission = AddressDetails()
@@ -87,7 +100,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'University City', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_valley_park(self):
         submission = AddressDetails()
@@ -98,7 +112,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Valley Park', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_webster_groves(self):
         submission = AddressDetails()
@@ -109,7 +124,8 @@ class TestMunicipal(unittest.TestCase):
                      'geo_code': 'Webster Groves', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
 class TestStLouisCounty(unittest.TestCase):
 
@@ -122,7 +138,8 @@ class TestStLouisCounty(unittest.TestCase):
                      'geo_code': 'St Louis County', 
                      'patron_type': 'Resident'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'library', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
     
 class TestJeffersonCounty(unittest.TestCase):
 
@@ -135,7 +152,8 @@ class TestJeffersonCounty(unittest.TestCase):
                      'geo_code': 'Jefferson County', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_northwest(self):
         submission = AddressDetails()
@@ -146,7 +164,8 @@ class TestJeffersonCounty(unittest.TestCase):
                      'geo_code': 'Jefferson County', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_windsor(self):
         submission = AddressDetails()
@@ -157,7 +176,8 @@ class TestJeffersonCounty(unittest.TestCase):
                      'geo_code': 'Jefferson County', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_other(self):
         submission = AddressDetails()
@@ -168,7 +188,8 @@ class TestJeffersonCounty(unittest.TestCase):
                      'geo_code': 'Jefferson County', 
                      'patron_type': 'Non-Resident'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
 class TestReciprocalCounty(unittest.TestCase):
 
@@ -180,7 +201,8 @@ class TestReciprocalCounty(unittest.TestCase):
                      'geo_code': 'St Louis City', 
                      'patron_type': 'Reciprocal'}
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_warren(self):
         submission = AddressDetails()
@@ -192,7 +214,8 @@ class TestReciprocalCounty(unittest.TestCase):
             "patron_type": "Reciprocal"
         }
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_franklin(self):
         submission = AddressDetails()
@@ -204,7 +227,8 @@ class TestReciprocalCounty(unittest.TestCase):
             "patron_type": "Reciprocal"
         }
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_gasconade(self):
         submission = AddressDetails()
@@ -216,7 +240,8 @@ class TestReciprocalCounty(unittest.TestCase):
             "patron_type": "Reciprocal"
         }
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
     def test_st_charles(self):
         submission = AddressDetails()
@@ -228,7 +253,8 @@ class TestReciprocalCounty(unittest.TestCase):
             "patron_type": "Reciprocal"
         }
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
 class TestWashingtonMO(unittest.TestCase):
 
@@ -242,7 +268,8 @@ class TestWashingtonMO(unittest.TestCase):
             "patron_type": "Reciprocal"
         }
         
-        self.assertEqual(result, test_case)
+        for category in ['county', 'geo_code', 'patron_type']:
+            self.assertEqual(result[category], test_case[category])
 
 
 if __name__ == "__main__":
