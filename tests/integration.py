@@ -7,6 +7,7 @@ CWD = Path(os.getcwd())
 sys.path.append(str(CWD))
 
 from main import AddressDetails
+
 from dotenv import load_dotenv
 load_dotenv()
 
