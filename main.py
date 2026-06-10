@@ -52,75 +52,10 @@ def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
 
 
 @retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
-def census_address(street: str, zip: str) -> tuple:
-    """
-    Get data from census geocoder API.
-    Returns: (lng, lat, address, zip, city, state, county)
-    """
-    api_key: str = os.getenv("CENSUS_DATA_API_KEY")
-
-    returntype: str = "geographies"
-    searchtype: str = "address"
-
-    url: str = f"https://geocoding.geo.census.gov/geocoder/{returntype}/{searchtype}?"
-
-    params: dict = {
-        "benchmark": "Public_AR_Current",
-        "vintage": "Current_Current",
-        "street": street,
-        "zip": zip,
-        "format": "json",
-        "key": api_key
-    }
-
-    response = requests.get(url, params=params, timeout=(3,10))
-
-    if response.status_code != requests.codes.ok:
-        logger.info("Census API call was unsuccessful. " \
-                     f"Response status code: {response.status_code}")
-        response.raise_for_status()
-
-    try:
-        data: dict = response.json()
-    except:
-        raise(Exception('Address not found.'))
-
-    addressMatches: list = data.get("result", {}) \
-                         .get("addressMatches", [])
-
-    if addressMatches == []:
-        raise Exception('Address not found.')
-
-    address: str = addressMatches[0].get("matchedAddress")
-
-    lng: float = addressMatches[0].get("coordinates", {}).get("x")
-    lat: float = addressMatches[0].get("coordinates", {}).get("y")
-
-    county_reg: str = (data.get("result",
-                           {}).get("addressMatches",
-                                   [])[0].get("geographies",
-                                              {}).get("Counties",
-                                                      [])[0].get("NAME"))
-
-    county: str = ' '.join(list(map(str.capitalize, county_reg.split(' '))))
-
-    try:
-        city: str = address.split(',')[1].strip()
-        state: str = address.split(',')[2].strip()
-        zip: str = address.split(',')[3].strip()
-
-    except (IndexError, AttributeError):
-        city, state, zip = None, None, None
-
-    return lng, lat, address, zip, city, state, county
-
-
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def goog_geocode(address: str, zip: str) -> tuple:
     """
     Get data from Google Geocoder API.
     Returns: (lng, lat, formatted_address, zip, city, state)
-    Note: Same returns as census_address, but doesn't return county.
     """
     api_key = os.getenv("GOOGLE_MAPS_API_KEY")
 
@@ -133,7 +68,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
         logger.info("Google Geocoder API call was unsuccessful."
                      f"Error: {e}")
         raise e
-
+    
     if len(data) == 0:
         raise Exception('Address not found.')
 
@@ -163,9 +98,6 @@ def goog_geocode(address: str, zip: str) -> tuple:
     lat: float = result.get("geometry", {}).get("location", {}).get("lat")
 
     address: str = format_address(result.get("formatted_address"))
-    address_split = address.split(", ")
-    address_split[2] = address_split[2].replace(" ", ", ")
-    formatted_address = ", ".join(address_split)
 
     # Extract postal code
     zip: None = None
@@ -175,7 +107,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
             break
 
     try:
-        city: str = formatted_address.split(", ")[0]
+        city: str = address.split(", ")[1]
     except IndexError:
         city: None = None
 
@@ -185,7 +117,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
             state: str = component.get('short_name')
             break
 
-    return lng, lat, formatted_address, zip, city, state
+    return lng, lat, address, zip, city, state
 
 
 def format_address(address: str) -> str:
@@ -228,7 +160,10 @@ def arcgis_county(lng: float, lat: float) -> str:
                 .get("attributes", {})
                 .get("NAME")
         )
-        return county_name
+        # Capitalize first letter of every word
+        county_name_caps = county_name.title()
+
+        return county_name_caps
 
     except Exception as e:
         logger.error("County name not found by function: arcgis_county")
@@ -373,30 +308,20 @@ class AddressDetails:
 
         """
         Step 1:
-        First, try Census Geocoder API. If it fails, try Google Geocoding API.
-        If Google Geocoding API is used, use ArcGIS API to identify county.
+        Use Google Geocoding API to validate address and get coords. 
+        Use ArcGIS API to identify county.
         Raise exception if details cannot be found from the address and zip.
         """
-        try:
-            lng, lat, self.address, zip, city, state, self.county = census_address(
-                address, zip)
 
-            if None in [lng, lat, self.address, zip, city, state]:
-                raise Exception(
-                    "Census geocoder api failed to find all address details.")
+        logger.info("Using Google Geocoder")
+        lng, lat, self.address, zip, city, state = goog_geocode(
+            address, zip)
+        if None in [lng, lat, self.address, zip, city, state]:
+            raise Exception(
+                "Google geocoder failed to find all address details")
 
-        except Exception as e:
-            logger.info(e)
-            logger.info("Using Google Geocoder instead.")
-
-            lng, lat, self.address, zip, city, state = goog_geocode(
-                address, zip)
-            if None in [lng, lat, self.address, zip, city, state]:
-                raise Exception(
-                    "Google geocoder failed to find all address details")
-
-            # identify county using arcgis API.
-            self.county: str = arcgis_county(lng, lat)
+        # identify county using arcgis API.
+        self.county: str = arcgis_county(lng, lat)
 
         """
         Step 2:
