@@ -26,7 +26,6 @@ For more details about using venv, [click here](https://docs.python.org/3/librar
 
 ## Running tests
 ### Run unit tests
-Unit tests 
 `python -m unittest tests/unit.py`
 
 ### Run integration tests
