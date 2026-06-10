@@ -1,7 +1,14 @@
 import sys
-sys.path.append(r"C:\Users\reedb\Documents\Git Repos\RegistrationFinder") 
-from main import AddressDetails
+from pathlib import Path
+import os
 import unittest
+
+CWD = Path(os.getcwd())
+sys.path.append(str(CWD))
+
+from main import AddressDetails
+from dotenv import load_dotenv
+load_dotenv()
 
 """
 Integration testing for the AddressLookup app.
