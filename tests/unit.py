@@ -2,6 +2,7 @@ import unittest
 import sys
 import os
 from pathlib import Path
+import time
 
 # append current working directory to sys
 CWD = Path(os.getcwd())
@@ -17,6 +18,8 @@ Unit testing for the AddressLookup app.
 """
 
 class TestFunctions(unittest.TestCase):
+    def tearDown(self):
+        time.sleep(1)
 
     def test_goog_geocode(self):
         result = main.goog_geocode('4444 Weber Rd.', '63123')
