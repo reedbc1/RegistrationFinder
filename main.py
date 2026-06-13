@@ -152,6 +152,10 @@ def arcgis_county(lng: float, lat: float) -> str:
             }
 
     response = requests.get(url, params=params, timeout=(3,10))
+
+    if response.status_code != requests.codes.ok:
+            response.raise_for_status()
+            
     data: dict = response.json()
 
     try:
@@ -272,6 +276,7 @@ def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
         }
 
         response = requests.get(url, params=params, timeout=(3,10))
+
         if response.status_code != requests.codes.ok:
             response.raise_for_status()
 

@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 import os
 import unittest
+import time
 
 CWD = Path(os.getcwd())
 sys.path.append(str(CWD))
@@ -24,7 +25,12 @@ which can trigger tests to fail. For this reason, they are not used in testing.
 Future tests can be written to test non-resident and ineligible addresses.
 """
 
-class TestMunicipal(unittest.TestCase):
+# defines parent class that waits 1 second after each test runs
+class TestSleep(unittest.TestCase):
+    def tearDown(self):
+        time.sleep(1)
+
+class TestMunicipal(TestSleep):
 
     def test_brentwood(self):
         submission = AddressDetails()
@@ -135,7 +141,7 @@ class TestMunicipal(unittest.TestCase):
         for category in ['county', 'library', 'geo_code', 'patron_type']:
             self.assertEqual(result[category], test_case[category])
 
-class TestStLouisCounty(unittest.TestCase):
+class TestStLouisCounty(TestSleep):
 
     def test_st_louis_county(self):
         submission = AddressDetails()
@@ -149,7 +155,7 @@ class TestStLouisCounty(unittest.TestCase):
         for category in ['county', 'library', 'geo_code', 'patron_type']:
             self.assertEqual(result[category], test_case[category])
     
-class TestJeffersonCounty(unittest.TestCase):
+class TestJeffersonCounty(TestSleep):
 
     def test_fox(self):
         submission = AddressDetails()
@@ -199,7 +205,7 @@ class TestJeffersonCounty(unittest.TestCase):
         for category in ['county', 'geo_code', 'patron_type']:
             self.assertEqual(result[category], test_case[category])
 
-class TestReciprocalCounty(unittest.TestCase):
+class TestReciprocalCounty(TestSleep):
 
     def test_st_louis_city(self):
         submission = AddressDetails()
@@ -264,7 +270,7 @@ class TestReciprocalCounty(unittest.TestCase):
         for category in ['county', 'geo_code', 'patron_type']:
             self.assertEqual(result[category], test_case[category])
 
-class TestWashingtonMO(unittest.TestCase):
+class TestWashingtonMO(TestSleep):
 
     def test_wash_mo(self):
         submission = AddressDetails()
