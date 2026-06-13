@@ -25,7 +25,7 @@ which can trigger tests to fail. For this reason, they are not used in testing.
 Future tests can be written to test non-resident and ineligible addresses.
 """
 
-# defines parent class that waits 1 second after tests run
+# defines parent class that waits 1 second after each test runs
 class TestSleep(unittest.TestCase):
     def tearDown(self):
         time.sleep(1)
