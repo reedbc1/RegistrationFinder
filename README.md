@@ -46,11 +46,10 @@ The goal is to reduce cognitive load, eliminate manual lookups, and ensure consi
 
 1. Staff submits a street address and ZIP code via a web form  
 2. Backend normalizes and validates the input  
-3. Address is geocoded using Census data (primary source)  
-4. If Census validation fails, Google Maps is used as a fallback  
-5. Geographic jurisdiction is inferred from geocoded coordinates  
-6. County-specific logic determines patron type and eligibility  
-7. Results are returned to the client in a structured format  
+3. Address is geocoded using Google Maps 
+4. Geographic jurisdiction is inferred from geocoded coordinates  
+5. County-specific logic determines patron type and eligibility  
+6. Results are returned to the client in a structured format  
 
 ---
 
@@ -89,7 +88,7 @@ Primary results provide the actionable information required for patron registrat
 ## Tradeoffs & Limitations
 
 - **API cost control**  
-  Google Maps is used only as a fallback to limit external API usage and cost.
+  Google Maps allows for up to 10,000 requests per month.
 
 - **Data freshness**  
   CSV reference files require manual updates when eligibility rules or boundaries change.
