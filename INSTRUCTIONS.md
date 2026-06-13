@@ -31,3 +31,18 @@ Unit tests
 
 ### Run integration tests
 `python -m unittest tests/integration.py`
+
+## Cleaning up git branches
+After deleting a branch (after it has been successfully merged, for example), 
+it can be helpful to remove the merged repository from remote and local git branches. 
+This is because the remote will no longer connect since the branch has 
+been deleted from GitHub. I like to also remove it locally so that my local branches 
+are identical to the remote branches.
+1. Delete the desired branch on GitHub
+2. To remove the branch from the remote, run `git fetch --prune`
+3. To remove the branch locally, run `git branch -d your_branch_name_here`  
+
+**DO NOT delete the main branch from GitHub**.   
+Other branches with new commits/features that you would like the app to use 
+should be merged to main whenever possible.
+Merge conflicts can be dealt with if they occur, but they are best avoided.
