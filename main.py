@@ -182,13 +182,11 @@ def check_county(county: str) -> list[str, str] | None:
     Returns [geo_code, patron_type]
     """
 
-    patron_types = pd.read_csv("csv_files/PatronTypes.csv")
-    patron_types = patron_types[~patron_types["County"].isin(
-        ['Saint Louis County', 'Jefferson County'])]
+    patron_types = pd.read_csv("csv_files/OtherCounties.csv")
 
     try:
         result: list[str, str] = patron_types[patron_types["County"].str.lower(
-        ) == county.lower()].loc[:, ["Geographic Code", "Patron Type"]]
+        ) == county.lower()].loc[:, ["Geographic Code", "Patron Code"]]
         geo_code: str = result.iloc[0, 0]
         patron_type: str = result.iloc[0, 1]
 
@@ -207,10 +205,7 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
     """
 
     if county.lower() == "st. louis county":
-        patron_types = pd.read_csv("csv_files/PatronTypes.csv")
-        patron_types = patron_types[patron_types["County"] ==
-                                    'Saint Louis County']
-        patron_types = patron_types[["Geographic Code", "Patron Type"]]
+        patron_types = pd.read_csv("csv_files/StLouisCounty.csv")
 
         url: str = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8/query"
 
