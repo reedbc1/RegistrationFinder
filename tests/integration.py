@@ -17,7 +17,7 @@ Integration testing for the AddressLookup app.
 Tests for all resident/reciprocal cases and verifies output.
 
 Only primary important information is tested, including county, geo_code, 
-and patron_type.
+and patron_code.
 
 Specific addresses can be returned from different APIs and be slightly different,
 which can trigger tests to fail. For this reason, they are not used in testing.
@@ -39,9 +39,9 @@ class TestMunicipal(TestSleep):
                     'county': 'St. Louis County', 
                     'library': 'Brentwood', 
                     'geo_code': 'Brentwood', 
-                    'patron_type': 'Reciprocal'}
+                    'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_fergusen(self):
@@ -51,9 +51,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Ferguson', 
                      'geo_code': 'Ferguson', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
         
 
@@ -64,9 +64,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Kirkwood', 
                      'geo_code': 'Kirkwood', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_maplewood(self):
@@ -76,9 +76,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Maplewood', 
                      'geo_code': 'Maplewood', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_richmond_heights(self):
@@ -88,9 +88,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Richmond Heights', 
                      'geo_code': 'Richmond Heights', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_rock_hill(self):
@@ -100,9 +100,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Rock Hill', 
                      'geo_code': 'Rock Hill', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_university_city(self):
@@ -112,9 +112,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'University City', 
                      'geo_code': 'University City', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_valley_park(self):
@@ -124,9 +124,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Valley Park', 
                      'geo_code': 'Valley Park', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_webster_groves(self):
@@ -136,9 +136,9 @@ class TestMunicipal(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'Webster Groves', 
                      'geo_code': 'Webster Groves', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
 class TestStLouisCounty(TestSleep):
@@ -150,9 +150,9 @@ class TestStLouisCounty(TestSleep):
                      'county': 'St. Louis County', 
                      'library': 'St. Louis County', 
                      'geo_code': 'St Louis County', 
-                     'patron_type': 'Resident'}
+                     'patron_code': 'Resident'}
         
-        for category in ['county', 'library', 'geo_code', 'patron_type']:
+        for category in ['county', 'library', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
     
 class TestJeffersonCounty(TestSleep):
@@ -164,9 +164,9 @@ class TestJeffersonCounty(TestSleep):
                      'county': 'Jefferson County', 
                      'school': 'Fox', 
                      'geo_code': 'Jefferson County', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_northwest(self):
@@ -176,9 +176,9 @@ class TestJeffersonCounty(TestSleep):
                      'county': 'Jefferson County', 
                      'school': 'Northwest', 
                      'geo_code': 'Jefferson County', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_windsor(self):
@@ -188,9 +188,9 @@ class TestJeffersonCounty(TestSleep):
                      'county': 'Jefferson County', 
                      'school': 'Windsor', 
                      'geo_code': 'Jefferson County', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_other(self):
@@ -200,9 +200,9 @@ class TestJeffersonCounty(TestSleep):
                      'county': 'Jefferson County', 
                      'school': 'DeSoto', 
                      'geo_code': 'Jefferson County', 
-                     'patron_type': 'Non-Resident'}
+                     'patron_code': 'Non-Resident'}
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
 class TestReciprocalCounty(TestSleep):
@@ -213,9 +213,9 @@ class TestReciprocalCounty(TestSleep):
         test_case = {'address': '2642 MICHIGAN AVE, SAINT LOUIS, MO, 63118', 
                      'county': 'St. Louis City', 
                      'geo_code': 'St Louis City', 
-                     'patron_type': 'Reciprocal'}
+                     'patron_code': 'Reciprocal'}
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_warren(self):
@@ -225,10 +225,10 @@ class TestReciprocalCounty(TestSleep):
             "address": "112 E 1ST ST S, WRIGHT CITY, MO, 63390",
             "county": "Warren County",
             "geo_code": "Warren County",
-            "patron_type": "Reciprocal"
+            "patron_code": "Reciprocal"
         }
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_franklin(self):
@@ -238,10 +238,10 @@ class TestReciprocalCounty(TestSleep):
             "address": "116 FRANKLIN AVE, UNION, MO, 63084",
             "county": "Franklin County",
             "geo_code": "Franklin County",
-            "patron_type": "Reciprocal"
+            "patron_code": "Reciprocal"
         }
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_gasconade(self):
@@ -251,10 +251,10 @@ class TestReciprocalCounty(TestSleep):
             "address": "411 S 5TH ST, OWENSVILLE, MO, 65066",
             "county": "Gasconade County",
             "geo_code": "Gasconade County",
-            "patron_type": "Reciprocal"
+            "patron_code": "Reciprocal"
         }
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
     def test_st_charles(self):
@@ -264,10 +264,10 @@ class TestReciprocalCounty(TestSleep):
             "address": "2750 STATE HWY K, O FALLON, MO, 63368",
             "county": "St. Charles County",
             "geo_code": "St Charles",
-            "patron_type": "Reciprocal"
+            "patron_code": "Reciprocal"
         }
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
 class TestWashingtonMO(TestSleep):
@@ -279,10 +279,10 @@ class TestWashingtonMO(TestSleep):
             "address": "405 E 7TH ST, WASHINGTON, MO, 63090",
             "county": "Franklin County",
             "geo_code": "Washington Public Library",
-            "patron_type": "Reciprocal"
+            "patron_code": "Reciprocal"
         }
         
-        for category in ['county', 'geo_code', 'patron_type']:
+        for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
 
