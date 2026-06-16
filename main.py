@@ -313,7 +313,6 @@ class AddressDetails:
         Raise exception if details cannot be found from the address and zip.
         """
 
-        logger.info("Using Google Geocoder")
         lng, lat, self.address, zip, city, state = goog_geocode(
             address, zip)
         if None in [lng, lat, self.address, zip, city, state]:
