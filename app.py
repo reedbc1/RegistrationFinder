@@ -8,11 +8,6 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import os
 
-if __name__ == "__main__":
-    # load variables from .env into local environment
-    from dotenv import load_dotenv
-    load_dotenv()
-
 storage_uri = os.getenv("REDIS_URL")
 
 app = Flask(__name__)
