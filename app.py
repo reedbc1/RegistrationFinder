@@ -4,14 +4,12 @@ from main import AddressDetails
 import re
 from markupsafe import escape
 import logging
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import os
 
-storage_uri = os.getenv("REDIS_URL")
-
 app = Flask(__name__)
+
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.before_request
 def limit_payload():
@@ -22,16 +20,10 @@ def limit_payload():
 def index():
     return render_template('index.html')
 
-limiter = Limiter(
-    get_remote_address, 
-    app=app,
-    storage_uri=storage_uri,
-    storage_options={}
-    )
-
 @app.route('/lookup', methods=['POST'])
 # @limiter.limit("100 per minute")
 def lookup_address():
+    logger.info(f"remote address: {get_remote_address()}")
     try:
         # Get form data
         street = request.form.get('streetAddress', '').strip()
@@ -51,7 +43,7 @@ def lookup_address():
         return render_template('result.html', params=[street_safe, zip_safe], result=result)
     
     except Exception as e:
-        logging.exception(str(e))
+        logger.exception(str(e))
         return render_template('error.html', error="Address not found."), 500
 
 if __name__ == '__main__':
