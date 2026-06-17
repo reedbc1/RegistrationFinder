@@ -289,12 +289,12 @@ class TestNonresident(TestSleep):
 
     def test_bond(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("518 E Main St", "62246")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "518 E MAIN ST, GREENVILLE, IL 62246",
+            "county": "Bond County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -302,12 +302,12 @@ class TestNonresident(TestSleep):
 
     def test_calhoun(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("201 Hanna Ave", "62006")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "201 HANNA AVE, BATCHTOWN, IL 62006",
+            "county": "Calhoun County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -315,12 +315,12 @@ class TestNonresident(TestSleep):
 
     def test_clinton(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("745 N 7th St", "62230")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "745 N 7TH ST, BREESE, IL 62230",
+            "county": "Clinton County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -328,12 +328,12 @@ class TestNonresident(TestSleep):
 
     def test_jersey(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("601 W Pine St", "62052")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "601 W PINE ST, JERSEYVILLE, IL 62052",
+            "county": "Jersey County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -341,12 +341,12 @@ class TestNonresident(TestSleep):
 
     def test_macoupin(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("711 N Charles St", "62626")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "711 N CHARLES ST, CARLINVILLE, IL 62626",
+            "county": "Macoupin County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -354,12 +354,12 @@ class TestNonresident(TestSleep):
 
     def test_madison(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("602 Hancock St", "62025")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "602 HANCOCK ST, EDWARDSVILLE, IL 62025",
+            "county": "Madison County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -367,12 +367,12 @@ class TestNonresident(TestSleep):
 
     def test_monroe(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("200 N Market St", "62298")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "200 N MARKET ST, WATERLOO, IL 62298",
+            "county": "Monroe County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -380,12 +380,12 @@ class TestNonresident(TestSleep):
 
     def test_st_clair(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("121 Timber Dr", "62226")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "121 TIMBER DR, SWANSEA, IL 62226",
+            "county": "St. Clair County",
+            "geo_code": "Illinois",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -393,12 +393,12 @@ class TestNonresident(TestSleep):
 
     def test_lincoln(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("71 Nottingham Dr", "63379")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "71 NOTTINGHAM DR, TROY, MO 63379",
+            "county": "Lincoln County",
+            "geo_code": "Other MO",
+            "patron_code": "Non-Resident"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
@@ -408,12 +408,12 @@ class TestIneligible(TestSleep):
     
     def test_ineligible(self):
         submission = AddressDetails()
-        result = submission.address_lookup("", "")
+        result = submission.address_lookup("8015 Berry Ave", "32211")
         test_case = {
-            "address": "",
-            "county": "",
-            "geo_code": "",
-            "patron_code": ""
+            "address": "8015 BERRY AVE, JACKSONVILLE, FL 32211",
+            "county": "Duval County",
+            "geo_code": "Ineligible",
+            "patron_code": "Ineligible"
         }
 
         for category in ['county', 'geo_code', 'patron_code']:
