@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 bind = "0.0.0.0:$PORT"
 workers = 4
 worker_class = "sync"

@@ -11,12 +11,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-if __name__ == "__main__":
-    # load variables from .env into local environment
-    from dotenv import load_dotenv
-    load_dotenv()
-
-
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
     def decorator(func):
@@ -179,23 +173,21 @@ def check_county(county: str) -> list[str, str] | None:
     """
     Check for status for counties other 
     than St. Louis County and Jefferson County
-    Returns [geo_code, patron_type]
+    Returns [geo_code, patron_code]
     """
 
-    patron_types = pd.read_csv("csv_files/PatronTypes.csv")
-    patron_types = patron_types[~patron_types["County"].isin(
-        ['Saint Louis County', 'Jefferson County'])]
+    patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
 
     try:
-        result: list[str, str] = patron_types[patron_types["County"].str.lower(
-        ) == county.lower()].loc[:, ["Geographic Code", "Patron Type"]]
+        result: list[str, str] = patron_codes[patron_codes["County"].str.lower(
+        ) == county.lower()].loc[:, ["Geographic Code", "Patron Code"]]
         geo_code: str = result.iloc[0, 0]
-        patron_type: str = result.iloc[0, 1]
+        patron_code: str = result.iloc[0, 1]
 
     except IndexError:
         return None
 
-    return [geo_code, patron_type]
+    return [geo_code, patron_code]
 
 
 @retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
@@ -203,14 +195,11 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
     """
     Checks for library district if county is St. Louis County.
     Otherwise, returns None.
-    Returns: [geo_code, patron_type, library] | None
+    Returns: [geo_code, patron_code, library] | None
     """
 
     if county.lower() == "st. louis county":
-        patron_types = pd.read_csv("csv_files/PatronTypes.csv")
-        patron_types = patron_types[patron_types["County"] ==
-                                    'Saint Louis County']
-        patron_types = patron_types[["Geographic Code", "Patron Type"]]
+        patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
 
         url: str = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8/query"
 
@@ -235,10 +224,10 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
         library: str = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
-        selected_row = patron_types[
-            patron_types["Geographic Code"].str.lower() == library.lower()]
+        selected_row = patron_codes[
+            patron_codes["Geographic Code"].str.lower() == library.lower()]
         geo_code: str = selected_row.iloc[0, 0]
-        patron_type: str = selected_row.iloc[0, 1]
+        patron_code: str = selected_row.iloc[0, 1]
 
         library_format: list = list(map(str.capitalize, library.split(' ')))
         if library_format[0] == "St":
@@ -246,7 +235,7 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
 
         library: str = ' '.join(library_format)
 
-        return [geo_code, patron_type, library]
+        return [geo_code, patron_code, library]
 
     else:
         return None
@@ -300,7 +289,7 @@ class AddressDetails:
 
     def __init__(self):
         attributes: list = [
-            "address", "county", "library", "school", "geo_code", "patron_type"
+            "address", "county", "library", "school", "geo_code", "patron_code"
         ]
         for attr in attributes:
             setattr(self, attr, None)
@@ -318,7 +307,6 @@ class AddressDetails:
         Raise exception if details cannot be found from the address and zip.
         """
 
-        logger.info("Using Google Geocoder")
         lng, lat, self.address, zip, city, state = goog_geocode(
             address, zip)
         if None in [lng, lat, self.address, zip, city, state]:
@@ -335,7 +323,7 @@ class AddressDetails:
         """
         if city.upper() == "WASHINGTON" and state.upper() == "MO":
             self.geo_code: str = "Washington Public Library"
-            self.patron_type: str = "Reciprocal"
+            self.patron_code: str = "Reciprocal"
             return self.display_data()
 
         """
@@ -348,7 +336,7 @@ class AddressDetails:
 
         if lookup_county:
             self.geo_code: str = lookup_county[0]
-            self.patron_type: str = lookup_county[1]
+            self.patron_code: str = lookup_county[1]
             return self.display_data()
 
         """
@@ -361,7 +349,7 @@ class AddressDetails:
 
         if lookup_library:
             self.geo_code: str = lookup_library[0]
-            self.patron_type: str = lookup_library[1]
+            self.patron_code: str = lookup_library[1]
             self.library: str = lookup_library[2]
             return self.display_data()
 
@@ -378,9 +366,9 @@ class AddressDetails:
 
             eligible_schools = ["northwest", "fox", "windsor"]
             if self.school.lower() in eligible_schools:
-                self.patron_type: str = "Reciprocal"
+                self.patron_code: str = "Reciprocal"
             else:
-                self.patron_type: str = "Non-Resident"
+                self.patron_code: str = "Non-Resident"
 
             return self.display_data()
 
@@ -390,7 +378,7 @@ class AddressDetails:
         it is ineligible for a library card.
         """
         self.geo_code: str = "Ineligible"
-        self.patron_type: str = "Ineligible"
+        self.patron_code: str = "Ineligible"
         return self.display_data()
 
     def display_data(self) -> dict:
@@ -409,12 +397,17 @@ class AddressDetails:
                 "library": self.library,
                 "school": self.school,
                 "geo_code": self.geo_code,
-                "patron_type": self.patron_type
+                "patron_code": self.patron_code
             }.items() if v is not None
         }
 
 """Local testing"""
 if __name__ == "__main__":
+    # load variables from .env into local environment
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    # test address
     submission = AddressDetails()
-    result: dict = submission.address_lookup("4444 Weber Rd.", "63123")
+    result: dict = submission.address_lookup("4444 Weber Rd", "63123")
     print(json.dumps(result, indent=4))
