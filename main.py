@@ -407,7 +407,7 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
 
-    # test with Weber Road Branch address
+    # test address
     submission = AddressDetails()
-    result: dict = submission.address_lookup("4444 Weber Rd.", "63123")
+    result: dict = submission.address_lookup("4444 Weber Rd", "63123")
     print(json.dumps(result, indent=4))
