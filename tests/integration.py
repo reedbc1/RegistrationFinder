@@ -285,6 +285,137 @@ class TestWashingtonMO(TestSleep):
         for category in ['county', 'geo_code', 'patron_code']:
             self.assertEqual(result[category], test_case[category])
 
+class TestNonresident(TestSleep):
+    def test_bond(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_calhoun(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_clinton(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_jersey(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_macoupin(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_madison(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_monroe(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_st_clair(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+    def test_lincoln(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
+
+class TestIneligible(TestSleep):
+    def test_ineligible(self):
+        submission = AddressDetails()
+        result = submission.address_lookup("", "")
+        test_case = {
+            "address": "",
+            "county": "",
+            "geo_code": "",
+            "patron_code": ""
+        }
+
+        for category in ['county', 'geo_code', 'patron_code']:
+            self.assertEqual(result[category], test_case[category])
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
