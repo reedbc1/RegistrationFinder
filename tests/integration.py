@@ -286,6 +286,7 @@ class TestWashingtonMO(TestSleep):
             self.assertEqual(result[category], test_case[category])
 
 class TestNonresident(TestSleep):
+
     def test_bond(self):
         submission = AddressDetails()
         result = submission.address_lookup("", "")
@@ -404,6 +405,7 @@ class TestNonresident(TestSleep):
             self.assertEqual(result[category], test_case[category])
 
 class TestIneligible(TestSleep):
+    
     def test_ineligible(self):
         submission = AddressDetails()
         result = submission.address_lookup("", "")
