@@ -36,7 +36,8 @@ After deleting a branch (after it has been successfully merged, for example),
 it can be helpful to remove the merged repository from remote and local git branches. 
 This is because the remote will no longer connect since the branch has 
 been deleted from GitHub. I like to also remove it locally so that my local branches 
-are identical to the remote branches.
+are identical to the remote branches.  
+
 1. Delete the desired branch on GitHub
 2. To remove the branch from the remote, run `git fetch --prune`
 3. To remove the branch locally, run `git branch -d your_branch_name_here`  
