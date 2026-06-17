@@ -11,12 +11,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-if __name__ == "__main__":
-    # load variables from .env into local environment
-    from dotenv import load_dotenv
-    load_dotenv()
-
-
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
     def decorator(func):
@@ -409,6 +403,11 @@ class AddressDetails:
 
 """Local testing"""
 if __name__ == "__main__":
+    # load variables from .env into local environment
+    from dotenv import load_dotenv
+    load_dotenv()
+
+    # test with Weber Road Branch address
     submission = AddressDetails()
     result: dict = submission.address_lookup("4444 Weber Rd.", "63123")
     print(json.dumps(result, indent=4))

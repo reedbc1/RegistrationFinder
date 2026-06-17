@@ -4,7 +4,6 @@ from main import AddressDetails
 import re
 from markupsafe import escape
 import logging
-import os
 
 app = Flask(__name__)
 
@@ -21,9 +20,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/lookup', methods=['POST'])
-# @limiter.limit("100 per minute")
 def lookup_address():
-    logger.info(f"remote address: {get_remote_address()}")
     try:
         # Get form data
         street = request.form.get('streetAddress', '').strip()
@@ -47,4 +44,6 @@ def lookup_address():
         return render_template('error.html', error="Address not found."), 500
 
 if __name__ == '__main__':
+    from dotenv import load_dotenv
+    load_dotenv()
     app.run(host='0.0.0.0', port=5000, debug=True)
