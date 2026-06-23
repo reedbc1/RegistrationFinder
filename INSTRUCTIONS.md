@@ -17,12 +17,16 @@ For **Windows**, run the following in PowerShell
 
 For more details about using venv, [click here](https://docs.python.org/3/library/venv.html#how-venvs-work).
 
+### Step 4. Configure GOOGLE_MAPS_API_KEY as an environment variable
+- Create a local file called `.env` in the main directory.
+- Set `GOOGLE_MAPS_API_KEY` to your API key value. For example: `GOOGLE_MAPS_API_KEY=your_api_key_here`
+
 ## Running the website locally
 ### Run with Flask  
 `flask --app app run`
 
 ### Run with Gunicorn (Linux Only)  
-`gunicorn --bind 0.0.0.0:8080 app:app`
+`gunicorn --bind 0.0.0.0:8080 wsgi:app`
 
 ## Running tests
 ### Run unit tests
