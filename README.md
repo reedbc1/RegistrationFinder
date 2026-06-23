@@ -93,9 +93,6 @@ Primary results provide the actionable information required for patron registrat
 - **Data freshness**  
   CSV reference files require manual updates when eligibility rules or boundaries change.
 
-- **Boundary precision**  
-  Apartment-level granularity is intentionally ignored to reduce ambiguity in GIS boundaries.
-
 - **Dependency on GIS accuracy**  
   Results depend on the accuracy of county-provided GIS datasets.
 
@@ -105,9 +102,7 @@ These tradeoffs balance maintainability, reliability, and operational simplicity
 
 ## Future Improvements
 - Add ArcGIS geocoding API as additional fallback for higher traffic
-- Add library district info for other counties
-- Add audit logging for registration decisions
-- Expose the logic as a versioned internal API  
+- Remove dependency on StLouisCounty.csv to simplify programming decision logic
 
 ---
 
