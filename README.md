@@ -1,4 +1,4 @@
-# AddressLookup (Library Patron Registration Helper)
+# Address Lookup (Library Patron Registration Helper)
 
 ## Problem & Context
 
