@@ -9,7 +9,7 @@ Open PowerShell and run the following command
 For **Linux**, run the following in a bash terminal  
 `$ source .venv/bin/activate`  
 
-For **Windows**, run the following in PowerShell
+For **Windows**, run the following in PowerShell  
 `PS C:\> .venv\Scripts\Activate.ps1`
 
 ### Step 3. Install dependencies located in requirements.txt  
