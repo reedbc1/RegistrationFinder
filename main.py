@@ -91,7 +91,7 @@ def goog_geocode(address: str, zip: str) -> tuple:
     lng: float = result.get("geometry", {}).get("location", {}).get("lng")
     lat: float = result.get("geometry", {}).get("location", {}).get("lat")
 
-    address: str = format_address(result.get("formatted_address"))
+    address = format_address(result.get("formatted_address"))
 
     # Extract postal code
     zip: None = None
@@ -226,8 +226,8 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
                                          {}).get("LIBRARY_DISTRICT"))
         selected_row = patron_codes[
             patron_codes["Geographic Code"].str.lower() == library.lower()]
-        geo_code: str = selected_row.iloc[0, 0]
-        patron_code: str = selected_row.iloc[0, 1]
+        geo_code: str = str(selected_row.iloc[0, 0])
+        patron_code: str = str(selected_row.iloc[0, 1])
 
         library_format: list = list(map(str.capitalize, library.split(' ')))
         if library_format[0] == "St":
@@ -332,7 +332,7 @@ class AddressDetails:
         that has reciprocal or non-resident status. 
         If true, set geo code and patron type and return results.
         """
-        lookup_county: list[str, str] | None = check_county(self.county)
+        lookup_county: list[str] | None = check_county(self.county)
 
         if lookup_county:
             self.geo_code: str = lookup_county[0]
@@ -345,7 +345,7 @@ class AddressDetails:
         If true, find the correct geo code and patron type
         Returns library, geo code, and patron type.
         """
-        lookup_library: list[str, str, str] | None = slc_libs(lng, lat, self.county)
+        lookup_library: list[str] | None = slc_libs(lng, lat, self.county)
 
         if lookup_library:
             self.geo_code: str = lookup_library[0]
