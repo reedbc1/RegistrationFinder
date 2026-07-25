@@ -1,11 +1,12 @@
-
-from flask import Flask, render_template, request, jsonify, abort
-from main import AddressDetails
-import re
-from markupsafe import escape
 import logging
+import re
 
 from dotenv import load_dotenv
+from flask import Flask, abort, render_template, request
+from markupsafe import escape
+
+from main import AddressDetails
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -42,8 +43,8 @@ def lookup_address():
         # fix params = params
         return render_template('result.html', params=[street_safe, zip_safe], result=result)
     
-    except Exception as e:
-        logger.exception(str(e))
+    except Exception:
+        logger.exception("An error occurred.")
         return render_template('error.html', error="Address not found."), 500
 
 if __name__ == '__main__':

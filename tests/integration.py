@@ -1,15 +1,16 @@
-import sys
-from pathlib import Path
 import os
-import unittest
+import sys
 import time
+import unittest
+from pathlib import Path
 
 CWD = Path(os.getcwd())
 sys.path.append(str(CWD))
 
+from dotenv import load_dotenv
+
 from main import AddressDetails
 
-from dotenv import load_dotenv
 load_dotenv()
 
 """

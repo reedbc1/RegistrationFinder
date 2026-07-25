@@ -1,16 +1,17 @@
-import unittest
-import sys
 import os
-from pathlib import Path
+import sys
 import time
+import unittest
+from pathlib import Path
 
 # append current working directory to sys
 CWD = Path(os.getcwd())
 sys.path.append(str(CWD))
 
+from dotenv import load_dotenv
+
 import main
 
-from dotenv import load_dotenv
 load_dotenv()
 
 """
