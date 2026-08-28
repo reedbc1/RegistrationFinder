@@ -1,5 +1,7 @@
 # Instructions for Running Locally
 
+Run all commands from the project directory (.../RegistrationFinder).
+
 ## Setting up the local environment
 
 ### Step 1. Create virtual environment  
@@ -38,11 +40,15 @@ For more details about using venv, [click here](https://docs.python.org/3/librar
 
 ## Running tests
 
-### Run unit tests
+### Run all tests
+
+    python -m unittest discover tests
+
+### Run unit tests only
 
     python -m unittest tests/test_unit.py
 
-### Run integration tests
+### Run integration tests only
 
     python -m unittest tests/test_integration.py
 
