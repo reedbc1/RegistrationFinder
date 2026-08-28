@@ -1,6 +1,7 @@
 # Instructions for Running Locally
 
 ## Setting up the local environment
+
 ### Step 1. Create virtual environment  
 Open PowerShell and run the following command
 
@@ -26,6 +27,7 @@ For more details about using venv, [click here](https://docs.python.org/3/librar
 - Set `GOOGLE_MAPS_API_KEY` to your API key value. For example: `GOOGLE_MAPS_API_KEY=your_api_key_here`
 
 ## Running the website locally
+
 ### Run with Flask
 
     flask --app app run
@@ -35,13 +37,14 @@ For more details about using venv, [click here](https://docs.python.org/3/librar
     gunicorn --bind 0.0.0.0:8080 wsgi:app
 
 ## Running tests
+
 ### Run unit tests
 
-    python -m unittest tests/unit.py
+    python -m unittest tests/test_unit.py
 
 ### Run integration tests
 
-    python -m unittest tests/integration.py
+    python -m unittest tests/test_integration.py
 
 ## Cleaning up git branches
 After deleting a branch (after it has been successfully merged, for example), 
