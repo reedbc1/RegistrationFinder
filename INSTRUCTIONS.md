@@ -5,16 +5,16 @@ Run all commands from the project directory (.../RegistrationFinder).
 ## Setting up the local environment
 
 ### Step 1. Create virtual environment  
-Open PowerShell and run the following command
+Open a terminal and run the following command.
 
     python -m venv .venv 
 
 ### Step 2. Open virtual environment  
-For **Linux**, run the following in a bash terminal
+For **Linux**, run the following in a bash terminal.
 
     source .venv/bin/activate 
 
-For **Windows**, run the following in PowerShell  
+For **Windows**, run the following in PowerShell.
 
     .venv\Scripts\Activate.ps1
 
