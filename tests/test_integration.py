@@ -3,8 +3,8 @@ import time
 import unittest
 from pathlib import Path
 
-CWD = Path(__file__).resolve().parent.parent
-sys.path.append(str(CWD))
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(PROJECT_DIR))
 
 from dotenv import load_dotenv
 
