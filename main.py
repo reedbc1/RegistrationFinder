@@ -53,13 +53,11 @@ def get_gmaps_client():
 
 
 @retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
-def goog_geocode(address: str, zip: str) -> tuple:
+def goog_geocode(gmaps, address: str, zip: str) -> tuple:
     """
     Get data from Google Geocoder API.
     Returns: (lng, lat, formatted_address, zip, city, state)
     """
-
-    gmaps = get_gmaps_client()
 
     try:
         data: list = gmaps.geocode(address + " " + zip)
@@ -185,10 +183,10 @@ def check_county(county: str) -> list[str, str] | None:
     patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
 
     try:
-        result: list[str, str] = patron_codes[patron_codes["County"].str.lower(
+        result = patron_codes[patron_codes["County"].str.lower(
         ) == county.lower()].loc[:, ["Geographic Code", "Patron Code"]]
-        geo_code: str = result.iloc[0, 0]
-        patron_code: str = result.iloc[0, 1]
+        geo_code = str(result.iloc[0, 0])
+        patron_code = str(result.iloc[0, 1])
 
     except IndexError:
         return None
@@ -300,7 +298,7 @@ class AddressDetails:
         for attr in attributes:
             setattr(self, attr, None)
 
-    def address_lookup(self, address: str, zip: str):
+    def address_lookup(self, gmaps, address: str, zip: str):
         """
         Determine patron code, geographic code, and other relevant information
         depending on location.
@@ -313,7 +311,7 @@ class AddressDetails:
         Raise exception if details cannot be found from the address and zip.
         """
 
-        lng, lat, self.address, zip, city, state = goog_geocode(
+        lng, lat, self.address, zip, city, state = goog_geocode(gmaps,
             address, zip)
         if None in [lng, lat, self.address, zip, city, state]:
             raise Exception(
@@ -413,7 +411,9 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
 
+    gmaps = get_gmaps_client()
+
     # test address
     submission = AddressDetails()
-    result: dict = submission.address_lookup("4444 Weber Rd", "63123")
+    result: dict = submission.address_lookup(gmaps, "4444 Weber Rd", "63123")
     print(json.dumps(result, indent=4))

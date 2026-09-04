@@ -3,16 +3,33 @@ import re
 
 from dotenv import load_dotenv
 from flask import Flask, abort, render_template, request
+from flask_caching import Cache
 from markupsafe import escape
 
-from main import AddressDetails
+from main import AddressDetails, get_gmaps_client
 
 load_dotenv()
 
+config = {
+    "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 600
+}
+
 app = Flask(__name__)
+app.config.from_mapping(config)
+
+cache = Cache(app)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# cache test
+logger.info("setting gmaps client in cache...")
+cache.set("gmaps", get_gmaps_client())
+
+logger.info("loading gmaps client...")
+with app.app_context():
+    gmaps = cache.get("gmaps")
 
 @app.before_request
 def limit_payload():
@@ -37,8 +54,17 @@ def lookup_address():
         if not re.match(r"^\d{5}(-\d{4})?$", zip_safe):
             abort(400, "Invalid ZIP code")
 
+        logger.info("Loading gmaps...")
+        with app.app_context():
+            gmaps = cache.get("gmaps")
+            if gmaps == None:
+                logger.info("gmaps not found in cache. Storing in cache.")
+                cache.set("gmaps", get_gmaps_client())
+                logger.info("Loading gmaps...")
+                gmaps = cache.get("gmaps")
+                
         # Call the main function
-        result = AddressDetails().address_lookup(street_safe, zip_safe)
+        result = AddressDetails().address_lookup(gmaps, street_safe, zip_safe)
 
         # fix params = params
         return render_template('result.html', params=[street_safe, zip_safe], result=result)
