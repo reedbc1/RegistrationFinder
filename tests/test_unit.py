@@ -1,11 +1,10 @@
-import os
 import sys
 import time
 import unittest
 from pathlib import Path
 
 # append current working directory to sys
-CWD = Path(os.getcwd())
+CWD = Path(__file__).resolve().parent.parent
 sys.path.append(str(CWD))
 
 from dotenv import load_dotenv
@@ -13,6 +12,8 @@ from dotenv import load_dotenv
 import main
 
 load_dotenv()
+
+gmaps = main.get_gmaps_client()
 
 """
 Unit testing for the AddressLookup app.
@@ -23,7 +24,7 @@ class TestFunctions(unittest.TestCase):
         time.sleep(1)
 
     def test_goog_geocode(self):
-        result = main.goog_geocode('4444 Weber Rd.', '63123')
+        result = main.goog_geocode(gmaps, '4444 Weber Rd.', '63123')
         test_case = (
             -90.2980178, 38.5509335, 
             '4444 WEBER RD, ST LOUIS, MO 63123', 
