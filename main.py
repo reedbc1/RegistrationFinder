@@ -46,15 +46,20 @@ def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     return decorator
 
 
+def get_gmaps_client():
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
+    gmaps = googlemaps.Client(key=api_key)
+    return gmaps
+
+
 @retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def goog_geocode(address: str, zip: str) -> tuple:
     """
     Get data from Google Geocoder API.
     Returns: (lng, lat, formatted_address, zip, city, state)
     """
-    api_key = os.getenv("GOOGLE_MAPS_API_KEY")
 
-    gmaps = googlemaps.Client(key=api_key)
+    gmaps = get_gmaps_client()
 
     try:
         data: list = gmaps.geocode(address + " " + zip)
