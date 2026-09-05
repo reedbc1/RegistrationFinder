@@ -130,12 +130,7 @@ def format_address(address: str) -> str:
 
 
 @retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
-def arcgis_county(lng: float, lat: float) -> str:
-    """
-    Returns county_name or raises Exception('Address not found.')
-    Example output: St. Louis County
-    """
-
+def arcgis_request(lng: float, lat: float):
     url: str = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
     params: dict = {
@@ -152,9 +147,23 @@ def arcgis_county(lng: float, lat: float) -> str:
     response = requests.get(url, params=params, timeout=(3,10))
 
     if response.status_code != requests.codes.ok:
-            response.raise_for_status()
-            
-    data: dict = response.json()
+        response.raise_for_status()
+
+    return response
+
+
+def arcgis_county(lng: float, lat: float) -> str:
+    """
+    Returns county_name or raises ValueError("County name not found by function: arcgis_county").
+    Example output: St. Louis County
+    """
+
+    response = arcgis_request(lng, lat)
+
+    try:
+        data: dict = response.json()
+    except requests.exceptions.JSONDecodeError as e:
+        raise ValueError("response did not return valid JSON.") from e
 
     try:
         county_name: str = (
