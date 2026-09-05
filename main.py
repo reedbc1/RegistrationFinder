@@ -62,9 +62,7 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
         data: list = gmaps.geocode(address + " " + zip)
 
     except Exception as e:
-        logger.info("Google Geocoder API call was unsuccessful."
-                     f"Error: {e}")
-        raise e
+        raise RuntimeError("Google Geocoder API call was unsuccessful.") from e
     
     if len(data) == 0:
         raise ValueError('Length of data is 0.')
@@ -100,10 +98,10 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
     formatted_address = format_address(google_address)
 
     # Extract postal code
-    zip: str | None = None
+    zip_google: str | None = None
     for component in components:
         if 'postal_code' in component.get('types', []):
-            zip = component.get('long_name')
+            zip_google = component.get('long_name')
             break
 
     try:
@@ -117,7 +115,7 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
             state = component.get('short_name')
             break
 
-    return lng, lat, formatted_address, zip, city, state
+    return lng, lat, formatted_address, zip_google, city, state
 
 
 def format_address(address: str) -> str:
@@ -173,7 +171,7 @@ def arcgis_county(lng: float, lat: float) -> str:
         raise ValueError("County name not found by function: arcgis_county") from e
 
 
-def check_county(county: str) -> list[str, str] | None:
+def check_county(county: str) -> list[str] | None:
     """
     Check for status for counties other 
     than St. Louis County and Jefferson County
@@ -195,7 +193,7 @@ def check_county(county: str) -> list[str, str] | None:
 
 
 @retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
-def slc_libs(lng: float, lat: float, county: str) -> list[str, str, str] | None:
+def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
     """
     Checks for library district if county is St. Louis County.
     Otherwise, returns None.
@@ -314,8 +312,7 @@ class AddressDetails:
         lng, lat, self.address, zip, city, state = goog_geocode(gmaps,
             address, zip)
         if None in [lng, lat, self.address, zip, city, state]:
-            raise Exception(
-                "Google geocoder failed to find all address details")
+            raise ValueError("Google geocoder failed to find all address details")
 
         # identify county using arcgis API.
         self.county: str = arcgis_county(lng, lat)
