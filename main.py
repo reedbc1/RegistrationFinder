@@ -94,7 +94,7 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
     lat: float = result.get("geometry", {}).get("location", {}).get("lat")
 
     google_address = result.get("formatted_address")
-    if not google_address:
+    if google_address is None:
         raise ValueError("formatted_address not found in result.")
 
     formatted_address = format_address(google_address)
@@ -141,15 +141,15 @@ def arcgis_county(lng: float, lat: float) -> str:
     url: str = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
     params: dict = {
-                "geometry": f"{lng},{lat}",
-                "geometryType": "esriGeometryPoint",
-                "inSR": "4326",
-                "spatialRel": "esriSpatialRelIntersects",
-                "outFields": "NAME",
-                "returnGeometry": "false",
-                "defaultSR": "4326",
-                "f": "json"
-            }
+            "geometry": f"{lng},{lat}",
+            "geometryType": "esriGeometryPoint",
+            "inSR": "4326",
+            "spatialRel": "esriSpatialRelIntersects",
+            "outFields": "NAME",
+            "returnGeometry": "false",
+            "defaultSR": "4326",
+            "f": "json"
+        }
 
     response = requests.get(url, params=params, timeout=(3,10))
 
@@ -169,10 +169,8 @@ def arcgis_county(lng: float, lat: float) -> str:
 
         return county_name_caps
 
-    except Exception as e:
-        logger.error("County name not found by function: arcgis_county")
-        logger.info(e)
-        raise Exception("Address not found.")
+    except AttributeError as e:
+        raise ValueError("County name not found by function: arcgis_county") from e
 
 
 def check_county(county: str) -> list[str, str] | None:
