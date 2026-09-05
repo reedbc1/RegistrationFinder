@@ -87,34 +87,37 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
 
     # Check if both exist, otherwise raise error.
     if not (street_number and route):
-        logger.info("street_number and/or route not found.")
-        raise Exception("Address not found.")
+        raise ValueError("Street_number and/or route not found.")
 
     # get longitude and latitude
     lng: float = result.get("geometry", {}).get("location", {}).get("lng")
     lat: float = result.get("geometry", {}).get("location", {}).get("lat")
 
-    address = format_address(result.get("formatted_address"))
+    google_address = result.get("formatted_address")
+    if not google_address:
+        raise ValueError("formatted_address not found in result.")
+
+    formatted_address = format_address(google_address)
 
     # Extract postal code
-    zip: None = None
+    zip: str | None = None
     for component in components:
         if 'postal_code' in component.get('types', []):
-            zip: str | None = component.get('long_name')
+            zip = component.get('long_name')
             break
 
     try:
-        city: str = address.split(", ")[1]
+        city: str | None = formatted_address.split(", ")[1]
     except IndexError:
-        city: None = None
+        city = None
 
-    state: None = None
+    state: str | None = None
     for component in components:
         if 'administrative_area_level_1' in component.get('types', []):
-            state: str = component.get('short_name')
+            state = component.get('short_name')
             break
 
-    return lng, lat, address, zip, city, state
+    return lng, lat, formatted_address, zip, city, state
 
 
 def format_address(address: str) -> str:
