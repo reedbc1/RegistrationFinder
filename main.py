@@ -52,7 +52,6 @@ def get_gmaps_client():
     return gmaps
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
 def goog_geocode(gmaps, address: str, zip: str) -> tuple:
     """
     Get data from Google Geocoder API.
@@ -68,7 +67,7 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
         raise e
     
     if len(data) == 0:
-        raise Exception('Address not found.')
+        raise ValueError('Length of data is 0.')
 
     elif len(data) > 1:
         logger.warning('Multiple addresses found, using the first one.')
