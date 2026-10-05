@@ -145,9 +145,7 @@ def arcgis_request(lng: float, lat: float):
         }
 
     response = requests.get(url, params=params, timeout=(3,10))
-
-    if response.status_code != requests.codes.ok:
-        response.raise_for_status()
+    response.raise_for_status()
 
     return response
 
@@ -226,9 +224,7 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
         }
 
         response = requests.get(url, params=params, timeout=(3,10))
-
-        if response.status_code != requests.codes.ok:
-            response.raise_for_status()
+        response.raise_for_status()
 
         data: dict = response.json()
 
@@ -276,9 +272,7 @@ def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
         }
 
         response = requests.get(url, params=params, timeout=(3,10))
-
-        if response.status_code != requests.codes.ok:
-            response.raise_for_status()
+        response.raise_for_status()
 
         data: dict = response.json()
 
