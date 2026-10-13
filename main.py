@@ -11,6 +11,10 @@ import requests
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# load csv files once when main.py is imported
+oc_patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
+slc_patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
+
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
@@ -187,10 +191,8 @@ def check_county(county: str) -> list[str] | None:
     Returns [geo_code, patron_code]
     """
 
-    patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
-
     try:
-        result = patron_codes[patron_codes["County"].str.lower(
+        result = oc_patron_codes[oc_patron_codes["County"].str.lower(
         ) == county.lower()].loc[:, ["Geographic Code", "Patron Code"]]
         geo_code = str(result.iloc[0, 0])
         patron_code = str(result.iloc[0, 1])
@@ -210,8 +212,6 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
     """
 
     if county.lower() == "st. louis county":
-        patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
-
         url: str = "https://services2.arcgis.com/w657bnjzrjguNyOy/ArcGIS/rest/services/AGS_Jurisdictions/FeatureServer/8/query"
 
         params: dict = {
@@ -235,8 +235,8 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
         library: str = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
-        selected_row = patron_codes[
-            patron_codes["Geographic Code"].str.lower() == library.lower()]
+        selected_row = slc_patron_codes[
+            slc_patron_codes["Geographic Code"].str.lower() == library.lower()]
         geo_code: str = str(selected_row.iloc[0, 0])
         patron_code: str = str(selected_row.iloc[0, 1])
 
