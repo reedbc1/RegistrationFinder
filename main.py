@@ -2,6 +2,7 @@ import functools
 import json
 import logging
 import os
+from pathlib import Path
 import time
 
 import googlemaps
@@ -14,6 +15,22 @@ logger = logging.getLogger(__name__)
 # load csv files once when main.py is imported
 oc_patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
 slc_patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
+
+PROJECT_DIR = Path(__file__).resolve().parent
+DATA_PATH = PROJECT_DIR / "csv_files"
+OC_PATH = DATA_PATH / "OtherCounties.csv"
+SLC_PATH = DATA_PATH / "StLouisCounty.csv"
+MUNICIPAL_PATH = DATA_PATH / "MunicipalLibraries.json"
+
+
+def get_municipal_set():
+    with open(MUNICIPAL_PATH) as f:
+        municipal_list = json.load(f)
+        municipal_set = set(map(lambda x: x.lower(), set(municipal_list)))
+        return municipal_set
+
+
+municipal_set = get_municipal_set()
 
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
@@ -231,16 +248,19 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
         library: str = (data.get("features",
                             [{}])[0].get("attributes",
                                          {}).get("LIBRARY_DISTRICT"))
-        selected_row = slc_patron_codes[
-            slc_patron_codes["Geographic Code"].str.lower() == library.lower()]
-        geo_code: str = str(selected_row.iloc[0, 0])
-        patron_code: str = str(selected_row.iloc[0, 1])
 
-        library_format: list = list(map(str.capitalize, library.split(' ')))
-        if library_format[0] == "St":
-            library_format[0] = "St."
+        if library.lower() == "st louis county":
+            geo_code: str = "St Louis County"
+            patron_code: str = "Resident"
+            library = "St. Louis County"
+        elif library.lower() in municipal_set:
+            patron_code: str = "Reciprocal"
+            library_format: list = list(map(str.capitalize, library.split(' ')))
+            library: str = ' '.join(library_format)
+            geo_code: str = library
 
-        library: str = ' '.join(library_format)
+        else:
+            raise ValueError("Library not St. Louis County or found in set of municipal libraries.")
 
         return [geo_code, patron_code, library]
 
