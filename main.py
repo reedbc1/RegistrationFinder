@@ -1,3 +1,4 @@
+import csv
 import functools
 import json
 import logging
@@ -12,15 +13,32 @@ import requests
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# load csv files once when main.py is imported
-oc_patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
-slc_patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
-
 PROJECT_DIR = Path(__file__).resolve().parent
 DATA_PATH = PROJECT_DIR / "csv_files"
 OC_PATH = DATA_PATH / "OtherCounties.csv"
-SLC_PATH = DATA_PATH / "StLouisCounty.csv"
 MUNICIPAL_PATH = DATA_PATH / "MunicipalLibraries.json"
+
+
+def get_oc_list():
+    oc_list = []
+    with open(OC_PATH) as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            oc_list.append(row)
+    return oc_list
+
+
+def get_oc_dict(oc_list):
+    oc_dict = {}
+    for item in oc_list:
+        county = item["County"].lower()
+        del item["County"]
+        oc_dict[county] = item
+    return oc_dict
+
+
+def get_oc_set(oc_dict):
+    return set(map(lambda x: x.lower(), oc_dict.keys()))
 
 
 def get_municipal_set():
@@ -30,6 +48,9 @@ def get_municipal_set():
         return municipal_set
 
 
+oc_list = get_oc_list()
+oc_dict = get_oc_dict(oc_list)
+oc_set = get_oc_set(oc_dict)
 municipal_set = get_municipal_set()
 
 
@@ -206,14 +227,15 @@ def check_county(county: str) -> list[str] | None:
     Returns [geo_code, patron_code]
     """
 
-    try:
-        result = oc_patron_codes[oc_patron_codes["County"].str.lower(
-        ) == county.lower()].loc[:, ["Geographic Code", "Patron Code"]]
-        geo_code = str(result.iloc[0, 0])
-        patron_code = str(result.iloc[0, 1])
-
-    except IndexError:
+    if county.lower() not in oc_set:
         return None
+
+    county_info = oc_dict.get(county.lower(), {})
+    geo_code = county_info.get("Geographic Code")
+    patron_code = county_info.get("Patron Code")
+
+    if geo_code is None or patron_code is None:
+        raise ValueError(f"geo_code or patron_code not found for county: {county}")
 
     return [geo_code, patron_code]
 
