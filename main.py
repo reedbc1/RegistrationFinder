@@ -22,8 +22,7 @@ def get_oc_list():
     oc_list = []
     with open(OC_PATH) as csvfile:
         reader = csv.DictReader(csvfile)
-        for row in reader:
-            oc_list.append(row)
+        oc_list = list(reader)
     return oc_list
 
 
@@ -37,13 +36,13 @@ def get_oc_dict(oc_list):
 
 
 def get_oc_set(oc_dict):
-    return set(map(lambda x: x.lower(), oc_dict.keys()))
+    return {k.lower() for k in oc_dict}
 
 
 def get_municipal_set():
     with open(MUNICIPAL_PATH) as f:
         municipal_list = json.load(f)
-        municipal_set = set(map(lambda x: x.lower(), set(municipal_list)))
+        municipal_set = {k.lower() for k in municipal_list}
         return municipal_set
 
 
