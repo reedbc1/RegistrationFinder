@@ -3,11 +3,10 @@ import functools
 import json
 import logging
 import os
-from pathlib import Path
 import time
+from pathlib import Path
 
 import googlemaps
-import pandas as pd
 import requests
 
 logging.basicConfig(level=logging.INFO)
@@ -56,6 +55,7 @@ municipal_set = get_municipal_set()
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
+
     def decorator(func):
 
         @functools.wraps(func)
@@ -105,25 +105,26 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
 
     except Exception as e:
         raise RuntimeError("Google Geocoder API call was unsuccessful.") from e
-    
+
     if len(data) == 0:
-        raise ValueError('Length of data is 0.')
+        raise ValueError("Length of data is 0.")
 
     elif len(data) > 1:
-        logger.warning('Multiple addresses found, using the first one.')
+        logger.warning("Multiple addresses found, using the first one.")
 
     # extract the first result
     result: dict = data[0]
 
     # Extract the components
-    components: list = result.get('address_components', [])
+    components: list = result.get("address_components", [])
 
     # Find street number and route
     street_number: str | None = next(
-        (c['long_name'] for c in components if 'street_number' in c['types']),
-        None)
-    route: str | None = next((c['long_name'] for c in components if 'route' in c['types']),
-                 None)
+        (c["long_name"] for c in components if "street_number" in c["types"]), None
+    )
+    route: str | None = next(
+        (c["long_name"] for c in components if "route" in c["types"]), None
+    )
 
     # Check if both exist, otherwise raise error.
     if not (street_number and route):
@@ -142,8 +143,8 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
     # Extract postal code
     zip_google: str | None = None
     for component in components:
-        if 'postal_code' in component.get('types', []):
-            zip_google = component.get('long_name')
+        if "postal_code" in component.get("types", []):
+            zip_google = component.get("long_name")
             break
 
     try:
@@ -153,8 +154,8 @@ def goog_geocode(gmaps, address: str, zip: str) -> tuple:
 
     state: str | None = None
     for component in components:
-        if 'administrative_area_level_1' in component.get('types', []):
-            state = component.get('short_name')
+        if "administrative_area_level_1" in component.get("types", []):
+            state = component.get("short_name")
             break
 
     return lng, lat, formatted_address, zip_google, city, state
@@ -167,26 +168,32 @@ def format_address(address: str) -> str:
     Example output: 4444 WEBER RD, ST LOUIS, MO 63123
     """
 
-    return address.upper().strip().replace('.', '').replace("'", ' ').replace(
-        ", USA", '')
+    return (
+        address.upper().strip().replace(".", "").replace("'", " ").replace(", USA", "")
+    )
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+@retry(
+    max_attempts=3,
+    delay=1,
+    backoff=2,
+    exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
+)
 def arcgis_request(lng: float, lat: float):
     url: str = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
     params: dict = {
-            "geometry": f"{lng},{lat}",
-            "geometryType": "esriGeometryPoint",
-            "inSR": "4326",
-            "spatialRel": "esriSpatialRelIntersects",
-            "outFields": "NAME",
-            "returnGeometry": "false",
-            "defaultSR": "4326",
-            "f": "json"
-        }
+        "geometry": f"{lng},{lat}",
+        "geometryType": "esriGeometryPoint",
+        "inSR": "4326",
+        "spatialRel": "esriSpatialRelIntersects",
+        "outFields": "NAME",
+        "returnGeometry": "false",
+        "defaultSR": "4326",
+        "f": "json",
+    }
 
-    response = requests.get(url, params=params, timeout=(3,10))
+    response = requests.get(url, params=params, timeout=(3, 10))
     response.raise_for_status()
 
     return response
@@ -207,9 +214,7 @@ def arcgis_county(lng: float, lat: float) -> str:
 
     try:
         county_name: str = (
-            data.get("features", [{}])[0]
-                .get("attributes", {})
-                .get("NAME")
+            data.get("features", [{}])[0].get("attributes", {}).get("NAME")
         )
         # Capitalize first letter of every word
         county_name_caps = county_name.title()
@@ -222,7 +227,7 @@ def arcgis_county(lng: float, lat: float) -> str:
 
 def check_county(county: str) -> list[str] | None:
     """
-    Check for status for counties other 
+    Check for status for counties other
     than St. Louis County and Jefferson County
     Returns [geo_code, patron_code]
     """
@@ -240,7 +245,12 @@ def check_county(county: str) -> list[str] | None:
     return [geo_code, patron_code]
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+@retry(
+    max_attempts=3,
+    delay=1,
+    backoff=2,
+    exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
+)
 def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
     """
     Checks for library district if county is St. Louis County.
@@ -259,17 +269,17 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
             "outFields": "LIBRARY_DISTRICT",
             "returnGeometry": "false",
             "defaultSR": "4326",
-            "f": "json"
+            "f": "json",
         }
 
-        response = requests.get(url, params=params, timeout=(3,10))
+        response = requests.get(url, params=params, timeout=(3, 10))
         response.raise_for_status()
 
         data: dict = response.json()
 
-        library: str = (data.get("features",
-                            [{}])[0].get("attributes",
-                                         {}).get("LIBRARY_DISTRICT"))
+        library: str = (
+            data.get("features", [{}])[0].get("attributes", {}).get("LIBRARY_DISTRICT")
+        )
 
         if library.lower() == "st louis county":
             geo_code: str = "St Louis County"
@@ -277,12 +287,14 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
             library = "St. Louis County"
         elif library.lower() in municipal_set:
             patron_code: str = "Reciprocal"
-            library_format: list = list(map(str.capitalize, library.split(' ')))
-            library: str = ' '.join(library_format)
+            library_format: list = list(map(str.capitalize, library.split(" ")))
+            library: str = " ".join(library_format)
             geo_code: str = library
 
         else:
-            raise ValueError("Library not St. Louis County or found in set of municipal libraries.")
+            raise ValueError(
+                "Library not St. Louis County or found in set of municipal libraries."
+            )
 
         return [geo_code, patron_code, library]
 
@@ -290,7 +302,12 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
         return None
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+@retry(
+    max_attempts=3,
+    delay=1,
+    backoff=2,
+    exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
+)
 def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
     """
     Checks for school district if county is Jefferson County.
@@ -299,7 +316,6 @@ def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
     """
 
     if county.lower() == "jefferson county":
-
         url: str = "https://services1.arcgis.com/Ur3TPhgM56qvxaar/arcgis/rest/services/Tax_Districts/FeatureServer/0/query"
 
         params: dict = {
@@ -310,16 +326,15 @@ def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
             "outFields": "*",
             "returnGeometry": "false",
             "defaultSR": "4326",
-            "f": "json"
+            "f": "json",
         }
 
-        response = requests.get(url, params=params, timeout=(3,10))
+        response = requests.get(url, params=params, timeout=(3, 10))
         response.raise_for_status()
 
         data: dict = response.json()
 
-        school: str = (data.get("features", [{}])[0].get("attributes",
-                                                    {}).get("Name"))
+        school: str = data.get("features", [{}])[0].get("attributes", {}).get("Name")
 
         return school
 
@@ -336,7 +351,12 @@ class AddressDetails:
 
     def __init__(self):
         attributes: list = [
-            "address", "county", "library", "school", "geo_code", "patron_code"
+            "address",
+            "county",
+            "library",
+            "school",
+            "geo_code",
+            "patron_code",
         ]
         for attr in attributes:
             setattr(self, attr, None)
@@ -354,8 +374,7 @@ class AddressDetails:
         Raise exception if details cannot be found from the address and zip.
         """
 
-        lng, lat, self.address, zip, city, state = goog_geocode(gmaps,
-            address, zip)
+        lng, lat, self.address, zip, city, state = goog_geocode(gmaps, address, zip)
         if None in [lng, lat, self.address, zip, city, state]:
             raise ValueError("Google geocoder failed to find all address details")
 
@@ -407,7 +426,6 @@ class AddressDetails:
         self.school: str | None = jeffco_schools(lng, lat, self.county)
 
         if self.school:
-
             self.geo_code = "Jefferson County"
 
             eligible_schools = ["northwest", "fox", "windsor"]
@@ -443,14 +461,17 @@ class AddressDetails:
                 "library": self.library,
                 "school": self.school,
                 "geo_code": self.geo_code,
-                "patron_code": self.patron_code
-            }.items() if v is not None
+                "patron_code": self.patron_code,
+            }.items()
+            if v is not None
         }
+
 
 """Local testing"""
 if __name__ == "__main__":
     # load variables from .env into local environment
     from dotenv import load_dotenv
+
     load_dotenv()
 
     gmaps = get_gmaps_client()
