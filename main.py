@@ -35,10 +35,6 @@ def get_oc_dict(oc_list):
     return oc_dict
 
 
-def get_oc_set(oc_dict):
-    return {k.lower() for k in oc_dict}
-
-
 def get_municipal_set():
     with open(MUNICIPAL_PATH) as f:
         municipal_list = json.load(f)
@@ -48,7 +44,6 @@ def get_municipal_set():
 
 oc_list = get_oc_list()
 oc_dict = get_oc_dict(oc_list)
-oc_set = get_oc_set(oc_dict)
 municipal_set = get_municipal_set()
 
 
@@ -231,7 +226,7 @@ def check_county(county: str) -> list[str] | None:
     Returns [geo_code, patron_code]
     """
 
-    if county.lower() not in oc_set:
+    if county.lower() not in oc_dict:
         return None
 
     county_info = oc_dict.get(county.lower(), {})
