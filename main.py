@@ -16,7 +16,7 @@ oc_patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
 slc_patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
 
 # status codes to retry
-
+CODES_TO_RETRY = [408, 425, 429, 500, 502, 503, 504]
 
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
@@ -32,6 +32,9 @@ def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
                 try:
                     return func(*args, **kwargs)
                 except exceptions as e:
+                    if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code not in CODES_TO_RETRY:
+                        raise
+
                     if attempt == max_attempts:
                         logger.error("Max retries reached for %s", func.__name__)
                         raise
@@ -152,7 +155,6 @@ def arcgis_request(lng: float, lat: float):
         }
 
     response = requests.get(url, params=params, timeout=(3,10))
-    # if response.status_code ==
     response.raise_for_status()
 
     return response
@@ -205,7 +207,8 @@ def check_county(county: str) -> list[str] | None:
     return [geo_code, patron_code]
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError,
+                                                       requests.exceptions.HTTPError))
 def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
     """
     Checks for library district if county is St. Louis County.
@@ -252,7 +255,8 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
         return None
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError,
+                                                       requests.exceptions.HTTPError))
 def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
     """
     Checks for school district if county is Jefferson County.
