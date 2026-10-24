@@ -15,6 +15,9 @@ logger = logging.getLogger(__name__)
 oc_patron_codes = pd.read_csv("csv_files/OtherCounties.csv")
 slc_patron_codes = pd.read_csv("csv_files/StLouisCounty.csv")
 
+# status codes to retry
+
+
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
@@ -28,7 +31,6 @@ def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
             for attempt in range(1, max_attempts + 1):
                 try:
                     return func(*args, **kwargs)
-
                 except exceptions as e:
                     if attempt == max_attempts:
                         logger.error("Max retries reached for %s", func.__name__)
@@ -133,7 +135,8 @@ def format_address(address: str) -> str:
         ", USA", '')
 
 
-@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError))
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError,
+                                                       requests.exceptions.HTTPError))
 def arcgis_request(lng: float, lat: float):
     url: str = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
@@ -149,6 +152,7 @@ def arcgis_request(lng: float, lat: float):
         }
 
     response = requests.get(url, params=params, timeout=(3,10))
+    # if response.status_code ==
     response.raise_for_status()
 
     return response

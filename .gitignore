@@ -162,5 +162,5 @@ cython_debug/
 # testing code
 test_script.py
 
-# local folder
+# local file
 local/
