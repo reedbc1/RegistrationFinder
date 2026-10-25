@@ -46,6 +46,9 @@ oc_list = get_oc_list()
 oc_dict = get_oc_dict(oc_list)
 municipal_set = get_municipal_set()
 
+# status codes to retry
+CODES_TO_RETRY = [408, 425, 429, 500, 502, 503, 504]
+
 
 def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
     """Define decorator function for retries if APIs time out."""
@@ -60,8 +63,10 @@ def retry(max_attempts=3, delay=1, backoff=1, exceptions=(Exception,)):
             for attempt in range(1, max_attempts + 1):
                 try:
                     return func(*args, **kwargs)
-
                 except exceptions as e:
+                    if isinstance(e, requests.exceptions.HTTPError) and e.response.status_code not in CODES_TO_RETRY:
+                        raise
+
                     if attempt == max_attempts:
                         logger.error("Max retries reached for %s", func.__name__)
                         raise
@@ -167,12 +172,8 @@ def format_address(address: str) -> str:
     )
 
 
-@retry(
-    max_attempts=3,
-    delay=1,
-    backoff=2,
-    exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
-)
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError,
+                                                       requests.exceptions.HTTPError))
 def arcgis_request(lng: float, lat: float):
     url: str = "https://services.arcgis.com/P3ePLMYs2RVChkJx/ArcGIS/rest/services/USA_Census_Counties/FeatureServer/0/query"
 
@@ -239,12 +240,8 @@ def check_county(county: str) -> list[str] | None:
     return [geo_code, patron_code]
 
 
-@retry(
-    max_attempts=3,
-    delay=1,
-    backoff=2,
-    exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
-)
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError,
+                                                       requests.exceptions.HTTPError))
 def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
     """
     Checks for library district if county is St. Louis County.
@@ -296,12 +293,8 @@ def slc_libs(lng: float, lat: float, county: str) -> list[str] | None:
         return None
 
 
-@retry(
-    max_attempts=3,
-    delay=1,
-    backoff=2,
-    exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError),
-)
+@retry(max_attempts=3, delay=1, backoff=2, exceptions=(requests.exceptions.Timeout, requests.exceptions.ConnectionError,
+                                                       requests.exceptions.HTTPError))
 def jeffco_schools(lng: float, lat: float, county: str) -> str | None:
     """
     Checks for school district if county is Jefferson County.

@@ -2,6 +2,9 @@ import sys
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import call, patch
+
+import requests
 
 # append current working directory to sys
 PROJECT_DIR = Path(__file__).resolve().parent.parent
@@ -60,6 +63,145 @@ class TestFunctions(unittest.TestCase):
         result = main.jeffco_schools(lng = -90.5096530409488, lat = 38.311159280927086, county = 'Jefferson County')
         test_case = 'Fox'
         self.assertEqual(result, test_case)
+
+
+class TestRetryDecorator(unittest.TestCase):
+    @staticmethod
+    def make_http_error(status_code):
+        response = requests.Response()
+        response.status_code = status_code
+        response.url = "https://example.test/resource"
+        return requests.exceptions.HTTPError(
+            f"HTTP {status_code}",
+            response=response,
+        )
+
+    def test_http_errors_with_retryable_status_codes_are_retried(self):
+        with patch("main.time.sleep") as mock_sleep:
+            for status_code in main.CODES_TO_RETRY:
+                with self.subTest(status_code=status_code):
+                    attempts = 0
+                    error = self.make_http_error(status_code)
+
+                    @main.retry(
+                        max_attempts=2,
+                        delay=1,
+                        exceptions=(requests.exceptions.HTTPError,),
+                    )
+                    def succeeds_after_retry():
+                        nonlocal attempts
+                        attempts += 1
+                        if attempts == 1:
+                            raise error
+                        return "success"
+
+                    result = succeeds_after_retry()
+
+                    self.assertEqual(result, "success")
+                    self.assertEqual(attempts, 2)
+                    mock_sleep.assert_called_once_with(1)
+                    mock_sleep.reset_mock()
+
+    def test_http_error_with_non_retryable_status_code_is_not_retried(self):
+        attempts = 0
+        error = self.make_http_error(404)
+
+        @main.retry(
+            max_attempts=3,
+            delay=1,
+            exceptions=(requests.exceptions.HTTPError,),
+        )
+        def always_fails():
+            nonlocal attempts
+            attempts += 1
+            raise error
+
+        with patch("main.time.sleep") as mock_sleep:
+            with self.assertRaises(requests.exceptions.HTTPError) as context:
+                always_fails()
+
+        self.assertIs(context.exception, error)
+        self.assertEqual(attempts, 1)
+        mock_sleep.assert_not_called()
+
+    def test_retryable_http_error_is_raised_after_attempts_are_exhausted(self):
+        attempts = 0
+        error = self.make_http_error(503)
+
+        @main.retry(
+            max_attempts=3,
+            delay=1,
+            backoff=2,
+            exceptions=(requests.exceptions.HTTPError,),
+        )
+        def always_fails():
+            nonlocal attempts
+            attempts += 1
+            raise error
+
+        with patch("main.time.sleep") as mock_sleep:
+            with self.assertRaises(requests.exceptions.HTTPError) as context:
+                always_fails()
+
+        self.assertIs(context.exception, error)
+        self.assertEqual(attempts, 3)
+        self.assertEqual(mock_sleep.call_args_list, [call(1), call(2)])
+
+    def test_timeout_and_connection_error_are_retried(self):
+        retryable_exceptions = (
+            requests.exceptions.Timeout,
+            requests.exceptions.ConnectionError,
+        )
+
+        with patch("main.time.sleep") as mock_sleep:
+            for exception_type in retryable_exceptions:
+                with self.subTest(exception_type=exception_type):
+                    attempts = 0
+                    error = exception_type("Temporary request failure")
+
+                    @main.retry(
+                        max_attempts=2,
+                        delay=1,
+                        exceptions=retryable_exceptions,
+                    )
+                    def succeeds_after_retry():
+                        nonlocal attempts
+                        attempts += 1
+                        if attempts == 1:
+                            raise error
+                        return "success"
+
+                    result = succeeds_after_retry()
+
+                    self.assertEqual(result, "success")
+                    self.assertEqual(attempts, 2)
+                    mock_sleep.assert_called_once_with(1)
+                    mock_sleep.reset_mock()
+
+    def test_exception_not_listed_in_exceptions_is_not_retried(self):
+        attempts = 0
+        error = ValueError("Unexpected failure")
+
+        @main.retry(
+            max_attempts=3,
+            delay=1,
+            exceptions=(
+                requests.exceptions.Timeout,
+                requests.exceptions.ConnectionError,
+            ),
+        )
+        def always_fails():
+            nonlocal attempts
+            attempts += 1
+            raise error
+
+        with patch("main.time.sleep") as mock_sleep:
+            with self.assertRaises(ValueError) as context:
+                always_fails()
+
+        self.assertIs(context.exception, error)
+        self.assertEqual(attempts, 1)
+        mock_sleep.assert_not_called()
 
 
 if __name__ == "__main__":
