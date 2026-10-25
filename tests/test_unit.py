@@ -147,6 +147,62 @@ class TestRetryDecorator(unittest.TestCase):
         self.assertEqual(attempts, 3)
         self.assertEqual(mock_sleep.call_args_list, [call(1), call(2)])
 
+    def test_timeout_and_connection_error_are_retried(self):
+        retryable_exceptions = (
+            requests.exceptions.Timeout,
+            requests.exceptions.ConnectionError,
+        )
+
+        with patch("main.time.sleep") as mock_sleep:
+            for exception_type in retryable_exceptions:
+                with self.subTest(exception_type=exception_type):
+                    attempts = 0
+                    error = exception_type("Temporary request failure")
+
+                    @main.retry(
+                        max_attempts=2,
+                        delay=1,
+                        exceptions=retryable_exceptions,
+                    )
+                    def succeeds_after_retry():
+                        nonlocal attempts
+                        attempts += 1
+                        if attempts == 1:
+                            raise error
+                        return "success"
+
+                    result = succeeds_after_retry()
+
+                    self.assertEqual(result, "success")
+                    self.assertEqual(attempts, 2)
+                    mock_sleep.assert_called_once_with(1)
+                    mock_sleep.reset_mock()
+
+    def test_exception_not_listed_in_exceptions_is_not_retried(self):
+        attempts = 0
+        error = ValueError("Unexpected failure")
+
+        @main.retry(
+            max_attempts=3,
+            delay=1,
+            exceptions=(
+                requests.exceptions.Timeout,
+                requests.exceptions.ConnectionError,
+            ),
+        )
+        def always_fails():
+            nonlocal attempts
+            attempts += 1
+            raise error
+
+        with patch("main.time.sleep") as mock_sleep:
+            with self.assertRaises(ValueError) as context:
+                always_fails()
+
+        self.assertIs(context.exception, error)
+        self.assertEqual(attempts, 1)
+        mock_sleep.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
