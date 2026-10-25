@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 PROJECT_DIR = Path(__file__).resolve().parent
-DATA_PATH = PROJECT_DIR / "csv_files"
+DATA_PATH = PROJECT_DIR / "data"
 OC_PATH = DATA_PATH / "OtherCounties.csv"
 MUNICIPAL_PATH = DATA_PATH / "MunicipalLibraries.json"
 
